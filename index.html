@@ -1,508 +1,211 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THE LAST DOOR — FDS Adventure</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>THE LAST DOOR — 5 Rooms</title>
 <style>
-:root{
-  --bg:#05070c;--panel:#0d111b;--panel2:#141a27;--line:#293349;
-  --text:#f1f4fa;--muted:#9da8bc;--violet:#9b8cff;--cyan:#61e6d2;
-  --gold:#f4cf72;--red:#ff7180;--green:#78e0a8;
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
-body{overflow-x:hidden}
-button,input{font:inherit}
-button{cursor:pointer}
-.screen{display:none;min-height:100vh}
-.screen.active{display:flex}
-.btn{
-  border:0;border-radius:14px;padding:13px 20px;background:var(--violet);color:white;
-  font-weight:800;letter-spacing:.02em;transition:.2s
-}
-.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
-.btn.secondary{background:transparent;border:1px solid var(--line)}
-.btn.quit{background:transparent;border:1px solid #60323b;color:#ff9da7}
-.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);font-weight:900}
-p{color:var(--muted);line-height:1.75}
-#home,#guide,#result{
-  align-items:center;justify-content:center;padding:24px;
-  background:radial-gradient(circle at 50% 18%,#242943 0,transparent 42%),#05070c
-}
-.card{width:min(880px,100%);background:rgba(13,17,27,.94);border:1px solid var(--line);border-radius:26px;padding:34px;box-shadow:0 30px 90px #000b}
-.hero{text-align:center;background:transparent;border:0;box-shadow:none}
-h1{font-size:clamp(50px,10vw,100px);line-height:.84;margin:20px 0 16px;letter-spacing:-.05em}
-h2{font-size:clamp(28px,5vw,44px);margin:8px 0 12px;line-height:1}
-h3{margin:0 0 8px}
-.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:7px 12px;color:var(--muted);font-size:12px}
-.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
-.notice{border-left:3px solid var(--violet);background:#141625;padding:13px 15px;border-radius:0 12px 12px 0;color:var(--muted);line-height:1.6}
-
-#game{background:#06080e}
-.world{width:100%;min-height:100vh;display:flex;flex-direction:column}
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:13px 17px;background:rgba(5,7,12,.9);border-bottom:1px solid #1c2432;
-  backdrop-filter:blur(12px);z-index:5
-}
-.roomNo{font-size:11px;color:var(--cyan);font-weight:900;letter-spacing:.16em}
-.roomName{font-size:13px;color:var(--muted);margin-top:3px}
-.bar{height:4px;background:#171d2b}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--violet),var(--cyan));width:0;transition:.4s}
-
-.viewport{
-  position:relative;flex:1;min-height:620px;overflow:hidden;
-  background:
-    radial-gradient(ellipse at 50% 23%,#3a4057 0,#171d2c 28%,#080b13 67%,#030407 100%);
-}
-.viewport:after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(90deg,#0009,transparent 25%,transparent 75%,#0009),
-             linear-gradient(180deg,#fff0,transparent 55%,#0009);
-}
-.scene{position:absolute;inset:0}
-.door{
-  position:absolute;left:50%;top:12%;transform:translateX(-50%);
-  width:min(31vw,260px);height:61%;border:7px solid #252d3c;
-  background:linear-gradient(90deg,#080a10,#1b2230 50%,#080a10);
-  box-shadow:0 0 60px #000b
-}
-.door:before{content:"";position:absolute;inset:8%;border:1px solid #414b60}
-.doorHandle{position:absolute;right:12%;top:52%;width:11px;height:11px;border-radius:50%;background:#bdc5d4;box-shadow:0 0 12px #fff5}
-.ceilingLight{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:70px;height:5px;border-radius:8px;background:#dbe5ff;box-shadow:0 0 35px 8px #a8c5ff66}
-.floor{
-  position:absolute;left:-12%;right:-12%;bottom:-28%;height:48%;
-  background:linear-gradient(165deg,#0b0f18,#1b2230 50%,#06080e);
-  transform:perspective(600px) rotateX(55deg);transform-origin:center top
-}
-.prop{position:absolute;font-size:40px;color:#c6ccda;filter:drop-shadow(0 12px 16px #000);opacity:.8}
-.prop.l{left:14%;bottom:29%}.prop.r{right:14%;bottom:30%}
-.roomTag{
-  position:absolute;left:50%;top:22%;transform:translateX(-50%);
-  color:#cdd5e5;font-size:10px;letter-spacing:.3em;opacity:.55
-}
-.overlay{
-  position:absolute;z-index:4;left:0;right:0;bottom:0;padding:18px;
-  background:linear-gradient(transparent,rgba(3,5,9,.97) 26%)
-}
-.story{
-  max-width:920px;margin:auto;background:rgba(9,12,19,.92);
-  border:1px solid var(--line);border-radius:20px;padding:20px;
-  box-shadow:0 20px 60px #000b
-}
-.domain{
-  display:inline-block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--gold);border:1px solid #554a29;border-radius:999px;padding:5px 9px;margin-bottom:8px
-}
-.story p{margin:8px 0}
-.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
-.choice{
-  border:1px solid #2b3549;border-radius:13px;padding:14px;
-  background:#111724;color:#f2f5fa;text-align:left;transition:.18s
-}
-.choice:hover{border-color:var(--violet);background:#151b2b}
-.choice:disabled{opacity:.55;cursor:default}
-.choice b{color:var(--cyan);margin-right:7px}
-.interact{display:flex;gap:8px;margin-top:12px}
-.interact input{
-  flex:1;min-width:0;background:#080c14;border:1px solid #2b3549;
-  color:white;border-radius:12px;padding:13px
-}
-.feedback{
-  display:none;margin-top:12px;padding:12px 14px;border-radius:12px;
-  border:1px solid #2a4b46;background:#101c1e;color:#cdeee9
-}
-.feedback.show{display:block}
-.footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
-.small{font-size:12px;color:var(--muted)}
-
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0}
-.metric{background:#131927;border:1px solid #293349;border-radius:16px;padding:17px}
-.metric span{display:block;font-size:12px;color:var(--muted)}
-.metric strong{display:block;font-size:32px;margin-top:5px}
-.timeline{display:flex;flex-wrap:wrap;gap:7px;margin:15px 0 22px}
-.dot{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#171e2c;border:1px solid #2b3549}
-.dot.try{color:var(--green);border-color:#376c59}.dot.hesitate{color:var(--gold);border-color:#66572e}.dot.quit{color:var(--red);border-color:#71353e}
-.resultNote{font-size:12px;color:#818ca0;margin-top:14px}
-@media(max-width:700px){
-  .choices{grid-template-columns:1fr}
-  .viewport{min-height:720px}
-  .door{width:45vw;height:50%}
-  .prop.l{left:7%}.prop.r{right:7%}
-  .metrics{grid-template-columns:1fr 1fr}
-  .card{padding:24px}
-  .overlay{padding:10px}
-  .story{padding:15px}
-}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#03050a;color:#fff;font-family:Arial,sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#hud{position:fixed;inset:0;pointer-events:none}
+#top{position:absolute;top:0;left:0;right:0;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(#02040acc,transparent)}
+#room{font-size:12px;letter-spacing:.15em;color:#72ead8;font-weight:800}.name{font-size:13px;color:#aab3c5;margin-top:4px}
+#stats{font-size:12px;color:#d5dbea;background:#090d15dd;border:1px solid #293246;padding:9px 12px;border-radius:12px}
+#cross{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:25px;color:#fff9;text-shadow:0 0 12px #000}
+#prompt{position:absolute;left:50%;bottom:24%;transform:translateX(-50%);background:#080c14ed;border:1px solid #3a465d;border-radius:10px;padding:10px 16px;font-size:13px;display:none}
+#hint{position:absolute;left:50%;top:72px;transform:translateX(-50%);font-size:12px;color:#aeb8c9;background:#080c14aa;border:1px solid #273145;border-radius:999px;padding:7px 12px;display:none}
+#quit{position:absolute;right:18px;bottom:18px;pointer-events:auto;background:#150b10;border:1px solid #633541;color:#ff9aa7;border-radius:10px;padding:9px 12px}
+#help{position:absolute;left:18px;bottom:18px;color:#8994a8;font-size:11px;line-height:1.5}
+#touch{display:none;position:absolute;inset:0;pointer-events:none}.stick{position:absolute;left:22px;bottom:38px;width:118px;height:118px;border:2px solid #ffffff25;border-radius:50%;background:#ffffff08;pointer-events:auto}.knob{position:absolute;width:48px;height:48px;left:33px;top:33px;border-radius:50%;background:#ffffff22;border:1px solid #ffffff35}
+.touchBtns{position:absolute;right:18px;bottom:35px;display:flex;gap:10px;pointer-events:auto}.touchBtns button{width:62px;height:62px;border-radius:50%;border:1px solid #ffffff35;background:#111827dd;color:#fff;font-weight:bold}
+#start,#result,#challenge{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 50% 20%,#252b48,#05070c 65%);z-index:10}
+.card,.qcard{width:min(820px,100%);padding:32px;border:1px solid #2b3549;border-radius:24px;background:#0b101af2;box-shadow:0 30px 100px #000c;text-align:center}
+.ey{font-size:11px;letter-spacing:.2em;color:#72ead8;font-weight:bold}
+h1{font-size:clamp(48px,10vw,94px);line-height:.82;margin:12px 0 18px;letter-spacing:-.05em}h2{font-size:clamp(27px,5vw,42px);margin:8px 0 12px}p{color:#aab3c5;line-height:1.7}
+button.main{margin-top:15px;border:0;border-radius:12px;padding:14px 22px;background:#9587ff;color:white;font-weight:bold;cursor:pointer}
+#challenge{display:none;background:#000b;z-index:8}.qcard{text-align:left}.domain{font-size:10px;color:#f1ce70;letter-spacing:.15em;text-transform:uppercase}.qcard h2{margin-top:10px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.choice{background:#131a28;color:white;border:1px solid #303b50;border-radius:12px;padding:14px;text-align:left;cursor:pointer}.choice:hover{border-color:#9587ff}.choice b{color:#72ead8}
+.challengeBox{background:#101725;border:1px solid #2c3850;border-radius:14px;padding:15px;margin-top:14px}.code{font-size:30px;letter-spacing:.35em;text-align:center;color:#72ead8;margin:12px 0}.challengeBox input{width:100%;background:#070b12;color:#fff;border:1px solid #334056;border-radius:10px;padding:12px}.msg{margin-top:10px;color:#aeb8c9;font-size:13px}
+#result{display:none;z-index:20}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.metric{background:#131927;border:1px solid #2a3448;border-radius:14px;padding:15px}.metric span{display:block;color:#929caf;font-size:11px}.metric strong{font-size:30px;display:block;margin-top:4px}.timeline{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}.dot{width:35px;height:35px;border-radius:9px;display:grid;place-items:center;border:1px solid #29354a;background:#111827}.try{color:#78e0a8}.hes{color:#f1ce70}.quit{color:#ff7180}
+@media(max-width:700px){#touch{display:block}.choices{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}.card{padding:24px}#help{display:none}#prompt{bottom:29%}}
 </style>
 </head>
 <body>
+<canvas id="view"></canvas>
 
-<section id="home" class="screen active">
-  <div class="card hero">
-    <div class="eyebrow">Interactive first-person experience</div>
-    <h1>THE<br>LAST DOOR</h1>
-    <p>
-      Bạn tỉnh dậy trong một khu phức hợp bí ẩn. Tám căn phòng nằm giữa bạn và cánh cửa cuối cùng.
-      Mỗi căn phòng đặt bạn trước một kiểu khó chịu khác nhau: chờ đợi, thất bại, bất công,
-      cảm xúc mạnh, trì hoãn phần thưởng và áp lực thành tích.
-    </p>
-    <span class="badge">Inspired by FDS domains — original game scenarios</span>
-    <div class="actions">
-      <button class="btn" onclick="startGame()">BẮT ĐẦU HÀNH TRÌNH</button>
-      <button class="btn secondary" onclick="show('guide')">CÁCH CHƠI</button>
-    </div>
-  </div>
-</section>
+<div id="hud">
+  <div id="top"><div><div id="room"></div><div class="name" id="roomName"></div></div><div id="stats"></div></div>
+  <div id="cross">+</div><div id="hint"></div><div id="prompt"></div>
+  <div id="help">WASD / ↑↓←→: di chuyển • Chuột: nhìn • E: tương tác</div>
+  <button id="quit" onclick="giveUp()">Bỏ cuộc</button>
+</div>
 
-<section id="guide" class="screen">
-  <div class="card">
-    <div class="eyebrow">Before you enter</div>
-    <h2>Luật của mê cung</h2>
-    <p>
-      Bạn sẽ nhập vai nhân vật và đưa ra lựa chọn trong các tình huống. Một số phòng có thử thách
-      tương tác. Không có lựa chọn nào được gắn nhãn “đúng” hay “sai”.
-    </p>
-    <p>
-      Game chỉ ghi lại ba loại hành vi trong quá trình chơi:
-      <b>🔥 Cố gắng</b>, <b>⏳ Chần chừ</b> và <b>🚪 Bỏ cuộc</b>.
-    </p>
-    <div class="notice">
-      Nội dung được xây dựng mới dựa trên bốn lĩnh vực được mô tả cho FDS:
-      khó chịu, cảm giác được hưởng quyền/đòi hỏi, không chịu đựng cảm xúc và
-      khó chịu với việc không đạt thành tích. Đây là game giáo dục/giải trí, không phải bài FDS
-      chính thức và không dùng để chẩn đoán.
-    </div>
-    <div class="actions"><button class="btn" onclick="show('home')">QUAY LẠI</button></div>
-  </div>
-</section>
+<div id="touch">
+  <div class="stick" id="stick"><div class="knob" id="knob"></div></div>
+  <div class="touchBtns"><button id="turnL">↶</button><button id="act">E</button><button id="turnR">↷</button></div>
+</div>
 
-<section id="game" class="screen">
-  <div class="world">
-    <div class="topbar">
-      <div>
-        <div id="roomNo" class="roomNo"></div>
-        <div id="roomName" class="roomName"></div>
-      </div>
-      <button class="btn quit" onclick="quitGame()">BỎ CUỘC</button>
-    </div>
-    <div class="bar"><i id="barFill"></i></div>
+<div id="start">
+ <div class="card">
+  <div class="ey">FIRST-PERSON ESCAPE ROOM</div>
+  <h1>THE<br>LAST DOOR</h1>
+  <p><b>5 căn phòng. 5 thử thách. 1 cánh cửa cuối cùng.</b></p>
+  <p>Bạn tự di chuyển trong từng căn phòng, khám phá bối cảnh, tìm điểm tương tác và vượt thử thách. Mỗi phòng có một tình huống lấy cảm hứng từ các lĩnh vực của FDS: khó chịu, kỳ vọng/quyền lợi, cảm xúc và thành tích. FDS được mô tả là thang đo gồm bốn lĩnh vực này.</p>
+  <p style="font-size:12px">Đây là game giáo dục/giải trí với tình huống viết mới, không phải bài FDS chính thức và không chẩn đoán.</p>
+  <button class="main" onclick="begin()">BẮT ĐẦU — PHÒNG 1/5</button>
+ </div>
+</div>
 
-    <div class="viewport">
-      <div class="scene">
-        <div class="ceilingLight"></div>
-        <div class="door"><div class="doorHandle"></div></div>
-        <div id="roomTag" class="roomTag"></div>
-        <div id="propL" class="prop l">◼</div>
-        <div id="propR" class="prop r">◷</div>
-        <div class="floor"></div>
-      </div>
+<div id="challenge">
+ <div class="qcard">
+   <div class="domain" id="qdomain"></div>
+   <h2 id="qtitle"></h2>
+   <p id="qtext"></p>
+   <div id="challengeArea"></div>
+   <div class="choices" id="choices"></div>
+ </div>
+</div>
 
-      <div class="overlay">
-        <div class="story">
-          <div id="domain" class="domain"></div>
-          <h2 id="question"></h2>
-          <p id="storyText"></p>
-          <div id="choices" class="choices"></div>
-          <div id="interaction"></div>
-          <div id="feedback" class="feedback"></div>
-          <div class="footer">
-            <span id="hint" class="small"></span>
-            <button id="nextBtn" class="btn" style="display:none" onclick="nextRoom()">MỞ CỬA →</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="result" class="screen">
-  <div class="card">
-    <div id="resultEyebrow" class="eyebrow"></div>
-    <h2 id="resultTitle"></h2>
-    <p id="resultText"></p>
-    <div id="metrics" class="metrics"></div>
-
-    <h3>Dấu vết hành trình</h3>
-    <div id="timeline" class="timeline"></div>
-
-    <div class="notice">
-      Đây là thống kê hành vi trong trò chơi, không phải điểm số hay kết luận tâm lý.
-    </div>
-    <div id="resultNote" class="resultNote"></div>
-
-    <div class="actions">
-      <button class="btn" onclick="startGame()">CHƠI LẠI</button>
-      <button class="btn secondary" onclick="show('home')">TRANG CHỦ</button>
-    </div>
-  </div>
-</section>
+<div id="result">
+ <div class="card">
+   <div class="ey" id="resultEy"></div><h2 id="resultTitle"></h2><p id="resultText"></p>
+   <div class="metrics" id="metrics"></div>
+   <h3>Dấu vết hành trình</h3><div class="timeline" id="timeline"></div>
+   <p style="font-size:11px">Thống kê chỉ phản ánh lựa chọn trong game, không phải điểm tâm lý.</p>
+   <button class="main" onclick="location.reload()">CHƠI LẠI</button>
+ </div>
+</div>
 
 <script>
-const rooms = [
-  {
-    name:"THE WAITING ROOM",
-    domain:"Khó chịu / chờ đợi",
-    tag:"120 SECONDS",
-    iconL:"⌛",iconR:"◷",
-    q:"Cánh cửa không mở.",
-    story:"Bạn tỉnh dậy trước một cánh cửa thép. Màn hình chỉ hiện: “CỬA SẼ MỞ SAU 120 GIÂY.” Không có nút bỏ qua. Không có cách làm thời gian chạy nhanh hơn.",
-    choices:[
-      ["A","Kiểm tra căn phòng và tìm xem có cách nào mở cửa.",{try:1}],
-      ["B","Đứng lại, cân nhắc rất lâu xem có nên tiếp tục.",{hesitate:1}],
-      ["C","Chấp nhận phải chờ và quan sát xung quanh.",{try:1}],
-      ["D","Bỏ cuộc.",{quit:1}]
-    ]
-  },
-  {
-    name:"THE RESET",
-    domain:"Không đạt kết quả / thất bại",
-    tag:"PROGRESS RESET",
-    iconL:"↻",iconR:"▦",
-    q:"Mọi công sức vừa rồi bị xóa.",
-    story:"Bạn vừa giải xong bảng điều khiển. Đúng lúc cánh cửa chuẩn bị mở, toàn bộ hệ thống tắt. Màn hình hiện: “PROGRESS RESET”. Bạn phải làm lại.",
-    choices:[
-      ["A","Làm lại từ đầu và thử một chiến lược khác.",{try:1}],
-      ["B","Dừng lại vì nghĩ công sức tiếp theo có thể lại bị mất.",{hesitate:1}],
-      ["C","Tìm lỗi trong quy trình rồi bắt đầu lại.",{try:1}],
-      ["D","Bỏ cuộc.",{quit:1}]
-    ]
-  },
-  {
-    name:"THE UNFAIR ROOM",
-    domain:"Cảm giác bất công / kỳ vọng",
-    tag:"ACCESS ERROR",
-    iconL:"⚖",iconR:"!",
-    q:"Bạn làm đúng — nhưng vẫn bị báo sai.",
-    story:"Hệ thống nói bạn đã thất bại dù bạn chắc chắn đã làm theo hướng dẫn. Không ai giải thích. Chỉ còn hai lựa chọn: thử lại hoặc rời đi.",
-    choices:[
-      ["A","Thử lại bằng một cách khác.",{try:1}],
-      ["B","Chần chừ vì thấy chuyện này quá vô lý.",{hesitate:1}],
-      ["C","Tìm thêm manh mối trước khi thử lại.",{try:1}],
-      ["D","Bỏ cuộc.",{quit:1}]
-    ]
-  },
-  {
-    name:"THE MIRROR",
-    domain:"Không chịu đựng cảm xúc",
-    tag:"FEEL IT",
-    iconL:"◉",iconR:"◌",
-    q:"Cảm xúc khó chịu xuất hiện.",
-    story:"Một căn phòng trắng. Một tấm gương hiện dòng chữ: “Bạn không cần thích cảm giác này. Nhưng bạn vẫn có thể hành động.” Tim bạn đập nhanh hơn.",
-    choices:[
-      ["A","Nhận ra cảm giác khó chịu và tiếp tục.",{try:1}],
-      ["B","Chờ cho cảm giác biến mất rồi mới quyết định.",{hesitate:1}],
-      ["C","Tập trung vào việc cần làm thay vì cố loại bỏ cảm xúc.",{try:1}],
-      ["D","Bỏ cuộc.",{quit:1}]
-    ]
-  },
-  {
-    name:"THE DELAYED REWARD",
-    domain:"Trì hoãn phần thưởng",
-    tag:"ALMOST THERE",
-    iconL:"◇",iconR:"🔑",
-    q:"Phần thưởng nằm ngay trước mắt.",
-    story:"Chiếc chìa khóa nằm trong hộp kính. Bạn đã hoàn thành gần hết chuỗi ký hiệu. Nhưng hệ thống yêu cầu thêm một bước chờ đợi trước khi mở khóa.",
-    choices:[
-      ["A","Tiếp tục từng bước dù phần thưởng chưa đến ngay.",{try:1}],
-      ["B","Sốt ruột và cân nhắc có nên tiếp tục.",{hesitate:1}],
-      ["C","Tìm quy luật để hoàn thành phần còn lại.",{try:1}],
-      ["D","Bỏ cuộc.",{quit:1}]
-    ]
-  },
-  {
-    name:"THE CHAOS ROOM",
-    domain:"Áp lực / khó chịu",
-    tag:"FIND THE SYMBOL",
-    iconL:"⌁",iconR:"△",
-    q:"Tìm ký hiệu ẩn.",
-    story:"Đèn nhấp nháy. Âm thanh cảnh báo lặp lại. Trên tường có hàng chục ký hiệu. Dòng chữ duy nhất: “TÌM BIỂU TƯỢNG XUẤT HIỆN HAI LẦN.”",
-    code:"TRIANGLE",
-    choices:[
-      ["A","Tập trung và tìm kiếm dù môi trường gây khó chịu.",{try:1}],
-      ["B","Chần chừ vì quá nhiều kích thích cùng lúc.",{hesitate:1}]
-    ]
-  },
-  {
-    name:"THE FINAL ATTEMPT",
-    domain:"Thành tích / thất bại",
-    tag:"ACCESS DENIED",
-    iconL:"▣",iconR:"×",
-    q:"Bạn đã gần tới đích.",
-    story:"Cửa thoát xuất hiện. Bạn nhập mã. “ACCESS DENIED.” Bạn thử lần hai. Vẫn thất bại. Một manh mối nhỏ vừa xuất hiện ở góc màn hình.",
-    choices:[
-      ["A","Quay lại tìm manh mối và thử tiếp.",{try:1}],
-      ["B","Đứng im vì không chắc lần tiếp theo có ích.",{hesitate:1}],
-      ["C","Thay đổi cách tiếp cận.",{try:1}],
-      ["D","Bỏ cuộc.",{quit:1}]
-    ]
-  },
-  {
-    name:"THE LAST DOOR",
-    domain:"Lựa chọn cuối",
-    tag:"EXIT",
-    iconL:"□",iconR:"EXIT",
-    q:"Bạn có thể rời đi — nhưng không biết mình sẽ thắng.",
-    story:"Căn phòng cuối cùng hoàn toàn trắng. Không còn câu đố. Chỉ có cánh cửa EXIT. Hệ thống hỏi: “Khi kết quả không chắc chắn, bạn sẽ làm gì?”",
-    choices:[
-      ["A","Tiếp tục dù chưa chắc thành công.",{try:1}],
-      ["B","Dừng lại để suy nghĩ trước khi quyết định.",{hesitate:1}],
-      ["C","Nếu thất bại, tôi sẽ thử lại.",{try:1}],
-      ["D","Tôi chọn bỏ cuộc.",{quit:1}]
-    ]
-  }
-];
+const canvas=document.getElementById('view'),ctx=canvas.getContext('2d');let W=innerWidth,H=innerHeight;
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}addEventListener('resize',resize);resize();
 
-let current=0;
-let stats={try:0,hesitate:0,quit:0};
-let history=[];
-let answered=false;
+const rooms=[
+{
+ name:"THE WAITING ROOM",domain:"Khó chịu / chờ đợi",q:"Cánh cửa không mở.",
+ text:"Bạn tỉnh dậy trong một phòng chờ. Một chiếc đồng hồ đứng im ở 00:60. Terminal ở cuối phòng nói rằng bạn phải tìm đúng nút mở khóa.",
+ map:["111111111111","100000000001","100000000001","100001000001","100001000001","100001000001","100000000001","100000000001","100000000001","100000000001","100000000001","111111111111"],
+ start:[2.5,2.5],target:[9.5,9.5],type:"wait"
+},
+{
+ name:"THE RESET",domain:"Thất bại / khó chịu",q:"Mọi công sức vừa rồi bị xóa.",
+ text:"Bạn tìm thấy một màn hình chứa chuỗi ký hiệu. Ghi nhớ chuỗi trước khi hệ thống reset.",
+ map:["111111111111","100000000001","100111110001","100100010001","100100010001","100000010001","100111110001","100000000001","100000000001","100000000001","100000000001","111111111111"],
+ start:[2.5,2.5],target:[9.5,9.5],type:"memory"
+},
+{
+ name:"THE UNFAIR ROOM",domain:"Bất công / kỳ vọng",q:"Bạn làm đúng — nhưng hệ thống vẫn báo sai.",
+ text:"Có ba terminal trong phòng. Chỉ một terminal hoạt động. Bạn phải tìm đúng điểm tương tác thay vì đoán.",
+ map:["111111111111","100000000001","101111110001","100000010001","101111010001","101000010001","101011110001","101000000001","101111111101","100000000001","100000000001","111111111111"],
+ start:[1.5,1.5],target:[10.5,10.5],type:"search"
+},
+{
+ name:"THE MIRROR",domain:"Cảm xúc / chịu đựng khó chịu",q:"Bạn cảm thấy khó chịu — nhưng cánh cửa vẫn ở phía trước.",
+ text:"Đèn đỏ nhấp nháy và âm thanh cảnh báo tăng dần. Hãy đi tới chiếc gương ở cuối phòng và đọc thông điệp.",
+ map:["111111111111","100000000001","100011100001","100010000001","100010000001","100000111101","100000000001","101111111101","100000000001","100000000001","100000000001","111111111111"],
+ start:[2.5,9.5],target:[9.5,2.5],type:"emotion"
+},
+{
+ name:"THE LAST DOOR",domain:"Thành tích / thất bại",q:"Cánh cửa cuối cùng chỉ mở nếu bạn vượt qua thử thách.",
+ text:"Bạn đã tới căn phòng cuối. Một mã khóa hiện ra. Bạn phải giải nó rồi quyết định có tiếp tục khi chưa chắc chắn hay không.",
+ map:["111111111111","100000000001","100111110001","100100010001","100100010001","100000010001","101111110001","100000000001","100000000001","100000000001","100000000001","111111111111"],
+ start:[1.5,10.5],target:[10.5,1.5],type:"final"
+}];
 
-function show(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+let room=0,x,y,ang=0,modal=false,challengeState=null;let keys={};
+let stats={try:0,hes:0,quit:0},history=[];
+
+function begin(){document.getElementById('start').style.display='none';startRoom();canvas.requestPointerLock?.()}
+function startRoom(){let r=rooms[room];[x,y]=r.start;ang=0;modal=false;challengeState=null;updateHUD()}
+function updateHUD(){
+ let r=rooms[room];document.getElementById('room').textContent=`PHÒNG ${room+1} / 5`;
+ document.getElementById('roomName').textContent=r.name;
+ document.getElementById('stats').textContent=`🔥 ${stats.try}   ⏳ ${stats.hes}   🚪 ${stats.quit}`;
+ let h=document.getElementById('hint');h.style.display='block';h.textContent=room<4?`Vượt thử thách để mở cửa sang phòng ${room+2}`:"Vượt thử thách để mở CÁNH CỬA CUỐI";
 }
-
-function startGame(){
-  current=0;
-  stats={try:0,hesitate:0,quit:0};
-  history=[];
-  show("game");
-  renderRoom();
+function wall(px,py){let r=rooms[room],gx=Math.floor(px),gy=Math.floor(py);return !r.map[gy]||r.map[gy][gx]!=='0'}
+function move(dx,dy){if(modal)return;let nx=x+dx,ny=y+dy;if(!wall(nx,y))x=nx;if(!wall(x,ny))y=ny}
+function distTarget(){let t=rooms[room].target;return Math.hypot(x-t[0],y-t[1])}
+function interact(){if(modal)return;if(distTarget()<1.5)openChallenge()}
+function openChallenge(){
+ modal=true;let r=rooms[room];
+ document.getElementById('qdomain').textContent=r.domain;document.getElementById('qtitle').textContent=r.q;document.getElementById('qtext').textContent=r.text;
+ document.getElementById('challengeArea').innerHTML='';document.getElementById('choices').innerHTML='';
+ const area=document.getElementById('challengeArea');
+ if(r.type==="wait"){
+   area.innerHTML='<div class="challengeBox">Bạn phải chọn cách đối diện với việc chờ đợi.</div>';
+   addChoices([["A","Kiên nhẫn quan sát và tiếp tục.","try"],["B","Dừng lại rất lâu vì khó chịu.","hes"],["C","Bỏ cuộc.","quit"]]);
+ } else if(r.type==="memory"){
+   let code=["△","○","◇","△"].join(" ");
+   area.innerHTML=`<div class="challengeBox">Ghi nhớ chuỗi này trong 3 giây:<div class="code" id="memCode">${code}</div><button class="main" onclick="hideCode()">ĐÃ NHỚ</button></div>`;
+ } else if(r.type==="search"){
+   area.innerHTML='<div class="challengeBox">Bạn đã tìm thấy terminal. Hãy chọn cách xử lý khi hệ thống có vẻ bất công.</div>';
+   addChoices([["A","Kiểm tra lại và thử cách khác.","try"],["B","Chần chừ vì thấy quá vô lý.","hes"],["C","Bỏ cuộc.","quit"]]);
+ } else if(r.type==="emotion"){
+   area.innerHTML='<div class="challengeBox">Âm thanh càng lúc càng lớn. Bạn có thể tiếp tục hành động dù cảm giác khó chịu vẫn còn.</div>';
+   addChoices([["A","Tập trung vào việc cần làm và tiếp tục.","try"],["B","Chờ cảm giác khó chịu biến mất.","hes"],["C","Bỏ cuộc.","quit"]]);
+ } else {
+   area.innerHTML='<div class="challengeBox"><b>Giải mã:</b> 2 — 4 — 8 — 16 — ?<br><input id="answer" inputmode="numeric" placeholder="Nhập số tiếp theo"><button class="main" onclick="checkFinal()">MỞ KHÓA</button><div class="msg" id="msg"></div></div>';
+   addChoices([["A","Nếu thất bại, thử lại bằng cách khác.","try"],["B","Dừng lại vì chưa chắc chắn.","hes"],["C","Bỏ cuộc.","quit"]]);
+ }
+ document.getElementById('challenge').style.display='flex';
 }
-
-function renderRoom(){
-  const r=rooms[current];
-  answered=false;
-
-  document.getElementById("roomNo").textContent=`PHÒNG ${current+1} / ${rooms.length}`;
-  document.getElementById("roomName").textContent=r.name;
-  document.getElementById("domain").textContent=r.domain;
-  document.getElementById("roomTag").textContent=r.tag;
-  document.getElementById("question").textContent=r.q;
-  document.getElementById("storyText").textContent=r.story;
-  document.getElementById("barFill").style.width=((current)/rooms.length*100)+"%";
-  document.getElementById("propL").textContent=r.iconL;
-  document.getElementById("propR").textContent=r.iconR;
-
-  const choices=document.getElementById("choices");
-  const interaction=document.getElementById("interaction");
-  const feedback=document.getElementById("feedback");
-  const next=document.getElementById("nextBtn");
-
-  choices.innerHTML="";
-  interaction.innerHTML="";
-  feedback.classList.remove("show");
-  next.style.display="none";
-  document.getElementById("hint").textContent="";
-
-  r.choices.forEach((c)=>{
-    const b=document.createElement("button");
-    b.className="choice";
-    b.innerHTML=`<b>${c[0]}</b>${c[1]}`;
-    b.onclick=()=>record(c[2]);
-    choices.appendChild(b);
-  });
-
-  if(r.code){
-    interaction.innerHTML=`
-      <div class="interact">
-        <input id="codeInput" autocomplete="off" placeholder="Nhập ký hiệu bạn tìm thấy...">
-        <button class="btn" onclick="submitCode()">XÁC NHẬN</button>
-      </div>`;
-  }
+function addChoices(arr){
+ let c=document.getElementById('choices');c.innerHTML='';
+ arr.forEach(v=>{let b=document.createElement('button');b.className='choice';b.innerHTML=`<b>${v[0]}</b> ${v[1]}`;b.onclick=()=>answer(v[2]);c.appendChild(b)})
 }
-
-function record(action){
-  if(answered)return;
-  if(action.quit){
-    stats.quit++;
-    history.push("quit");
-    finish(true);
-    return;
-  }
-  answered=true;
-  if(action.try){stats.try++;history.push("try");}
-  if(action.hesitate){stats.hesitate++;history.push("hesitate");}
-
-  document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
-  const feedback=document.getElementById("feedback");
-  feedback.textContent=action.try
-    ?"🔥 Bạn chọn hành động thay vì để sự khó chịu quyết định thay mình."
-    :"⏳ Bạn dành thời gian cân nhắc trước khi tiếp tục.";
-  feedback.classList.add("show");
-  document.getElementById("nextBtn").style.display="inline-block";
-  document.getElementById("hint").textContent="Dữ liệu hành trình đã được ghi nhận.";
+function hideCode(){
+ document.getElementById('challengeArea').innerHTML='<div class="challengeBox">Chuỗi đã biến mất. Bạn có nhớ không?</div><div class="choices"><button class="choice" onclick="memoryAnswer(true)"><b>A</b> Nhập đúng chuỗi đã nhớ</button><button class="choice" onclick="memoryAnswer(false)"><b>B</b> Tôi không nhớ</button></div>';
 }
-
-function submitCode(){
-  if(answered)return;
-  const input=document.getElementById("codeInput");
-  const value=input.value.trim().toUpperCase();
-  const feedback=document.getElementById("feedback");
-
-  if(value==="TRIANGLE"){
-    answered=true;
-    stats.try++;
-    history.push("try");
-    feedback.textContent="✓ Chính xác. Bạn tìm thấy ký hiệu và khóa cửa bật sáng.";
-    feedback.classList.add("show");
-    document.getElementById("nextBtn").style.display="inline-block";
-    document.getElementById("hint").textContent="Thử thách hoàn thành.";
-    input.disabled=true;
-  }else{
-    stats.hesitate++;
-    history.push("hesitate");
-    feedback.textContent="Chưa đúng. Bạn vẫn có thể quan sát và thử lại.";
-    feedback.classList.add("show");
-  }
+function memoryAnswer(ok){if(ok)answer('try');else answer('hes')}
+function checkFinal(){
+ let v=document.getElementById('answer').value.trim(),m=document.getElementById('msg');
+ if(v==="32"){m.textContent="✓ Đúng. Cửa khóa đang mở. Bây giờ hãy chọn cách tiếp tục.";addChoices([["A","Bước tiếp dù chưa chắc kết quả.","try"],["B","Dừng lại cân nhắc.","hes"],["C","Bỏ cuộc.","quit"]])}
+ else m.textContent="Chưa đúng. Bạn có thể thử lại.";
 }
-
-function nextRoom(){
-  if(current<rooms.length-1){
-    current++;
-    renderRoom();
-  }else{
-    finish(false);
-  }
+function answer(type){
+ stats[type==='try'?'try':type==='hes'?'hes':'quit']++;history.push(type);
+ document.getElementById('challenge').style.display='none';modal=false;updateHUD();
+ if(type==='quit'){finish(true);return}
+ room++;
+ if(room>=5){finish(false);return}
+ startRoom();
 }
-
-function quitGame(){
-  if(answered){
-    // Bỏ cuộc vẫn được ghi nhận như một quyết định ở thời điểm hiện tại.
-  }
-  stats.quit++;
-  history.push("quit");
-  finish(true);
-}
-
+function giveUp(){if(document.getElementById('start').style.display!=='none'&&document.getElementById('start').style.display!=='flex')return;if(modal)return;stats.quit++;history.push('quit');finish(true)}
 function finish(quit){
-  document.getElementById("resultEyebrow").textContent=quit?"JOURNEY ENDED":"YOU ESCAPED";
-  document.getElementById("resultTitle").textContent=quit
-    ?"HÀNH TRÌNH DỪNG LẠI"
-    :"BẠN ĐÃ MỞ CÁNH CỬA CUỐI CÙNG";
-
-  document.getElementById("resultText").textContent=quit
-    ?`Bạn đã dừng lại ở phòng ${current+1}/${rooms.length}. Hãy nhìn lại cách bạn đã phản ứng trong hành trình.`
-    :"Bạn đã vượt qua toàn bộ mê cung. Không chỉ cánh cửa cuối cùng mở ra — bạn còn để lại một dấu vết về cách mình đối diện với những khoảnh khắc khó chịu.";
-
-  document.getElementById("metrics").innerHTML=`
-    <div class="metric"><span>🔥 Cố gắng</span><strong>${stats.try}</strong></div>
-    <div class="metric"><span>⏳ Chần chừ</span><strong>${stats.hesitate}</strong></div>
-    <div class="metric"><span>🚪 Bỏ cuộc</span><strong>${stats.quit}</strong></div>
-    <div class="metric"><span>🏁 Phòng</span><strong>${quit?current:rooms.length}/${rooms.length}</strong></div>
-  `;
-
-  document.getElementById("timeline").innerHTML=history.map((type,i)=>{
-    const icon=type==="try"?"🔥":type==="hesitate"?"⏳":"🚪";
-    return `<div class="dot ${type}" title="Lựa chọn ${i+1}">${icon}</div>`;
-  }).join("");
-
-  document.getElementById("resultNote").textContent=
-    "Game sử dụng các tình huống được viết mới, lấy cảm hứng từ bốn lĩnh vực của Frustration Discomfort Scale (FDS); không sao chép các mục câu hỏi của thang đo.";
-
-  show("result");
+ document.exitPointerLock?.();document.getElementById('resultEy').textContent=quit?'JOURNEY ENDED':'YOU ESCAPED';
+ document.getElementById('resultTitle').textContent=quit?'HÀNH TRÌNH DỪNG LẠI':'BẠN ĐÃ VƯỢT QUA 5 CĂN PHÒNG';
+ document.getElementById('resultText').textContent=quit?`Bạn dừng lại ở phòng ${Math.min(room+1,5)}/5.`:'Bạn đã tự di chuyển, khám phá và vượt qua đủ 5 căn phòng. Cánh cửa cuối cùng đã mở.';
+ document.getElementById('metrics').innerHTML=`<div class="metric"><span>🔥 Cố gắng</span><strong>${stats.try}</strong></div><div class="metric"><span>⏳ Chần chừ</span><strong>${stats.hes}</strong></div><div class="metric"><span>🚪 Bỏ cuộc</span><strong>${stats.quit}</strong></div><div class="metric"><span>🏁 Phòng</span><strong>${quit?Math.min(room+1,5):5}/5</strong></div>`;
+ document.getElementById('timeline').innerHTML=history.map(t=>`<div class="dot ${t}">${t==='try'?'🔥':t==='hes'?'⏳':'🚪'}</div>`).join('');
+ document.getElementById('result').style.display='flex';
 }
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+canvas.addEventListener('click',()=>{if(document.getElementById('start').style.display==='none'&&!modal)canvas.requestPointerLock?.()});
+document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas&&!modal)ang+=e.movementX*.0025});
+let joy={x:0,y:0},stick=document.getElementById('stick'),knob=document.getElementById('knob');
+stick.addEventListener('touchmove',e=>{let t=e.touches[0],r=stick.getBoundingClientRect(),dx=t.clientX-(r.left+r.width/2),dy=t.clientY-(r.top+r.height/2),m=Math.min(48,Math.hypot(dx,dy)),a=Math.atan2(dy,dx);joy.x=Math.cos(a)*m/48;joy.y=Math.sin(a)*m/48;knob.style.transform=`translate(${joy.x*48}px,${joy.y*48}px)`;e.preventDefault()},{passive:false});
+stick.addEventListener('touchend',()=>{joy={x:0,y:0};knob.style.transform='translate(0,0)'});
+document.getElementById('turnL').ontouchstart=()=>ang-=.25;document.getElementById('turnR').ontouchstart=()=>ang+=.25;document.getElementById('act').ontouchstart=interact;
+
+function draw(){
+ ctx.fillStyle='#05070d';ctx.fillRect(0,0,W,H);let r=rooms[room],fov=Math.PI/3,rays=Math.min(W,1000),step=W/rays;
+ for(let i=0;i<rays;i++){
+   let ra=ang-fov/2+fov*(i/rays),co=Math.cos(ra),si=Math.sin(ra),d=.02;
+   while(d<20&&!wall(x+co*d,y+si*d))d+=.025;
+   let corr=d*Math.cos(ra-ang),h=Math.min(H*2,(H*.92)/Math.max(corr,.01)),top=H/2-h/2,shade=Math.max(25,195-corr*14);
+   ctx.fillStyle=`rgb(${shade*.38},${shade*.46},${shade*.62})`;ctx.fillRect(i*step,top,step+1,h);
+   ctx.fillStyle=`rgba(3,5,10,${Math.min(.9,corr/12)})`;ctx.fillRect(i*step,0,step+1,top);ctx.fillRect(i*step,top+h,step+1,H-top-h);
+ }
+ let grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#05070d');grad.addColorStop(.48,'#111827');grad.addColorStop(.5,'#090d15');grad.addColorStop(1,'#020307');ctx.globalAlpha=.32;ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;
+ let t=r.target,dx=t[0]-x,dy=t[1]-y,dist=Math.hypot(dx,dy),rel=Math.atan2(dy,dx)-ang;while(rel>Math.PI)rel-=2*Math.PI;while(rel<-Math.PI)rel+=2*Math.PI;
+ if(Math.abs(rel)<fov*.48&&dist<7){let sx=W/2+(rel/fov)*W,sz=Math.max(18,90/dist);ctx.fillStyle='#61e6d2aa';ctx.beginPath();ctx.arc(sx,H/2,sz/3,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.textAlign='center';ctx.fillText('THỬ THÁCH',sx,H/2-sz/2)}
+ document.getElementById('prompt').style.display=dist<1.5?'block':'none';document.getElementById('prompt').textContent='E / CHẠM E  •  Tương tác';
+ let f=(keys['w']||keys['arrowup']?-1:0)+(keys['s']||keys['arrowdown']?1:0)-joy.y,str=(keys['a']||keys['arrowleft']?-1:0)+(keys['d']||keys['arrowright']?1:0)+joy.x,speed=.045;
+ move(Math.cos(ang)*f*speed+Math.cos(ang+Math.PI/2)*str*speed,Math.sin(ang)*f*speed+Math.sin(ang+Math.PI/2)*str*speed);
+ requestAnimationFrame(draw);
+}
+draw();
 </script>
 </body>
 </html>
