@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="vi">
 <head>
 <meta charset="utf-8">
@@ -17,9 +18,7 @@ html,body{
     font-family:Arial,sans-serif;
 }
 
-canvas{
-    display:block;
-}
+canvas{display:block}
 
 #hud{
     position:fixed;
@@ -39,8 +38,7 @@ canvas{
     opacity:.9;
 }
 
-#cross:before,
-#cross:after{
+#cross:before,#cross:after{
     content:"";
     position:absolute;
     background:#fff;
@@ -92,6 +90,36 @@ canvas{
     line-height:1.5;
 }
 
+/* ==============================
+   NÚT BỎ CUỘC
+============================== */
+
+#quitBtn{
+    position:absolute;
+    right:20px;
+    top:78px;
+    pointer-events:auto;
+    background:rgba(20,22,26,.82);
+    color:#fff;
+    border:1px solid rgba(198,184,120,.7);
+    padding:9px 15px;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.08em;
+    cursor:pointer;
+    transition:.2s;
+    z-index:10;
+}
+
+#quitBtn:hover{
+    background:#8b4b4b;
+    border-color:#fff;
+}
+
+/* ==============================
+   PROMPT
+============================== */
+
 #prompt{
     position:absolute;
     left:50%;
@@ -107,6 +135,10 @@ canvas{
     transition:.15s;
     box-shadow:0 5px 25px #0008;
 }
+
+/* ==============================
+   MESSAGE
+============================== */
 
 #msg{
     position:absolute;
@@ -131,13 +163,13 @@ canvas{
     letter-spacing:.08em;
 }
 
-#inv b{
-    color:#c6b878;
-}
+#inv b{color:#c6b878}
 
-#start,
-#doc,
-#ending{
+/* ==============================
+   OVERLAYS
+============================== */
+
+#start,#doc,#ending,#quitConfirm{
     position:fixed;
     inset:0;
     z-index:20;
@@ -173,9 +205,7 @@ h1{
     letter-spacing:-.05em;
 }
 
-h1 span{
-    color:#8b4b4b;
-}
+h1 span{color:#8b4b4b}
 
 h2{
     font:700 32px Georgia;
@@ -205,8 +235,7 @@ p{
     font-size:12px;
 }
 
-#doc,
-#ending{
+#doc,#ending,#quitConfirm{
     display:none;
 }
 
@@ -245,6 +274,53 @@ p{
     font-weight:bold;
 }
 
+/* ==============================
+   QUIT DIALOG
+============================== */
+
+#quitConfirm .panel{
+    max-width:480px;
+    text-align:center;
+}
+
+.quitTitle{
+    font:700 34px Georgia;
+    margin-bottom:10px;
+}
+
+.quitQuestion{
+    font-size:16px;
+    color:#555;
+    margin-bottom:24px;
+}
+
+.quitChoices{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+}
+
+.quitChoice{
+    min-width:150px;
+    padding:13px 18px;
+    border:1px solid #aaa;
+    background:#e8e3d8;
+    color:#202329;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.quitChoice:hover{
+    background:#ddd7c7;
+}
+
+.quitYes{
+    background:#8b4b4b;
+    color:white;
+    border-color:#8b4b4b;
+}
+
 #fade{
     position:fixed;
     inset:0;
@@ -255,162 +331,236 @@ p{
     transition:opacity .8s;
 }
 </style>
+
 </head>
 
 <body>
 
+<!-- ==============================
+     HUD
+============================== -->
+
 <div id="hud">
 
-    <div id="cross"></div>
+```
+<div id="cross"></div>
 
-    <div id="clockHud">
-        <div id="time">23:47</div>
-        <div id="loc">ASTERIA SCHOOL · ROOM 10A</div>
-    </div>
+<div id="clockHud">
+    <div id="time">23:47</div>
+    <div id="loc">ASTERIA SCHOOL · ROOM 10A</div>
+</div>
 
-    <div id="objective">
-        Mục tiêu:
-        <b id="objectiveText">Tìm cách mở cửa lớp học.</b>
-        <br>
-        <span style="opacity:.65">
-            Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.
-        </span>
-    </div>
+<div id="objective">
+    Mục tiêu:
+    <b id="objectiveText">Tìm cách mở cửa lớp học.</b>
+    <br>
+    <span style="opacity:.65">
+        Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.
+    </span>
+</div>
 
-    <div id="prompt"></div>
+<!-- NÚT BỎ CUỘC -->
+<button id="quitBtn" type="button">
+    BỎ CUỘC
+</button>
 
-    <div id="msg"></div>
+<div id="prompt"></div>
 
-    <div id="inv">
-        TÚI:
-        <b id="items">TRỐNG</b>
-    </div>
+<div id="msg"></div>
+
+<div id="inv">
+    TÚI:
+    <b id="items">TRỐNG</b>
+</div>
+```
 
 </div>
 
+<!-- ==============================
+     START SCREEN
+============================== -->
 
 <div id="start">
 
-    <div class="panel">
+```
+<div class="panel">
 
-        <div class="eyebrow">
-            ASTERIA SCHOOL / ROOM 01 · CINEMATIC PROTOTYPE
-        </div>
+    <div class="eyebrow">
+        ASTERIA SCHOOL / ROOM 01 · CINEMATIC PROTOTYPE
+    </div>
 
-        <h1>
-            THE LAST<br>
-            <span>BELL</span>
-        </h1>
+    <h1>
+        THE LAST<br>
+        <span>BELL</span>
+    </h1>
 
-        <p>
-            23:47. Lớp học 10A không có người.
-            Một cơn mưa vừa dứt.
-            Ánh đèn huỳnh quang chập chờn,
-            đồng hồ treo tường đứng im.
-        </p>
+    <p>
+        23:47. Lớp học 10A không có người.
+        Một cơn mưa vừa dứt.
+        Ánh đèn huỳnh quang chập chờn,
+        đồng hồ treo tường đứng im.
+    </p>
 
-        <p>
-            Bạn không nhớ mình đã vào đây bằng cách nào.
-        </p>
+    <p>
+        Bạn không nhớ mình đã vào đây bằng cách nào.
+    </p>
 
-        <button class="btn" id="begin" type="button">
-            VÀO LỚP HỌC
-        </button>
+    <button class="btn" id="begin" type="button">
+        VÀO LỚP HỌC
+    </button>
 
-        <div class="controls">
-            <b>W</b> đi lên ·
-            <b>S</b> đi xuống ·
-            <b>A</b> sang trái ·
-            <b>D</b> sang phải ·
-            <b>Chuột</b> nhìn ·
-            <b>E</b> tương tác ·
-            <b>Shift</b> chạy ·
-            <b>ESC</b> thả chuột
-        </div>
+    <div class="controls">
+        <b>W</b> đi lên ·
+        <b>S</b> đi xuống ·
+        <b>A</b> sang trái ·
+        <b>D</b> sang phải ·
+        <b>Chuột</b> nhìn ·
+        <b>E</b> tương tác ·
+        <b>Shift</b> chạy ·
+        <b>ESC</b> thả chuột
+    </div>
 
-        <div
-            id="boot"
-            style="font-size:11px;color:#8b4b4b;margin-top:10px">
-        </div>
-
+    <div
+        id="boot"
+        style="font-size:11px;color:#8b4b4b;margin-top:10px">
     </div>
 
 </div>
+```
 
+</div>
+
+<!-- ==============================
+     DOCUMENT
+============================== -->
 
 <div id="doc">
 
-    <div class="panel">
+```
+<div class="panel">
 
-        <div class="eyebrow">
-            ASTERIA / ROOM 10A
-        </div>
+    <div class="eyebrow">
+        ASTERIA / ROOM 10A
+    </div>
 
-        <h2 id="docTitle"></h2>
+    <h2 id="docTitle"></h2>
 
-        <div id="docBody"></div>
+    <div id="docBody"></div>
 
-        <button class="btn" id="closeDoc">
-            ĐÓNG
+    <button class="btn" id="closeDoc">
+        ĐÓNG
+    </button>
+
+</div>
+```
+
+</div>
+
+<!-- ==============================
+     QUIT CONFIRM
+============================== -->
+
+<div id="quitConfirm">
+
+```
+<div class="panel">
+
+    <div class="eyebrow">
+        PROJECT 23:47
+    </div>
+
+    <div class="quitTitle">
+        Bạn muốn bỏ cuộc?
+    </div>
+
+    <div class="quitQuestion">
+        Tiến trình hiện tại sẽ bị kết thúc.
+    </div>
+
+    <div class="quitChoices">
+
+        <button
+            class="quitChoice quitYes"
+            id="quitYes"
+            type="button">
+            Đúng
+        </button>
+
+        <button
+            class="quitChoice"
+            id="quitRetry"
+            type="button">
+            Tôi muốn thử lại
         </button>
 
     </div>
 
 </div>
+```
 
+</div>
+
+<!-- ==============================
+     ENDING
+============================== -->
 
 <div id="ending">
 
-    <div class="panel">
+```
+<div class="panel">
 
-        <div class="eyebrow">
-            PROJECT 23:47 / ROOM 01 COMPLETE
-        </div>
-
-        <h2>Cánh cửa đã mở.</h2>
-
-        <p>
-            Hành lang bên ngoài tối hơn căn phòng.
-            Bạn bước qua ngưỡng cửa.
-        </p>
-
-        <div class="note">
-            <span class="red">
-                PROJECT 23:47 — SUBJECT ACTIVE
-            </span>
-            <br>
-            Observation status:
-            <b>WATCHING</b>
-        </div>
-
-        <p>
-            Một chiếc loa cũ trên trần bật lên.
-        </p>
-
-        <p style="font-family:Georgia;font-size:25px;text-align:center">
-            “Good evening, Subject 10A.”
-        </p>
-
-        <p>
-            Tiếng chuông vang lên.
-        </p>
-
-        <h2 style="text-align:center">
-            TING...
-        </h2>
-
-        <button
-            class="btn"
-            onclick="location.reload()">
-            CHƠI LẠI ROOM 01
-        </button>
-
+    <div class="eyebrow">
+        PROJECT 23:47 / ROOM 01 COMPLETE
     </div>
+
+    <h2>Cánh cửa đã mở.</h2>
+
+    <p>
+        Hành lang bên ngoài tối hơn căn phòng.
+        Bạn bước qua ngưỡng cửa.
+    </p>
+
+    <div class="note">
+        <span class="red">
+            PROJECT 23:47 — SUBJECT ACTIVE
+        </span>
+        <br>
+        Observation status:
+        <b>WATCHING</b>
+    </div>
+
+    <p>
+        Một chiếc loa cũ trên trần bật lên.
+    </p>
+
+    <p style="font-family:Georgia;font-size:25px;text-align:center">
+        “Good evening, Subject 10A.”
+    </p>
+
+    <p>
+        Tiếng chuông vang lên.
+    </p>
+
+    <h2 style="text-align:center">
+        TING...
+    </h2>
+
+    <button
+        class="btn"
+        onclick="location.reload()">
+        CHƠI LẠI ROOM 01
+    </button>
+
+</div>
+```
 
 </div>
 
 <div id="fade"></div>
 
+<!-- ==============================
+     THREE.JS
+============================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
@@ -426,15 +576,14 @@ if(!window.THREE){
     return;
 }
 
-
 const THREE = window.THREE;
 
 const scene = new THREE.Scene();
 
 
-/* =========================================================
+/* ==============================
    CAMERA
-========================================================= */
+============================== */
 
 const camera =
     new THREE.PerspectiveCamera(
@@ -447,9 +596,9 @@ const camera =
 camera.position.set(9,1.65,10.2);
 
 
-/* =========================================================
-   RENDERER - TỐI ƯU LAG
-========================================================= */
+/* ==============================
+   RENDERER
+============================== */
 
 const renderer =
     new THREE.WebGLRenderer({
@@ -457,13 +606,19 @@ const renderer =
         powerPreference:"high-performance"
     });
 
-renderer.setSize(innerWidth,innerHeight);
-
-renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio,1.5)
+renderer.setSize(
+    innerWidth,
+    innerHeight
 );
 
-renderer.shadowMap.enabled = true;
+renderer.setPixelRatio(
+    Math.min(
+        window.devicePixelRatio,
+        1.5
+    )
+);
+
+renderer.shadowMap.enabled=true;
 
 renderer.shadowMap.type =
     THREE.PCFSoftShadowMap;
@@ -474,17 +629,18 @@ renderer.outputColorSpace =
 renderer.toneMapping =
     THREE.ACESFilmicToneMapping;
 
-renderer.toneMappingExposure =
-    1.22;
+renderer.toneMappingExposure=1.22;
 
-document.body.prepend(renderer.domElement);
+document.body.prepend(
+    renderer.domElement
+);
 
 
-/* =========================================================
+/* ==============================
    COLORS
-========================================================= */
+============================== */
 
-const C = {
+const C={
 
     wall:0xe8e5de,
     ink:0x202329,
@@ -500,9 +656,9 @@ const C = {
 };
 
 
-/* =========================================================
+/* ==============================
    MATERIALS
-========================================================= */
+============================== */
 
 function mat(c,r=.78,m=0){
 
@@ -517,7 +673,7 @@ function mat(c,r=.78,m=0){
 }
 
 
-const M = {
+const M={
 
     wall:mat(C.wall,.9),
     ink:mat(C.ink,.85),
@@ -533,24 +689,27 @@ const M = {
 };
 
 
-/* =========================================================
+/* ==============================
    OBJECT HELPERS
-========================================================= */
+============================== */
 
 function box(
-    n,x,y,z,w,h,d,m,
-    cast=true
+    n,x,y,z,w,h,d,m,cast=true
 ){
 
     const o =
         new THREE.Mesh(
-            new THREE.BoxGeometry(w,h,d),
+            new THREE.BoxGeometry(
+                w,h,d
+            ),
             m
         );
 
     o.name=n;
 
-    o.position.set(x,y,z);
+    o.position.set(
+        x,y,z
+    );
 
     o.castShadow=cast;
 
@@ -559,6 +718,7 @@ function box(
     scene.add(o);
 
     return o;
+
 }
 
 
@@ -576,7 +736,9 @@ function cyl(
 
     o.name=n;
 
-    o.position.set(x,y,z);
+    o.position.set(
+        x,y,z
+    );
 
     o.castShadow=true;
 
@@ -585,16 +747,24 @@ function cyl(
     scene.add(o);
 
     return o;
+
 }
 
 
-/* =========================================================
-   TEXTURE LABEL
-========================================================= */
+/* ==============================
+   LABEL
+============================== */
 
-function textureCanvas(draw,w=512,h=512){
+function textureCanvas(
+    draw,
+    w=512,
+    h=512
+){
 
-    const c=document.createElement("canvas");
+    const c =
+        document.createElement(
+            "canvas"
+        );
 
     c.width=w;
     c.height=h;
@@ -626,11 +796,17 @@ function label(
         textureCanvas(
             (x,w,h)=>{
 
-                x.clearRect(0,0,w,h);
+                x.clearRect(
+                    0,
+                    0,
+                    w,
+                    h
+                );
 
                 x.fillStyle=color;
 
-                x.font="700 40px Arial";
+                x.font=
+                    "700 40px Arial";
 
                 x.textAlign="center";
 
@@ -647,6 +823,7 @@ function label(
             128
         );
 
+
     const s =
         new THREE.Sprite(
             new THREE.SpriteMaterial({
@@ -654,6 +831,7 @@ function label(
                 transparent:true
             })
         );
+
 
     s.scale.set(
         2.6*scale,
@@ -666,9 +844,9 @@ function label(
 }
 
 
-/* =========================================================
-   LIGHTING - SÁNG HƠN
-========================================================= */
+/* ==============================
+   LIGHTING
+============================== */
 
 scene.add(
     new THREE.HemisphereLight(
@@ -706,7 +884,6 @@ moon.shadow.camera.bottom=-14;
 scene.add(moon);
 
 
-/* Ánh sáng vàng */
 const warm =
     new THREE.PointLight(
         0xffdf91,
@@ -722,8 +899,6 @@ warm.position.set(
 
 scene.add(warm);
 
-
-/* ĐÈN HUỲNH QUANG */
 
 const fluorescents=[];
 
@@ -743,6 +918,7 @@ for(
         false
     );
 
+
     const l =
         new THREE.PointLight(
             0xf4f4e8,
@@ -756,7 +932,6 @@ for(
         z
     );
 
-    /* Không cast shadow -> giảm lag */
     l.castShadow=false;
 
     scene.add(l);
@@ -782,9 +957,9 @@ redLight.position.set(
 scene.add(redLight);
 
 
-/* =========================================================
-   ROOM SHELL
-========================================================= */
+/* ==============================
+   ROOM
+============================== */
 
 box(
     "floor",
@@ -875,9 +1050,9 @@ box(
 );
 
 
-/* =========================================================
+/* ==============================
    DOOR
-========================================================= */
+============================== */
 
 box(
     "frame1",
@@ -926,22 +1101,21 @@ const door =
     );
 
 
-const handle =
-    box(
-        "handle",
-        17.35,
-        2.1,
-        5.4,
-        .1,
-        .14,
-        .14,
-        M.gold
-    );
+box(
+    "handle",
+    17.35,
+    2.1,
+    5.4,
+    .1,
+    .14,
+    .14,
+    M.gold
+);
 
 
-/* =========================================================
+/* ==============================
    WINDOWS
-========================================================= */
+============================== */
 
 for(
     const z of [2.3,5.2,8.1]
@@ -957,6 +1131,7 @@ for(
         1.8,
         M.green
     );
+
 
     box(
         "window",
@@ -974,6 +1149,7 @@ for(
         false
     );
 
+
     box(
         "vbar",
         .06,
@@ -985,6 +1161,7 @@ for(
         M.ink,
         false
     );
+
 
     box(
         "hbar",
@@ -1001,9 +1178,9 @@ for(
 }
 
 
-/* =========================================================
+/* ==============================
    BOARD
-========================================================= */
+============================== */
 
 box(
     "board",
@@ -1064,9 +1241,9 @@ bt2.rotation.y=-Math.PI/2;
 scene.add(bt2);
 
 
-/* =========================================================
-   DESKS - SẮP XẾP GỌN
-========================================================= */
+/* ==============================
+   DESKS
+============================== */
 
 function desk(
     x,
@@ -1153,6 +1330,7 @@ function desk(
         false
     );
 
+
     box(
         "pencil",
         x+.25,
@@ -1168,7 +1346,6 @@ function desk(
 }
 
 
-/* Bố cục mới: chừa lối đi rộng */
 [
     [4,3],
     [7,3],
@@ -1179,6 +1356,7 @@ function desk(
     [7,6],
     [10,6],
     [13,6]
+
 ].forEach(
     (p,i)=>
         desk(
@@ -1189,9 +1367,9 @@ function desk(
 );
 
 
-/* =========================================================
+/* ==============================
    TEACHER DESK
-========================================================= */
+============================== */
 
 box(
     "teacherDesk",
@@ -1244,9 +1422,9 @@ box(
 );
 
 
-/* =========================================================
+/* ==============================
    BOOKS
-========================================================= */
+============================== */
 
 for(
     let i=0;
@@ -1269,9 +1447,9 @@ for(
 }
 
 
-/* =========================================================
+/* ==============================
    LOCKER
-========================================================= */
+============================== */
 
 const locker =
     box(
@@ -1324,9 +1502,9 @@ lockerBadge.rotation.y=Math.PI;
 scene.add(lockerBadge);
 
 
-/* =========================================================
+/* ==============================
    COMPUTER
-========================================================= */
+============================== */
 
 box(
     "computerTable",
@@ -1401,9 +1579,9 @@ box(
 );
 
 
-/* =========================================================
+/* ==============================
    CLOCK
-========================================================= */
+============================== */
 
 const face =
     new THREE.Mesh(
@@ -1500,9 +1678,9 @@ ct.rotation.y=-Math.PI/2;
 scene.add(ct);
 
 
-/* =========================================================
+/* ==============================
    POSTER
-========================================================= */
+============================== */
 
 box(
     "poster",
@@ -1535,9 +1713,9 @@ pt.rotation.y=-Math.PI/2;
 scene.add(pt);
 
 
-/* =========================================================
-   DUST - GIẢM TỪ 420 -> 180
-========================================================= */
+/* ==============================
+   DUST
+============================== */
 
 const dustGeo =
     new THREE.BufferGeometry();
@@ -1556,14 +1734,17 @@ for(
     i++
 ){
 
-    dustPos[i*3] =
-        .7+Math.random()*16.6;
+    dustPos[i*3]=
+        .7+
+        Math.random()*16.6;
 
-    dustPos[i*3+1] =
-        .3+Math.random()*4;
+    dustPos[i*3+1]=
+        .3+
+        Math.random()*4;
 
-    dustPos[i*3+2] =
-        .7+Math.random()*10.6;
+    dustPos[i*3+2]=
+        .7+
+        Math.random()*10.6;
 
 }
 
@@ -1592,9 +1773,9 @@ const dust =
 scene.add(dust);
 
 
-/* =========================================================
-   INTERACTIONS
-========================================================= */
+/* ==============================
+   INTERACTION SYSTEM
+============================== */
 
 const interactables=[];
 
@@ -1609,11 +1790,8 @@ function addInteract(
     interactables.push({
 
         mesh:mesh,
-
         label:labelText,
-
         fn:fn,
-
         range:range
 
     });
@@ -1695,24 +1873,18 @@ addInteract(
 );
 
 
-/* Locker */
+/* ==============================
+   TỦ - SỬA LẠI
+============================== */
+
+let lockerOpened=false;
 
 addInteract(
     locker,
-    "Kiểm tra tủ 10A",
+    "MỞ TỦ 10A",
     () => {
 
-        if(unlocked){
-
-            addItem("KEY 01");
-
-            say(
-                "Bạn lấy được chìa khóa."
-            );
-
-        }
-
-        else{
+        if(!unlocked){
 
             doc(
                 "TỦ 10A",
@@ -1730,43 +1902,93 @@ addInteract(
                 `
             );
 
-        }
-
-    }
-);
-
-
-/* =========================================================
-   DOOR INTERACTION - SỬA LỖI CHÍNH
-========================================================= */
-
-addInteract(
-    door,
-    "MỞ KHÓA CỬA LỚP HỌC",
-    () => {
-
-        if(unlocked){
-
-            finish();
+            return;
 
         }
 
-        else{
+
+        if(!lockerOpened){
+
+            lockerOpened=true;
+
+            addItem("KEY 01");
+
+            document.getElementById(
+                "objectiveText"
+            ).textContent =
+                "Bạn đã lấy chìa khóa. Đến cửa và nhấn E.";
+
 
             say(
-                "Cửa vẫn khóa. Hãy tìm mã mở khóa trên máy tính."
+                "Tủ mở ra. Bạn lấy được chìa khóa KEY 01."
             );
 
+            beep(
+                520,
+                .12
+            );
+
+            return;
+
         }
+
+
+        say(
+            "Tủ đã mở. Không còn gì bên trong."
+        );
 
     },
     3.0
 );
 
 
-/* =========================================================
-   GAME STATE
-========================================================= */
+/* ==============================
+   DOOR
+============================== */
+
+addInteract(
+    door,
+    "MỞ KHÓA CỬA LỚP HỌC",
+    () => {
+
+        if(!unlocked){
+
+            say(
+                "Cửa bị khóa. Hãy tìm mã trên máy tính."
+            );
+
+            return;
+
+        }
+
+
+        if(!lockerOpened){
+
+            say(
+                "Cửa cần chìa khóa. Hãy mở tủ 10A."
+            );
+
+            return;
+
+        }
+
+
+        if(
+            inventory.includes("KEY 01")
+        ){
+
+            finish();
+
+        }
+
+    },
+    3.2
+);
+
+
+/* ==============================
+   STATE
+============================== */
 
 let inventory=[];
 
@@ -1781,9 +2003,9 @@ let yaw=0;
 let pitch=0;
 
 
-/* =========================================================
+/* ==============================
    INVENTORY
-========================================================= */
+============================== */
 
 function addItem(x){
 
@@ -1803,9 +2025,9 @@ function addItem(x){
 }
 
 
-/* =========================================================
+/* ==============================
    DOCUMENT
-========================================================= */
+============================== */
 
 function doc(
     title,
@@ -1829,9 +2051,9 @@ function doc(
 }
 
 
-/* =========================================================
-   COMPUTER PUZZLE
-========================================================= */
+/* ==============================
+   PUZZLE
+============================== */
 
 function puzzle(){
 
@@ -1920,18 +2142,18 @@ function puzzle(){
 
                         document.getElementById(
                             "objectiveText"
-                        ).textContent=
-                            "Đến cửa và nhấn E để mở khóa.";
+                        ).textContent =
+                            "Đến tủ 10A và nhấn E để mở tủ.";
 
 
                         document.getElementById(
                             "feedback"
-                        ).innerHTML=
+                        ).innerHTML =
                             `
                             <span class="green">
                                 ĐÚNG.
                             </span>
-                            Khóa cửa đã chuyển sang trạng thái có thể mở.
+                            Khóa tủ đã được mở.
                             `;
 
 
@@ -1947,7 +2169,7 @@ function puzzle(){
                                     .requestPointerLock();
 
                                 say(
-                                    "Một tiếng click vang lên. Cánh cửa đã được mở khóa."
+                                    "Một tiếng click vang lên. Tủ 10A đã có thể mở."
                                 );
 
                             },
@@ -1955,12 +2177,11 @@ function puzzle(){
                         );
 
                     }
-
                     else{
 
                         document.getElementById(
                             "feedback"
-                        ).innerHTML=
+                        ).innerHTML =
                             `
                             <span class="red">
                                 SAI.
@@ -1978,9 +2199,9 @@ function puzzle(){
 }
 
 
-/* =========================================================
-   CLOSE DOCUMENT
-========================================================= */
+/* ==============================
+   CLOSE DOC
+============================== */
 
 document.getElementById(
     "closeDoc"
@@ -2001,9 +2222,9 @@ document.getElementById(
 };
 
 
-/* =========================================================
+/* ==============================
    MESSAGE
-========================================================= */
+============================== */
 
 function say(t){
 
@@ -2031,9 +2252,9 @@ function say(t){
 }
 
 
-/* =========================================================
-   ENDING
-========================================================= */
+/* ==============================
+   FINISH
+============================== */
 
 function finish(){
 
@@ -2055,9 +2276,11 @@ function finish(){
 
     setTimeout(
         ()=>{
+
             document.getElementById(
                 "ending"
             ).style.display="grid";
+
         },
         850
     );
@@ -2067,6 +2290,7 @@ function finish(){
         523,
         .12
     );
+
 
     setTimeout(
         ()=>{
@@ -2081,9 +2305,9 @@ function finish(){
 }
 
 
-/* =========================================================
+/* ==============================
    SOUND
-========================================================= */
+============================== */
 
 let audio;
 
@@ -2144,9 +2368,9 @@ function beep(
 }
 
 
-/* =========================================================
-   CONTROLS
-========================================================= */
+/* ==============================
+   KEYBOARD
+============================== */
 
 const K={};
 
@@ -2242,9 +2466,9 @@ document.addEventListener(
 );
 
 
-/* =========================================================
+/* ==============================
    COLLISION
-========================================================= */
+============================== */
 
 function collides(
     x,
@@ -2265,12 +2489,6 @@ function collides(
 
     }
 
-
-    /*
-       Collision bàn ghế.
-       Các vùng được làm gọn để
-       không tạo "góc lag".
-    */
 
     const objects=[
 
@@ -2317,11 +2535,6 @@ function collides(
     }
 
 
-    /*
-       CỬA:
-       chỉ chặn khi chưa mở.
-    */
-
     if(
         !unlocked &&
         x>16.9 &&
@@ -2338,27 +2551,15 @@ function collides(
 }
 
 
-/* =========================================================
+/* ==============================
    MOVEMENT
-   W = UP / FORWARD
-   S = DOWN / BACK
-   A = LEFT
-   D = RIGHT
-========================================================= */
+============================== */
 
 function move(dt){
 
     let x=0;
     let z=0;
 
-
-    /*
-       Điều khiển camera-relative:
-       W = tiến
-       S = lùi
-       A = trái
-       D = phải
-    */
 
     if(K.KeyW){
 
@@ -2412,16 +2613,9 @@ function move(dt){
         dt;
 
 
-    x =
-        x/l*sp;
+    x=x/l*sp;
+    z=z/l*sp;
 
-    z =
-        z/l*sp;
-
-
-    /*
-       Collision X
-    */
 
     if(
         !collides(
@@ -2435,10 +2629,6 @@ function move(dt){
     }
 
 
-    /*
-       Collision Z
-    */
-
     if(
         !collides(
             camera.position.x,
@@ -2451,12 +2641,8 @@ function move(dt){
     }
 
 
-    /*
-       Head bob nhẹ
-    */
-
     camera.position.y =
-        1.65 +
+        1.65+
         Math.sin(
             performance.now()*.008
         )*.010;
@@ -2464,15 +2650,15 @@ function move(dt){
 }
 
 
-/* =========================================================
+/* ==============================
    FIND INTERACTION
-========================================================= */
+============================== */
 
 function findInteraction(){
 
     let best=null;
 
-    let bd=2.4;
+    let bd=3.2;
 
 
     const dir =
@@ -2495,15 +2681,14 @@ function findInteraction(){
 
         const v =
             p.clone()
-             .sub(camera.position);
+            .sub(camera.position);
 
 
         const d=v.length();
 
 
         if(
-            d >
-            o.range
+            d>o.range
         ){
 
             continue;
@@ -2514,13 +2699,8 @@ function findInteraction(){
         v.normalize();
 
 
-        /*
-           Cho phép nhìn vật thể
-           rộng hơn một chút.
-        */
-
         if(
-            v.dot(dir)>.12 &&
+            v.dot(dir)>.10 &&
             d<bd
         ){
 
@@ -2538,9 +2718,9 @@ function findInteraction(){
 }
 
 
-/* =========================================================
+/* ==============================
    INTERACT
-========================================================= */
+============================== */
 
 function interact(){
 
@@ -2562,9 +2742,9 @@ function interact(){
 }
 
 
-/* =========================================================
+/* ==============================
    PROMPT
-========================================================= */
+============================== */
 
 function prompt(){
 
@@ -2597,9 +2777,132 @@ function prompt(){
 }
 
 
-/* =========================================================
+/* ==============================
+   BỎ CUỘC
+============================== */
+
+const quitBtn =
+    document.getElementById(
+        "quitBtn"
+    );
+
+const quitConfirm =
+    document.getElementById(
+        "quitConfirm"
+    );
+
+
+quitBtn.onclick=()=>{
+
+    if(!playing)return;
+
+    quitConfirm.style.display="grid";
+
+    document.exitPointerLock?.();
+
+};
+
+
+/* Đúng -> về màn hình chính */
+
+document.getElementById(
+    "quitYes"
+).onclick=()=>{
+
+    quitConfirm.style.display="none";
+
+    playing=false;
+
+    inventory=[];
+
+    unlocked=false;
+
+    lockerOpened=false;
+
+    yaw=0;
+
+    pitch=0;
+
+    document.getElementById(
+        "items"
+    ).textContent="TRỐNG";
+
+    document.getElementById(
+        "objectiveText"
+    ).textContent=
+        "Tìm cách mở cửa lớp học.";
+
+    camera.position.set(
+        9,
+        1.65,
+        10.2
+    );
+
+    door.rotation.y=0;
+
+    document.getElementById(
+        "start"
+    ).style.display="grid";
+
+};
+
+
+/* Tôi muốn thử lại -> reset game */
+
+document.getElementById(
+    "quitRetry"
+).onclick=()=>{
+
+    quitConfirm.style.display="none";
+
+    inventory=[];
+
+    unlocked=false;
+
+    lockerOpened=false;
+
+    yaw=0;
+
+    pitch=0;
+
+    document.getElementById(
+        "items"
+    ).textContent="TRỐNG";
+
+    document.getElementById(
+        "objectiveText"
+    ).textContent=
+        "Tìm cách mở cửa lớp học.";
+
+    camera.position.set(
+        9,
+        1.65,
+        10.2
+    );
+
+    door.rotation.y=0;
+
+    playing=true;
+
+    say(
+        "Bạn quay lại từ đầu. 23:47."
+    );
+
+    setTimeout(
+        ()=>{
+            renderer
+                .domElement
+                .requestPointerLock();
+        },
+        100
+    );
+
+};
+
+
+/* ==============================
    ANIMATION
-========================================================= */
+============================== */
 
 let t=0;
 
@@ -2640,22 +2943,15 @@ function animate(){
     camera.rotation.x=pitch;
 
 
-    /*
-       Dust nhẹ
-    */
-
-    dust.rotation.y =
+    dust.rotation.y=
         t*.003;
 
-    dust.position.y =
+
+    dust.position.y=
         Math.sin(
             t*.25
         )*.015;
 
-
-    /*
-       Fluorescent flicker
-    */
 
     if(
         Math.random()<.008
@@ -2663,7 +2959,7 @@ function animate(){
 
         fluorescents.forEach(
             l=>{
-                l.intensity =
+                l.intensity=
                     1.9+
                     Math.random()*.7;
             }
@@ -2706,9 +3002,9 @@ function animate(){
 animate();
 
 
-/* =========================================================
+/* ==============================
    START GAME
-========================================================= */
+============================== */
 
 document.getElementById(
     "begin"
@@ -2720,6 +3016,24 @@ document.getElementById(
 
 
     playing=true;
+
+
+    inventory=[];
+
+    unlocked=false;
+
+    lockerOpened=false;
+
+
+    document.getElementById(
+        "items"
+    ).textContent="TRỐNG";
+
+
+    document.getElementById(
+        "objectiveText"
+    ).textContent=
+        "Tìm cách mở cửa lớp học.";
 
 
     camera.position.set(
@@ -2757,9 +3071,9 @@ document.getElementById(
 };
 
 
-/* =========================================================
+/* ==============================
    RESIZE
-========================================================= */
+============================== */
 
 addEventListener(
     "resize",
