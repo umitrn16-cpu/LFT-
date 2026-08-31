@@ -157,7 +157,7 @@ p{line-height:1.65;color:#555}
     <div class="memorySub">TÌM 8 CẶP GIỐNG NHAU</div>
    </div>
    <div class="memoryStats">
-    <div class="statBox"><small>THỜI GIAN</small><b id="memTime">20</b></div>
+    <div class="statBox"><small>THỜI GIAN</small><b id="memTime">36</b></div>
     <div class="statBox"><small>LƯỢT</small><b id="memMoves">0/25</b></div>
     <div class="statBox"><small>CẶP</small><b id="memPairs">0/8</b></div>
    </div>
@@ -165,7 +165,7 @@ p{line-height:1.65;color:#555}
   <div class="memoryRule">Mỗi lần lật một thẻ = 1 lượt. Lật hai thẻ giống nhau sẽ giữ ngửa; nếu khác nhau, chúng sẽ tự úp lại. Hoàn thành cả 8 cặp trước khi hết thời gian hoặc lượt chơi.</div>
   <div class="memoryBoard" id="memoryBoard"></div>
   <div class="memoryFooter">
-   <span>20 GIÂY · 25 LƯỢT · 8 CẶP</span>
+   <span>36 GIÂY · 25 LƯỢT · 8 CẶP</span>
    <button class="memoryClose" id="memoryClose">ĐÓNG GAME</button>
   </div>
  </div>
@@ -270,7 +270,7 @@ const interactables=[];
 let inventory=[],unlocked=false,playing=false,locked=false,yaw=0,pitch=0,modalOpen=false;
 function addItem(x){if(!inventory.includes(x)){inventory.push(x);document.getElementById("items").textContent=inventory.join(" · ");}}
 function doc(title,body){document.getElementById("docTitle").textContent=title;document.getElementById("docBody").innerHTML=body;document.getElementById("doc").style.display="grid";modalOpen=true;document.exitPointerLock?.();}
-addInteract(clue,"Đọc tờ giấy trên bàn giáo viên",()=>doc("EXERCISE 01",`<div class="note">2 → 4 → 8 → 16 → ?<br><br><span class="red">Đừng tìm câu trả lời trên bảng.</span></div><p>Một nét bút khác ghi ở góc dưới: “Nếu muốn mở cửa, hãy tìm nơi người ta nhìn vào mỗi ngày.”</p>`));
+addInteract(clue,"Chạm vào bàn giáo viên",()=>doc("GỢI Ý",`<div class="note">Những thứ đáng nhớ nhất lại thường là những thứ dễ bỏ quên nhất.<br><br>Hãy tìm lại chúng ở nơi bạn quen thuộc.</div>`));
 addInteract(face,"Kiểm tra đồng hồ 23:47",()=>say("23:47. Đồng hồ không chạy. Nhưng nó đang chỉ cho bạn một con số."));
 addInteract(scene.getObjectByName("board"),"Đọc bảng",()=>doc("BẢNG LỚP 10A",`<div class="note">DO NOT TRUST 23:47<br><br>THE ANSWER IS ELSEWHERE</div><p>Bảng không chứa câu trả lời. Dòng chữ có vẻ được viết rất gần đây.</p>`));
 addInteract(monitor,"Sử dụng máy tính — game lật thẻ",()=>openMemoryGame());
@@ -305,12 +305,15 @@ function move(dt){
  camera.position.y=1.65+Math.sin(performance.now()*.008)*.012;
 }
 function nearest(){
- let best=null,bd=2.2,dir=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));
- for(const o of interactables){const p=o.mesh.getWorldPosition(new THREE.Vector3()),v=p.clone().sub(camera.position),d=v.length();if(d>=bd)continue;v.normalize();if(v.dot(dir)>.35){bd=d;best=o}}
+ let best=null,bd=2.8;
+ for(const o of interactables){
+  const p=o.mesh.getWorldPosition(new THREE.Vector3()),v=p.clone().sub(camera.position),d=v.length();
+  if(d<bd){bd=d;best=o}
+ }
  return best;
 }
 function tryInteract(){if(!playing||modalOpen||memoryActive)return;const b=nearest();if(b)b.fn();else say("Không có gì để tương tác ở đây.");}
-function updatePrompt(){if(!playing||modalOpen||memoryActive){document.getElementById("prompt").style.opacity=0;return}const b=nearest(),el=document.getElementById("prompt");el.textContent=b?"E — "+b.label:"";el.style.opacity=b?1:0;}
+function updatePrompt(){if(!playing||modalOpen||memoryActive){document.getElementById("prompt").style.opacity=0;return}const b=nearest(),el=document.getElementById("prompt");el.textContent=b?"E — CHẠM ĐỂ MỞ":"";el.style.opacity=b?1:0;}
 
 const keys={};let memoryActive=false;
 addEventListener("keydown",e=>{keys[e.code]=true;if(e.code==="KeyE")tryInteract();if(e.code==="Escape")document.exitPointerLock?.()});
@@ -342,19 +345,19 @@ function startMemoryRound(){
   b.innerHTML=`<div class="cardInner"><div class="cardFace cardBack"></div><div class="cardFace cardFront"><img src="${src}" alt="Thẻ ${i+1}" draggable="false"></div></div>`;
   b.addEventListener("click",()=>flipCard(b));board.appendChild(b);
  });
- memoryDeadline=Date.now()+20000;
+ memoryDeadline=Date.now()+36000;
  memoryTimer=setInterval(updateMemoryTimer,100);
 }
 function updateMemoryTimer(){
  const left=Math.max(0,memoryDeadline-Date.now()),sec=Math.ceil(left/1000);
  document.getElementById("memTime").textContent=sec;
  if(sec<=5)document.getElementById("memTime").classList.add("timerDanger");
- if(left<=0){clearInterval(memoryTimer);memoryTimer=null;memoryFail("Hết 20 giây.");}
+ if(left<=0){clearInterval(memoryTimer);memoryTimer=null;memoryFail("Hết 36 giây.");}
 }
 function flash(kind){const f=document.getElementById("memoryFlash");f.className="";void f.offsetWidth;f.className=kind;}
 function flipCard(card){
  if(memoryBusy||card.classList.contains("flipped")||card.classList.contains("matched")||memoryMoves>=25)return;
- if(Date.now()>=memoryDeadline){memoryFail("Hết 20 giây.");return;}
+ if(Date.now()>=memoryDeadline){memoryFail("Hết 36 giây.");return;}
  card.classList.add("flipped");cardSound("flip");
  if(!memoryFirst){memoryFirst=card;return}
  memorySecond=card;memoryMoves++;document.getElementById("memMoves").textContent=memoryMoves+"/25";
