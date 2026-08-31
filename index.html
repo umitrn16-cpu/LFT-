@@ -16,7 +16,7 @@ canvas{display:block}
 #time{font:700 24px Georgia;letter-spacing:.12em}
 #room{font-size:9px;letter-spacing:.24em;color:#e5e8e3;margin-top:4px}
 #objective{position:absolute;left:20px;top:20px;width:min(380px,calc(100% - 40px));background:rgba(24,31,31,.76);backdrop-filter:blur(6px);border-left:3px solid #d4c786;padding:11px 14px;font-size:12px;line-height:1.5}
-#prompt{position:absolute;left:50%;bottom:17%;transform:translateX(-50%);padding:11px 17px;background:rgba(24,31,31,.92);border:1px solid #d4c786aa;border-radius:6px;font-size:12px;opacity:0;transition:.15s;white-space:nowrap}
+#prompt{position:absolute;left:50%;bottom:17%;transform:translateX(-50%);padding:11px 17px;background:rgba(24,31,31,.92);border:1px solid #d4c786aa;border-radius:6px;font-size:12px;opacity:0;transition:.05s;white-space:nowrap}
 #msg{position:absolute;left:20px;bottom:20px;max-width:480px;background:rgba(24,31,31,.88);border-left:3px solid #d4c786;padding:10px 14px;font-size:12px;opacity:0;transition:.25s}
 #inv{position:absolute;right:20px;bottom:20px;background:rgba(24,31,31,.76);padding:9px 12px;font-size:10px;letter-spacing:.08em}
 #inv b{color:#d4c786}
@@ -122,8 +122,8 @@ p{line-height:1.65;color:#555}
 
 <div id="fail" class="overlay"><div class="panel" style="max-width:570px">
  <div class="eyebrow">MEMORY TEST / FAILED</div>
- <h2 id="failTitle">Bạn đã thất bại ở lần chơi này.</h2>
- <p>Bạn chưa lật được đủ 16 tấm hình trong giới hạn của lần chơi.</p>
+ <h2 id="failTitle">Bạn đã thua, bạn có muốn bắt đầu lại?</h2>
+ <p>Bạn đã hết thời gian hoặc lượt chơi mà chưa ghép đủ 8 cặp.</p>
  <div class="note"><b id="failStats"></b><br>Hãy thử lại. Vị trí các thẻ sẽ được xáo trộn.</div>
  <button class="btn" id="retryMemory">TÔI MUỐN CHƠI LẠI</button>
  <button class="btn" id="giveupMemory" style="background:#ddd7c7">TÔI BỎ CUỘC</button>
@@ -157,7 +157,7 @@ p{line-height:1.65;color:#555}
     <div class="memorySub">TÌM 8 CẶP GIỐNG NHAU</div>
    </div>
    <div class="memoryStats">
-    <div class="statBox"><small>THỜI GIAN</small><b id="memTime">36</b></div>
+    <div class="statBox"><small>THỜI GIAN</small><b id="memTime">40</b></div>
     <div class="statBox"><small>LƯỢT</small><b id="memMoves">0/25</b></div>
     <div class="statBox"><small>CẶP</small><b id="memPairs">0/8</b></div>
    </div>
@@ -165,7 +165,7 @@ p{line-height:1.65;color:#555}
   <div class="memoryRule">Mỗi lần lật một thẻ = 1 lượt. Lật hai thẻ giống nhau sẽ giữ ngửa; nếu khác nhau, chúng sẽ tự úp lại. Hoàn thành cả 8 cặp trước khi hết thời gian hoặc lượt chơi.</div>
   <div class="memoryBoard" id="memoryBoard"></div>
   <div class="memoryFooter">
-   <span>36 GIÂY · 25 LƯỢT · 8 CẶP</span>
+   <span>40 GIÂY · 25 LƯỢT · 8 CẶP</span>
    <button class="memoryClose" id="memoryClose">ĐÓNG GAME</button>
   </div>
  </div>
@@ -299,7 +299,7 @@ function collides(x,z){
  return false;
 }
 function move(dt){
- let x=0,z=0;if(keys.KeyW){x+=Math.sin(yaw);z+=Math.cos(yaw)}if(keys.KeyS){x-=Math.sin(yaw);z-=Math.cos(yaw)}if(keys.KeyA){x-=Math.cos(yaw);z+=Math.sin(yaw)}if(keys.KeyD){x+=Math.cos(yaw);z-=Math.sin(yaw)}
+ let x=0,z=0;if(keys.KeyW){x+=Math.sin(yaw);z-=Math.cos(yaw)}if(keys.KeyS){x-=Math.sin(yaw);z+=Math.cos(yaw)}if(keys.KeyA){x-=Math.cos(yaw);z-=Math.sin(yaw)}if(keys.KeyD){x+=Math.cos(yaw);z+=Math.sin(yaw)}
  const l=Math.hypot(x,z);if(!l)return;const sp=3.25*(keys.ShiftLeft?1.55:1)*dt;x=x/l*sp;z=z/l*sp;
  if(!collides(camera.position.x+x,camera.position.z))camera.position.x+=x;if(!collides(camera.position.x,camera.position.z+z))camera.position.z+=z;
  camera.position.y=1.65+Math.sin(performance.now()*.008)*.012;
@@ -337,7 +337,7 @@ function openMemoryGame(){
 function startMemoryRound(){
  clearInterval(memoryTimer);memoryMoves=0;memoryPairs=0;memoryFirst=null;memorySecond=null;memoryBusy=false;
  document.getElementById("memMoves").textContent="0/25";document.getElementById("memPairs").textContent="0/8";
- document.getElementById("memTime").textContent="20";document.getElementById("memTime").classList.remove("timerDanger");
+ document.getElementById("memTime").textContent="40";document.getElementById("memTime").classList.remove("timerDanger");
  const deck=shuffle([...CARD_IMAGES,...CARD_IMAGES]);
  const board=document.getElementById("memoryBoard");board.innerHTML="";
  deck.forEach((src,i)=>{
@@ -345,19 +345,19 @@ function startMemoryRound(){
   b.innerHTML=`<div class="cardInner"><div class="cardFace cardBack"></div><div class="cardFace cardFront"><img src="${src}" alt="Thẻ ${i+1}" draggable="false"></div></div>`;
   b.addEventListener("click",()=>flipCard(b));board.appendChild(b);
  });
- memoryDeadline=Date.now()+36000;
+ memoryDeadline=Date.now()+40000;
  memoryTimer=setInterval(updateMemoryTimer,100);
 }
 function updateMemoryTimer(){
  const left=Math.max(0,memoryDeadline-Date.now()),sec=Math.ceil(left/1000);
  document.getElementById("memTime").textContent=sec;
  if(sec<=5)document.getElementById("memTime").classList.add("timerDanger");
- if(left<=0){clearInterval(memoryTimer);memoryTimer=null;memoryFail("Hết 36 giây.");}
+ if(left<=0){clearInterval(memoryTimer);memoryTimer=null;memoryFail("Hết 40 giây.");}
 }
 function flash(kind){const f=document.getElementById("memoryFlash");f.className="";void f.offsetWidth;f.className=kind;}
 function flipCard(card){
  if(memoryBusy||card.classList.contains("flipped")||card.classList.contains("matched")||memoryMoves>=25)return;
- if(Date.now()>=memoryDeadline){memoryFail("Hết 36 giây.");return;}
+ if(Date.now()>=memoryDeadline){memoryFail("Hết 40 giây.");return;}
  card.classList.add("flipped");cardSound("flip");
  if(!memoryFirst){memoryFirst=card;return}
  memorySecond=card;memoryMoves++;document.getElementById("memMoves").textContent=memoryMoves+"/25";
