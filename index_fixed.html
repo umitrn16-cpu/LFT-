@@ -4,244 +4,2784 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PROJECT 23:47 — Room 01 Cinematic</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;font-family:Arial,sans-serif}
-canvas{display:block}
-#hud{position:fixed;inset:0;pointer-events:none;color:#fff;z-index:5}
-#cross{position:absolute;left:50%;top:50%;width:11px;height:11px;transform:translate(-50%,-50%);opacity:.8}
-#cross:before,#cross:after{content:"";position:absolute;background:#fff;box-shadow:0 0 5px #000}.cross{}
-#cross:before{width:11px;height:1px;top:5px}#cross:after{height:11px;width:1px;left:5px}
-#clockHud{position:absolute;right:24px;top:18px;text-align:right;text-shadow:0 2px 8px #000}
-#time{font:700 25px Georgia;letter-spacing:.12em}#loc{font-size:9px;letter-spacing:.25em;color:#ddd;margin-top:4px}
-#objective{position:absolute;left:20px;top:20px;width:min(360px,calc(100% - 40px));background:rgba(20,22,26,.72);backdrop-filter:blur(5px);border-left:3px solid #c6b878;padding:11px 14px;font-size:12px;line-height:1.5}
-#prompt{position:absolute;left:50%;bottom:17%;transform:translateX(-50%);padding:11px 17px;background:rgba(20,22,26,.86);border:1px solid #c6b87899;font-size:12px;opacity:0;transition:.15s}
-#msg{position:absolute;left:20px;bottom:20px;max-width:460px;background:rgba(20,22,26,.84);border-left:3px solid #c6b878;padding:10px 14px;font-size:12px;opacity:0;transition:.25s}
-#inv{position:absolute;right:20px;bottom:20px;background:rgba(20,22,26,.72);padding:9px 12px;font-size:10px;letter-spacing:.08em}
-#inv b{color:#c6b878}
-#start,#doc,#ending{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,rgba(83,104,122,.35),rgba(18,20,24,.97))}
-.panel{width:min(650px,calc(100% - 34px));background:#f4f0e7;color:#202329;padding:35px;box-shadow:0 30px 100px #000b}
-.eyebrow{font-size:10px;letter-spacing:.25em;font-weight:bold;color:#8b4b4b;margin-bottom:14px}
-h1{font:700 clamp(42px,8vw,76px)/.86 Georgia;margin:0 0 17px;letter-spacing:-.05em}h1 span{color:#8b4b4b}
-h2{font:700 32px Georgia;margin:0 0 13px}p{line-height:1.65;color:#555}
-.btn{background:#c6b878;border:0;padding:13px 20px;font-weight:800;color:#202329;cursor:pointer;margin-top:9px}
-.controls{border-top:1px solid #ccc;margin-top:20px;padding-top:15px;color:#666;font-size:12px}
-#doc,#ending{display:none}.note{background:#e9e4d9;border-left:4px solid #c6b878;padding:14px;line-height:1.6;font-family:Georgia}.choices{display:grid;gap:9px}.choice{background:#e8e3d8;border:1px solid #bbb7aa;padding:12px;text-align:left;cursor:pointer}.choice:hover{background:#ddd7c7}
-.red{color:#8b4b4b;font-weight:bold}.green{color:#68756a;font-weight:bold}
-#fade{position:fixed;inset:0;background:#000;opacity:0;z-index:15;pointer-events:none;transition:opacity .8s}
+*{box-sizing:border-box}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#18232b;
+    font-family:Arial,sans-serif;
+}
+
+canvas{
+    display:block;
+}
+
+#hud{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    color:#fff;
+    z-index:5;
+}
+
+#cross{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:11px;
+    height:11px;
+    transform:translate(-50%,-50%);
+    opacity:.9;
+}
+
+#cross:before,
+#cross:after{
+    content:"";
+    position:absolute;
+    background:#fff;
+    box-shadow:0 0 5px #000;
+}
+
+#cross:before{
+    width:11px;
+    height:1px;
+    top:5px;
+}
+
+#cross:after{
+    height:11px;
+    width:1px;
+    left:5px;
+}
+
+#clockHud{
+    position:absolute;
+    right:24px;
+    top:18px;
+    text-align:right;
+    text-shadow:0 2px 8px #000;
+}
+
+#time{
+    font:700 25px Georgia;
+    letter-spacing:.12em;
+}
+
+#loc{
+    font-size:9px;
+    letter-spacing:.25em;
+    color:#ddd;
+    margin-top:4px;
+}
+
+#objective{
+    position:absolute;
+    left:20px;
+    top:20px;
+    width:min(360px,calc(100% - 40px));
+    background:rgba(20,22,26,.72);
+    backdrop-filter:blur(5px);
+    border-left:3px solid #c6b878;
+    padding:11px 14px;
+    font-size:12px;
+    line-height:1.5;
+}
+
+#prompt{
+    position:absolute;
+    left:50%;
+    bottom:17%;
+    transform:translateX(-50%);
+    padding:12px 19px;
+    background:rgba(20,22,26,.92);
+    border:1px solid #c6b878;
+    font-size:13px;
+    font-weight:bold;
+    letter-spacing:.03em;
+    opacity:0;
+    transition:.15s;
+    box-shadow:0 5px 25px #0008;
+}
+
+#msg{
+    position:absolute;
+    left:20px;
+    bottom:20px;
+    max-width:460px;
+    background:rgba(20,22,26,.88);
+    border-left:3px solid #c6b878;
+    padding:10px 14px;
+    font-size:12px;
+    opacity:0;
+    transition:.25s;
+}
+
+#inv{
+    position:absolute;
+    right:20px;
+    bottom:20px;
+    background:rgba(20,22,26,.72);
+    padding:9px 12px;
+    font-size:10px;
+    letter-spacing:.08em;
+}
+
+#inv b{
+    color:#c6b878;
+}
+
+#start,
+#doc,
+#ending{
+    position:fixed;
+    inset:0;
+    z-index:20;
+    display:grid;
+    place-items:center;
+    background:
+        radial-gradient(
+            circle at 50% 42%,
+            rgba(83,104,122,.42),
+            rgba(18,20,24,.94)
+        );
+}
+
+.panel{
+    width:min(650px,calc(100% - 34px));
+    background:#f4f0e7;
+    color:#202329;
+    padding:35px;
+    box-shadow:0 30px 100px #000b;
+}
+
+.eyebrow{
+    font-size:10px;
+    letter-spacing:.25em;
+    font-weight:bold;
+    color:#8b4b4b;
+    margin-bottom:14px;
+}
+
+h1{
+    font:700 clamp(42px,8vw,76px)/.86 Georgia;
+    margin:0 0 17px;
+    letter-spacing:-.05em;
+}
+
+h1 span{
+    color:#8b4b4b;
+}
+
+h2{
+    font:700 32px Georgia;
+    margin:0 0 13px;
+}
+
+p{
+    line-height:1.65;
+    color:#555;
+}
+
+.btn{
+    background:#c6b878;
+    border:0;
+    padding:13px 20px;
+    font-weight:800;
+    color:#202329;
+    cursor:pointer;
+    margin-top:9px;
+}
+
+.controls{
+    border-top:1px solid #ccc;
+    margin-top:20px;
+    padding-top:15px;
+    color:#666;
+    font-size:12px;
+}
+
+#doc,
+#ending{
+    display:none;
+}
+
+.note{
+    background:#e9e4d9;
+    border-left:4px solid #c6b878;
+    padding:14px;
+    line-height:1.6;
+    font-family:Georgia;
+}
+
+.choices{
+    display:grid;
+    gap:9px;
+}
+
+.choice{
+    background:#e8e3d8;
+    border:1px solid #bbb7aa;
+    padding:12px;
+    text-align:left;
+    cursor:pointer;
+}
+
+.choice:hover{
+    background:#ddd7c7;
+}
+
+.red{
+    color:#8b4b4b;
+    font-weight:bold;
+}
+
+.green{
+    color:#68756a;
+    font-weight:bold;
+}
+
+#fade{
+    position:fixed;
+    inset:0;
+    background:#000;
+    opacity:0;
+    z-index:15;
+    pointer-events:none;
+    transition:opacity .8s;
+}
 </style>
 </head>
+
 <body>
+
 <div id="hud">
- <div id="cross"></div>
- <div id="clockHud"><div id="time">23:47</div><div id="loc">ASTERIA SCHOOL · ROOM 10A</div></div>
- <div id="objective">Mục tiêu: <b>Tìm cách mở cửa lớp học.</b><br><span style="opacity:.65">Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.</span></div>
- <div id="prompt"></div><div id="msg"></div><div id="inv">TÚI: <b id="items">TRỐNG</b></div>
+
+    <div id="cross"></div>
+
+    <div id="clockHud">
+        <div id="time">23:47</div>
+        <div id="loc">ASTERIA SCHOOL · ROOM 10A</div>
+    </div>
+
+    <div id="objective">
+        Mục tiêu:
+        <b id="objectiveText">Tìm cách mở cửa lớp học.</b>
+        <br>
+        <span style="opacity:.65">
+            Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.
+        </span>
+    </div>
+
+    <div id="prompt"></div>
+
+    <div id="msg"></div>
+
+    <div id="inv">
+        TÚI:
+        <b id="items">TRỐNG</b>
+    </div>
+
 </div>
 
-<div id="start"><div class="panel">
- <div class="eyebrow">ASTERIA SCHOOL / ROOM 01 · CINEMATIC PROTOTYPE</div>
- <h1>THE LAST<br><span>BELL</span></h1>
- <p>23:47. Lớp học 10A không có người. Một cơn mưa vừa dứt. Ánh đèn huỳnh quang chập chờn, đồng hồ treo tường đứng im.</p>
- <p>Bạn không nhớ mình đã vào đây bằng cách nào.</p>
- <button class="btn" id="begin" type="button">VÀO LỚP HỌC</button>
- <div class="controls"><b>W A S D</b> di chuyển · <b>Chuột</b> nhìn · <b>E</b> tương tác · <b>Shift</b> chạy · <b>ESC</b> thả chuột</div>
- <div id="boot" style="font-size:11px;color:#8b4b4b;margin-top:10px"></div>
-</div></div>
 
-<div id="doc"><div class="panel">
- <div class="eyebrow">ASTERIA / ROOM 10A</div><h2 id="docTitle"></h2><div id="docBody"></div><button class="btn" id="closeDoc">ĐÓNG</button>
-</div></div>
+<div id="start">
 
-<div id="ending"><div class="panel">
- <div class="eyebrow">PROJECT 23:47 / ROOM 01 COMPLETE</div><h2>Cánh cửa đã mở.</h2>
- <p>Hành lang bên ngoài tối hơn căn phòng. Bạn bước qua ngưỡng cửa.</p>
- <div class="note"><span class="red">PROJECT 23:47 — SUBJECT ACTIVE</span><br>Observation status: <b>WATCHING</b></div>
- <p>Một chiếc loa cũ trên trần bật lên.</p><p style="font-family:Georgia;font-size:25px;text-align:center">“Good evening, Subject 10A.”</p>
- <p>Tiếng chuông vang lên.</p><h2 style="text-align:center">TING...</h2>
- <button class="btn" onclick="location.reload()">CHƠI LẠI ROOM 01</button>
-</div></div>
+    <div class="panel">
+
+        <div class="eyebrow">
+            ASTERIA SCHOOL / ROOM 01 · CINEMATIC PROTOTYPE
+        </div>
+
+        <h1>
+            THE LAST<br>
+            <span>BELL</span>
+        </h1>
+
+        <p>
+            23:47. Lớp học 10A không có người.
+            Một cơn mưa vừa dứt.
+            Ánh đèn huỳnh quang chập chờn,
+            đồng hồ treo tường đứng im.
+        </p>
+
+        <p>
+            Bạn không nhớ mình đã vào đây bằng cách nào.
+        </p>
+
+        <button class="btn" id="begin" type="button">
+            VÀO LỚP HỌC
+        </button>
+
+        <div class="controls">
+            <b>W</b> đi lên ·
+            <b>S</b> đi xuống ·
+            <b>A</b> sang trái ·
+            <b>D</b> sang phải ·
+            <b>Chuột</b> nhìn ·
+            <b>E</b> tương tác ·
+            <b>Shift</b> chạy ·
+            <b>ESC</b> thả chuột
+        </div>
+
+        <div
+            id="boot"
+            style="font-size:11px;color:#8b4b4b;margin-top:10px">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="doc">
+
+    <div class="panel">
+
+        <div class="eyebrow">
+            ASTERIA / ROOM 10A
+        </div>
+
+        <h2 id="docTitle"></h2>
+
+        <div id="docBody"></div>
+
+        <button class="btn" id="closeDoc">
+            ĐÓNG
+        </button>
+
+    </div>
+
+</div>
+
+
+<div id="ending">
+
+    <div class="panel">
+
+        <div class="eyebrow">
+            PROJECT 23:47 / ROOM 01 COMPLETE
+        </div>
+
+        <h2>Cánh cửa đã mở.</h2>
+
+        <p>
+            Hành lang bên ngoài tối hơn căn phòng.
+            Bạn bước qua ngưỡng cửa.
+        </p>
+
+        <div class="note">
+            <span class="red">
+                PROJECT 23:47 — SUBJECT ACTIVE
+            </span>
+            <br>
+            Observation status:
+            <b>WATCHING</b>
+        </div>
+
+        <p>
+            Một chiếc loa cũ trên trần bật lên.
+        </p>
+
+        <p style="font-family:Georgia;font-size:25px;text-align:center">
+            “Good evening, Subject 10A.”
+        </p>
+
+        <p>
+            Tiếng chuông vang lên.
+        </p>
+
+        <h2 style="text-align:center">
+            TING...
+        </h2>
+
+        <button
+            class="btn"
+            onclick="location.reload()">
+            CHƠI LẠI ROOM 01
+        </button>
+
+    </div>
+
+</div>
+
 <div id="fade"></div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
 <script>
+
 (() => {
-if(!window.THREE){document.getElementById("boot").textContent="Không tải được engine 3D. Hãy kết nối Internet rồi tải lại.";return;}
-const THREE=window.THREE, scene=new THREE.Scene();
-scene.background=new THREE.Color(0x1d2931);
-scene.fog=new THREE.FogExp2(0x26333b,.055);
-const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.05,80);
+
+if(!window.THREE){
+
+    document.getElementById("boot").textContent =
+        "Không tải được engine 3D. Hãy kết nối Internet rồi tải lại.";
+
+    return;
+}
+
+
+const THREE = window.THREE;
+
+const scene = new THREE.Scene();
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+const camera =
+    new THREE.PerspectiveCamera(
+        70,
+        innerWidth / innerHeight,
+        .05,
+        80
+    );
+
 camera.position.set(9,1.65,10.2);
-const renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;document.body.prepend(renderer.domElement);
 
-const C={wall:0xe8e5de,ink:0x202329,blue:0x53687a,green:0x68756a,gold:0xc6b878,red:0x8b4b4b,wood:0x4a4037,paper:0xf4f0e7,steel:0x4b5557,dark:0x15171b};
-function mat(c,r=.78,m=0){return new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});}
-const M={wall:mat(C.wall),ink:mat(C.ink),blue:mat(C.blue,.65),green:mat(C.green,.82),gold:mat(C.gold,.42,.25),red:mat(C.red),wood:mat(C.wood,.92),paper:mat(C.paper,1),steel:mat(C.steel,.55,.4),dark:mat(C.dark,.95)};
 
-function box(n,x,y,z,w,h,d,m,cast=true){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.name=n;o.position.set(x,y,z);o.castShadow=cast;o.receiveShadow=true;scene.add(o);return o}
-function cyl(n,x,y,z,r,h,m){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,20),m);o.name=n;o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}
-function addInteract(mesh,label,fn){interactables.push({mesh,label,fn});return mesh}
-function textureCanvas(draw,w=512,h=512){const c=document.createElement("canvas");c.width=w;c.height=h;draw(c.getContext("2d"),w,h);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t}
-function label(text,scale=1,color="#202329"){
- const tex=textureCanvas((x,w,h)=>{x.clearRect(0,0,w,h);x.fillStyle=color;x.font="700 40px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText(text,w/2,h/2)},512,128);
- const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));s.scale.set(2.6*scale,.65*scale,1);return s;
+/* =========================================================
+   RENDERER - TỐI ƯU LAG
+========================================================= */
+
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias:true,
+        powerPreference:"high-performance"
+    });
+
+renderer.setSize(innerWidth,innerHeight);
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio,1.5)
+);
+
+renderer.shadowMap.enabled = true;
+
+renderer.shadowMap.type =
+    THREE.PCFSoftShadowMap;
+
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
+
+renderer.toneMapping =
+    THREE.ACESFilmicToneMapping;
+
+renderer.toneMappingExposure =
+    1.22;
+
+document.body.prepend(renderer.domElement);
+
+
+/* =========================================================
+   COLORS
+========================================================= */
+
+const C = {
+
+    wall:0xe8e5de,
+    ink:0x202329,
+    blue:0x53687a,
+    green:0x68756a,
+    gold:0xc6b878,
+    red:0x8b4b4b,
+    wood:0x4a4037,
+    paper:0xf4f0e7,
+    steel:0x4b5557,
+    dark:0x15171b
+
+};
+
+
+/* =========================================================
+   MATERIALS
+========================================================= */
+
+function mat(c,r=.78,m=0){
+
+    return new THREE.MeshStandardMaterial({
+
+        color:c,
+        roughness:r,
+        metalness:m
+
+    });
+
 }
 
-/* Lighting: warm practicals + cold moonlight */
-scene.add(new THREE.HemisphereLight(0xe8e5de,0x15171b,.7));
-const moon=new THREE.DirectionalLight(0x53687a,1.55);moon.position.set(-8,10,4);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-14;moon.shadow.camera.right=14;moon.shadow.camera.top=14;moon.shadow.camera.bottom=-14;scene.add(moon);
-const warm=new THREE.PointLight(0xc6b878,1.5,9);warm.position.set(15.6,3.2,3);warm.castShadow=true;scene.add(warm);
+
+const M = {
+
+    wall:mat(C.wall,.9),
+    ink:mat(C.ink,.85),
+    blue:mat(C.blue,.65),
+    green:mat(C.green,.82),
+    gold:mat(C.gold,.42,.25),
+    red:mat(C.red,.85),
+    wood:mat(C.wood,.92),
+    paper:mat(C.paper,1),
+    steel:mat(C.steel,.55,.4),
+    dark:mat(C.dark,.95)
+
+};
+
+
+/* =========================================================
+   OBJECT HELPERS
+========================================================= */
+
+function box(
+    n,x,y,z,w,h,d,m,
+    cast=true
+){
+
+    const o =
+        new THREE.Mesh(
+            new THREE.BoxGeometry(w,h,d),
+            m
+        );
+
+    o.name=n;
+
+    o.position.set(x,y,z);
+
+    o.castShadow=cast;
+
+    o.receiveShadow=true;
+
+    scene.add(o);
+
+    return o;
+}
+
+
+function cyl(
+    n,x,y,z,r,h,m
+){
+
+    const o =
+        new THREE.Mesh(
+            new THREE.CylinderGeometry(
+                r,r,h,12
+            ),
+            m
+        );
+
+    o.name=n;
+
+    o.position.set(x,y,z);
+
+    o.castShadow=true;
+
+    o.receiveShadow=true;
+
+    scene.add(o);
+
+    return o;
+}
+
+
+/* =========================================================
+   TEXTURE LABEL
+========================================================= */
+
+function textureCanvas(draw,w=512,h=512){
+
+    const c=document.createElement("canvas");
+
+    c.width=w;
+    c.height=h;
+
+    draw(
+        c.getContext("2d"),
+        w,
+        h
+    );
+
+    const t =
+        new THREE.CanvasTexture(c);
+
+    t.colorSpace =
+        THREE.SRGBColorSpace;
+
+    return t;
+
+}
+
+
+function label(
+    text,
+    scale=1,
+    color="#202329"
+){
+
+    const tex =
+        textureCanvas(
+            (x,w,h)=>{
+
+                x.clearRect(0,0,w,h);
+
+                x.fillStyle=color;
+
+                x.font="700 40px Arial";
+
+                x.textAlign="center";
+
+                x.textBaseline="middle";
+
+                x.fillText(
+                    text,
+                    w/2,
+                    h/2
+                );
+
+            },
+            512,
+            128
+        );
+
+    const s =
+        new THREE.Sprite(
+            new THREE.SpriteMaterial({
+                map:tex,
+                transparent:true
+            })
+        );
+
+    s.scale.set(
+        2.6*scale,
+        .65*scale,
+        1
+    );
+
+    return s;
+
+}
+
+
+/* =========================================================
+   LIGHTING - SÁNG HƠN
+========================================================= */
+
+scene.add(
+    new THREE.HemisphereLight(
+        0xf4f1e8,
+        0x28343c,
+        1.15
+    )
+);
+
+
+const moon =
+    new THREE.DirectionalLight(
+        0x7c98aa,
+        1.15
+    );
+
+moon.position.set(
+    -8,
+    10,
+    4
+);
+
+moon.castShadow=true;
+
+moon.shadow.mapSize.set(
+    1024,
+    1024
+);
+
+moon.shadow.camera.left=-14;
+moon.shadow.camera.right=14;
+moon.shadow.camera.top=14;
+moon.shadow.camera.bottom=-14;
+
+scene.add(moon);
+
+
+/* Ánh sáng vàng */
+const warm =
+    new THREE.PointLight(
+        0xffdf91,
+        1.8,
+        11
+    );
+
+warm.position.set(
+    15.6,
+    3.2,
+    3
+);
+
+scene.add(warm);
+
+
+/* ĐÈN HUỲNH QUANG */
+
 const fluorescents=[];
-for(const z of [2.6,6,9.4]){box("fixture",9,4.78,z,2.8,.09,.35,M.dark);const l=new THREE.PointLight(0xe8e5de,2.0,7);l.position.set(9,4.45,z);l.castShadow=true;scene.add(l);fluorescents.push(l);}
-const redLight=new THREE.PointLight(0x8b4b4b,0,5);redLight.position.set(17.1,2.4,6);scene.add(redLight);
 
-/* Room shell */
-box("floor",9,-.08,6,18,.16,12,M.dark);
-box("ceiling",9,4.9,6,18,.18,12,M.wall);
-box("back",9,2.45,.05,18,4.9,.18,M.wall);
-box("left",.05,2.45,6,.18,4.9,12,M.wall);
-box("right",17.95,2.45,6,.18,4.9,12,M.wall);
-box("trimBack",9,.76,.16,17.7,1.45,.12,M.green);
-box("trimL",.16,.76,6,.12,1.45,11.7,M.green);box("trimR",17.84,.76,6,.12,1.45,11.7,M.green);
-/* door opening */
-box("frame1",17.7,2.2,5.0,.28,4.4,.34,M.ink);box("frame2",17.7,2.2,7.0,.28,4.4,.34,M.ink);box("frameTop",17.7,4.35,6,.28,.35,2.3,M.ink);
-const door=box("door",17.53,2.15,6,.18,4.0,1.7,M.green);
-box("handle",17.35,2.1,5.4,.1,.14,.14,M.gold);
+for(
+    const z of [2.6,6,9.4]
+){
 
-/* Windows + rainy blue outside */
-for(const z of [2.3,5.2,8.1]){
- box("windowFrame",.19,2.8,z,.12,2.05,1.8,M.green);
- const w=box("window",.11,2.8,z,.04,1.68,1.45,new THREE.MeshStandardMaterial({color:0x263a46,roughness:.25,metalness:.05}));
- box("vbar",.06,2.8,z,.07,1.8,.05,M.ink);box("hbar",.06,2.8,z, .07,.05,1.7,M.ink);
- /* rain streaks */
- for(let i=0;i<5;i++){const r=box("rain",.075,2.35+i*.18,z-.65+i*.28,.01,.1,.012,new THREE.MeshBasicMaterial({color:0x8ea7b3,transparent:true,opacity:.35}));}
+    box(
+        "fixture",
+        9,
+        4.78,
+        z,
+        2.8,
+        .09,
+        .35,
+        M.dark,
+        false
+    );
+
+    const l =
+        new THREE.PointLight(
+            0xf4f4e8,
+            2.8,
+            8
+        );
+
+    l.position.set(
+        9,
+        4.45,
+        z
+    );
+
+    /* Không cast shadow -> giảm lag */
+    l.castShadow=false;
+
+    scene.add(l);
+
+    fluorescents.push(l);
+
 }
 
-/* Board with handwritten-looking clues */
-box("board",.17,2.7,10.0,.12,2.1,4.2,M.ink);box("boardFrame",.10,2.7,10.0,.05,2.28,4.4,M.green);
-const bt=label("DO NOT TRUST 23:47",.72,"#e8e5de");bt.position.set(.04,3.05,10);bt.rotation.y=-Math.PI/2;scene.add(bt);
-const bt2=label("THE ANSWER IS ELSEWHERE",.5,"#c6b878");bt2.position.set(.04,2.35,10);bt2.rotation.y=-Math.PI/2;scene.add(bt2);
 
-/* desks, chairs and lived-in details */
-function desk(x,z,rot=0){
- const top=box("desk",x,1.02,z,1.45,.14,.72,M.wood);top.rotation.y=rot;
- for(const [dx,dz] of [[-.52,-.25],[.52,-.25],[-.52,.25],[.52,.25]]){const px=x+dx*Math.cos(rot)-dz*Math.sin(rot),pz=z+dx*Math.sin(rot)+dz*Math.cos(rot);box("leg",px,.52,pz,.09,1,.09,M.ink);}
- const chair=box("chair",x+1.0,.55,z,.68,1.0,.68,M.blue);chair.rotation.y=rot;
- box("notebook",x-.18,1.12,z-.08,.42,.025,.55,M.paper);
- box("pencil",x+.25,1.14,z+.18,.04,.035,.42,M.red);
+const redLight =
+    new THREE.PointLight(
+        0x8b4b4b,
+        0,
+        5
+    );
+
+redLight.position.set(
+    17.1,
+    2.4,
+    6
+);
+
+scene.add(redLight);
+
+
+/* =========================================================
+   ROOM SHELL
+========================================================= */
+
+box(
+    "floor",
+    9,
+    -.08,
+    6,
+    18,
+    .16,
+    12,
+    M.dark
+);
+
+box(
+    "ceiling",
+    9,
+    4.9,
+    6,
+    18,
+    .18,
+    12,
+    M.wall
+);
+
+box(
+    "back",
+    9,
+    2.45,
+    .05,
+    18,
+    4.9,
+    .18,
+    M.wall
+);
+
+box(
+    "left",
+    .05,
+    2.45,
+    6,
+    .18,
+    4.9,
+    12,
+    M.wall
+);
+
+box(
+    "right",
+    17.95,
+    2.45,
+    6,
+    .18,
+    4.9,
+    12,
+    M.wall
+);
+
+box(
+    "trimBack",
+    9,
+    .76,
+    .16,
+    17.7,
+    1.45,
+    .12,
+    M.green
+);
+
+box(
+    "trimL",
+    .16,
+    .76,
+    6,
+    .12,
+    1.45,
+    11.7,
+    M.green
+);
+
+box(
+    "trimR",
+    17.84,
+    .76,
+    6,
+    .12,
+    1.45,
+    11.7,
+    M.green
+);
+
+
+/* =========================================================
+   DOOR
+========================================================= */
+
+box(
+    "frame1",
+    17.7,
+    2.2,
+    5.0,
+    .28,
+    4.4,
+    .34,
+    M.ink
+);
+
+box(
+    "frame2",
+    17.7,
+    2.2,
+    7.0,
+    .28,
+    4.4,
+    .34,
+    M.ink
+);
+
+box(
+    "frameTop",
+    17.7,
+    4.35,
+    6,
+    .28,
+    .35,
+    2.3,
+    M.ink
+);
+
+
+const door =
+    box(
+        "DOOR",
+        17.53,
+        2.15,
+        6,
+        .18,
+        4.0,
+        1.7,
+        M.green
+    );
+
+
+const handle =
+    box(
+        "handle",
+        17.35,
+        2.1,
+        5.4,
+        .1,
+        .14,
+        .14,
+        M.gold
+    );
+
+
+/* =========================================================
+   WINDOWS
+========================================================= */
+
+for(
+    const z of [2.3,5.2,8.1]
+){
+
+    box(
+        "windowFrame",
+        .19,
+        2.8,
+        z,
+        .12,
+        2.05,
+        1.8,
+        M.green
+    );
+
+    box(
+        "window",
+        .11,
+        2.8,
+        z,
+        .04,
+        1.68,
+        1.45,
+        new THREE.MeshStandardMaterial({
+            color:0x314b5a,
+            roughness:.25,
+            metalness:.05
+        }),
+        false
+    );
+
+    box(
+        "vbar",
+        .06,
+        2.8,
+        z,
+        .07,
+        1.8,
+        .05,
+        M.ink,
+        false
+    );
+
+    box(
+        "hbar",
+        .06,
+        2.8,
+        z,
+        .07,
+        .05,
+        1.7,
+        M.ink,
+        false
+    );
+
 }
-[[4,3],[7,3],[10,3],[13,3],[4,6],[7,6],[10,6],[13,6]].forEach((p,i)=>desk(p[0],p[1],i%3===0?.08:0));
-desk(9,1.45);
 
-/* Teacher desk and clue */
-box("teacherDesk",9,1.05,1.35,2.0,.16,.85,M.green);
-const clue=box("CLUE",9,1.16,1.05,.52,.025,.34,M.paper);
-const pen=cyl("pen",9.2,1.18,1.35,.025,.42,M.red);pen.rotation.z=Math.PI/2;
-box("mug",8.55,1.25,1.43,.22,.28,.22,M.blue);
 
-/* books */
-for(let i=0;i<7;i++)box("book",2.0+i*.17,.13,2.1,.42,.18,.72,i%2?M.blue:M.green);
+/* =========================================================
+   BOARD
+========================================================= */
 
-/* locker */
-const locker=box("LOCKER",16.25,1.9,2.45,1.25,3.5,.72,M.green);
-for(let i=0;i<3;i++){box("lockerSeam",16.25,1.95+i*1.03,2.08,1.1,.025,.03,M.ink);}
-const lockerBadge=label("10A",.45);lockerBadge.position.set(16.25,2.1,2.07);lockerBadge.rotation.y=Math.PI;scene.add(lockerBadge);
+box(
+    "board",
+    .17,
+    2.7,
+    10.0,
+    .12,
+    2.1,
+    4.2,
+    M.ink
+);
 
-/* computer */
-box("computerTable",14.3,.85,9.55,1.9,.14,.78,M.green);
-const monitor=box("COMPUTER",14.3,1.62,9.52,1.02,1.0,.14,M.dark);
-box("screen",14.3,1.64,9.43,.83,.68,.025,M.blue);
-const st=label("2 × 2 × 2",.34,"#c6b878");st.position.set(14.3,1.65,9.40);st.scale.set(1.1,.5,1);scene.add(st);
-box("keyboard",14.3,1.17,9.28,1.05,.05,.34,M.paper);
+box(
+    "boardFrame",
+    .10,
+    2.7,
+    10.0,
+    .05,
+    2.28,
+    4.4,
+    M.green
+);
 
-/* clock with proper 23:47 hands */
-const face=new THREE.Mesh(new THREE.CircleGeometry(.7,40),new THREE.MeshStandardMaterial({color:C.paper,roughness:.8}));face.position.set(.16,3.75,7);face.rotation.y=-Math.PI/2;face.castShadow=true;scene.add(face);
-for(let i=0;i<12;i++){const a=i*Math.PI/6;const mark=box("tick",.08,3.75+Math.cos(a)*.56,7+Math.sin(a)*.56,.03,.09,.03,M.ink);mark.rotation.x=a;}
-const h1=box("hand",.07,3.75,7,.05,.52,.05,M.ink);h1.rotation.z=-.85;
-const h2=box("hand",.06,3.75,7,.035,.38,.035,M.red);h2.rotation.z=.45;
-const ct=label("23:47",.52);ct.position.set(.05,2.98,7);ct.rotation.y=-Math.PI/2;scene.add(ct);
 
-/* little wall posters */
-const poster=box("poster",.12,2.1,4.2,.035,1.3,.9,M.paper);
-const pt=label("ASTERIA\nRULE 04",.42,"#8b4b4b");pt.position.set(.05,2.1,4.2);pt.rotation.y=-Math.PI/2;scene.add(pt);
+const bt =
+    label(
+        "DO NOT TRUST 23:47",
+        .72,
+        "#e8e5de"
+    );
 
-/* Dust particles */
-const dustGeo=new THREE.BufferGeometry(), dustN=420, dustPos=new Float32Array(dustN*3);
-for(let i=0;i<dustN;i++){dustPos[i*3]=.7+Math.random()*16.6;dustPos[i*3+1]=.3+Math.random()*4;dustPos[i*3+2]=.7+Math.random()*10.6}
-dustGeo.setAttribute("position",new THREE.BufferAttribute(dustPos,3));
-const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({color:0xe8e5de,size:.025,transparent:true,opacity:.18,depthWrite:false}));scene.add(dust);
+bt.position.set(
+    .04,
+    3.05,
+    10
+);
 
-/* Interaction */
+bt.rotation.y=-Math.PI/2;
+
+scene.add(bt);
+
+
+const bt2 =
+    label(
+        "THE ANSWER IS ELSEWHERE",
+        .5,
+        "#c6b878"
+    );
+
+bt2.position.set(
+    .04,
+    2.35,
+    10
+);
+
+bt2.rotation.y=-Math.PI/2;
+
+scene.add(bt2);
+
+
+/* =========================================================
+   DESKS - SẮP XẾP GỌN
+========================================================= */
+
+function desk(
+    x,
+    z,
+    rot=0
+){
+
+    const top =
+        box(
+            "desk",
+            x,
+            1.02,
+            z,
+            1.35,
+            .14,
+            .68,
+            M.wood
+        );
+
+    top.rotation.y=rot;
+
+
+    const legs=[
+        [-.48,-.23],
+        [.48,-.23],
+        [-.48,.23],
+        [.48,.23]
+    ];
+
+
+    for(
+        const [dx,dz] of legs
+    ){
+
+        const px =
+            x+
+            dx*Math.cos(rot)-
+            dz*Math.sin(rot);
+
+        const pz =
+            z+
+            dx*Math.sin(rot)+
+            dz*Math.cos(rot);
+
+        box(
+            "leg",
+            px,
+            .52,
+            pz,
+            .08,
+            1,
+            .08,
+            M.ink,
+            false
+        );
+
+    }
+
+
+    const chair =
+        box(
+            "chair",
+            x+1.0,
+            .55,
+            z,
+            .62,
+            1.0,
+            .62,
+            M.blue
+        );
+
+    chair.rotation.y=rot;
+
+
+    box(
+        "notebook",
+        x-.18,
+        1.12,
+        z-.08,
+        .40,
+        .025,
+        .50,
+        M.paper,
+        false
+    );
+
+    box(
+        "pencil",
+        x+.25,
+        1.14,
+        z+.18,
+        .04,
+        .035,
+        .40,
+        M.red,
+        false
+    );
+
+}
+
+
+/* Bố cục mới: chừa lối đi rộng */
+[
+    [4,3],
+    [7,3],
+    [10,3],
+    [13,3],
+
+    [4,6],
+    [7,6],
+    [10,6],
+    [13,6]
+].forEach(
+    (p,i)=>
+        desk(
+            p[0],
+            p[1],
+            i%4===0?.05:0
+        )
+);
+
+
+/* =========================================================
+   TEACHER DESK
+========================================================= */
+
+box(
+    "teacherDesk",
+    9,
+    1.05,
+    1.35,
+    2.0,
+    .16,
+    .85,
+    M.green
+);
+
+
+const clue =
+    box(
+        "CLUE",
+        9,
+        1.16,
+        1.05,
+        .52,
+        .025,
+        .34,
+        M.paper
+    );
+
+
+const pen =
+    cyl(
+        "pen",
+        9.2,
+        1.18,
+        1.35,
+        .025,
+        .42,
+        M.red
+    );
+
+pen.rotation.z=Math.PI/2;
+
+
+box(
+    "mug",
+    8.55,
+    1.25,
+    1.43,
+    .22,
+    .28,
+    .22,
+    M.blue
+);
+
+
+/* =========================================================
+   BOOKS
+========================================================= */
+
+for(
+    let i=0;
+    i<7;
+    i++
+){
+
+    box(
+        "book",
+        2.0+i*.17,
+        .13,
+        2.1,
+        .42,
+        .18,
+        .72,
+        i%2?M.blue:M.green,
+        false
+    );
+
+}
+
+
+/* =========================================================
+   LOCKER
+========================================================= */
+
+const locker =
+    box(
+        "LOCKER",
+        16.25,
+        1.9,
+        2.45,
+        1.25,
+        3.5,
+        .72,
+        M.green
+    );
+
+
+for(
+    let i=0;
+    i<3;
+    i++
+){
+
+    box(
+        "lockerSeam",
+        16.25,
+        1.95+i*1.03,
+        2.08,
+        1.1,
+        .025,
+        .03,
+        M.ink,
+        false
+    );
+
+}
+
+
+const lockerBadge =
+    label(
+        "10A",
+        .45
+    );
+
+lockerBadge.position.set(
+    16.25,
+    2.1,
+    2.07
+);
+
+lockerBadge.rotation.y=Math.PI;
+
+scene.add(lockerBadge);
+
+
+/* =========================================================
+   COMPUTER
+========================================================= */
+
+box(
+    "computerTable",
+    14.3,
+    .85,
+    9.55,
+    1.9,
+    .14,
+    .78,
+    M.green
+);
+
+
+const monitor =
+    box(
+        "COMPUTER",
+        14.3,
+        1.62,
+        9.52,
+        1.02,
+        1.0,
+        .14,
+        M.dark
+    );
+
+
+box(
+    "screen",
+    14.3,
+    1.64,
+    9.43,
+    .83,
+    .68,
+    .025,
+    M.blue,
+    false
+);
+
+
+const st =
+    label(
+        "2 × 2 × 2",
+        .34,
+        "#c6b878"
+    );
+
+st.position.set(
+    14.3,
+    1.65,
+    9.40
+);
+
+st.scale.set(
+    1.1,
+    .5,
+    1
+);
+
+scene.add(st);
+
+
+box(
+    "keyboard",
+    14.3,
+    1.17,
+    9.28,
+    1.05,
+    .05,
+    .34,
+    M.paper,
+    false
+);
+
+
+/* =========================================================
+   CLOCK
+========================================================= */
+
+const face =
+    new THREE.Mesh(
+        new THREE.CircleGeometry(.7,32),
+        new THREE.MeshStandardMaterial({
+            color:C.paper,
+            roughness:.8
+        })
+    );
+
+face.position.set(
+    .16,
+    3.75,
+    7
+);
+
+face.rotation.y=-Math.PI/2;
+
+scene.add(face);
+
+
+for(
+    let i=0;
+    i<12;
+    i++
+){
+
+    const a=i*Math.PI/6;
+
+    const mark =
+        box(
+            "tick",
+            .08,
+            3.75+Math.cos(a)*.56,
+            7+Math.sin(a)*.56,
+            .03,
+            .09,
+            .03,
+            M.ink,
+            false
+        );
+
+    mark.rotation.x=a;
+
+}
+
+
+const h1 =
+    box(
+        "hand",
+        .07,
+        3.75,
+        7,
+        .05,
+        .52,
+        .05,
+        M.ink,
+        false
+    );
+
+h1.rotation.z=-.85;
+
+
+const h2 =
+    box(
+        "hand",
+        .06,
+        3.75,
+        7,
+        .035,
+        .38,
+        .035,
+        M.red,
+        false
+    );
+
+h2.rotation.z=.45;
+
+
+const ct =
+    label(
+        "23:47",
+        .52
+    );
+
+ct.position.set(
+    .05,
+    2.98,
+    7
+);
+
+ct.rotation.y=-Math.PI/2;
+
+scene.add(ct);
+
+
+/* =========================================================
+   POSTER
+========================================================= */
+
+box(
+    "poster",
+    .12,
+    2.1,
+    4.2,
+    .035,
+    1.3,
+    .9,
+    M.paper,
+    false
+);
+
+
+const pt =
+    label(
+        "ASTERIA RULE 04",
+        .42,
+        "#8b4b4b"
+    );
+
+pt.position.set(
+    .05,
+    2.1,
+    4.2
+);
+
+pt.rotation.y=-Math.PI/2;
+
+scene.add(pt);
+
+
+/* =========================================================
+   DUST - GIẢM TỪ 420 -> 180
+========================================================= */
+
+const dustGeo =
+    new THREE.BufferGeometry();
+
+const dustN=180;
+
+const dustPos =
+    new Float32Array(
+        dustN*3
+    );
+
+
+for(
+    let i=0;
+    i<dustN;
+    i++
+){
+
+    dustPos[i*3] =
+        .7+Math.random()*16.6;
+
+    dustPos[i*3+1] =
+        .3+Math.random()*4;
+
+    dustPos[i*3+2] =
+        .7+Math.random()*10.6;
+
+}
+
+
+dustGeo.setAttribute(
+    "position",
+    new THREE.BufferAttribute(
+        dustPos,
+        3
+    )
+);
+
+
+const dust =
+    new THREE.Points(
+        dustGeo,
+        new THREE.PointsMaterial({
+            color:0xe8e5de,
+            size:.022,
+            transparent:true,
+            opacity:.15,
+            depthWrite:false
+        })
+    );
+
+scene.add(dust);
+
+
+/* =========================================================
+   INTERACTIONS
+========================================================= */
+
 const interactables=[];
-addInteract(clue,"Đọc tờ giấy trên bàn giáo viên",()=>doc("EXERCISE 01",`<div class="note">2 → 4 → 8 → 16 → ?<br><br><span class="red">Đừng tìm câu trả lời trên bảng.</span></div><p>Một nét bút khác ghi ở góc dưới: “Nếu muốn mở cửa, hãy tìm nơi người ta nhìn vào mỗi ngày.”</p>`));
-addInteract(face,"Kiểm tra đồng hồ 23:47",()=>say("23:47. Đồng hồ không chạy. Nhưng nó đang chỉ cho bạn một con số."));
-addInteract(scene.getObjectByName("board"),"Đọc bảng",()=>doc("BẢNG LỚP 10A",`<div class="note">DO NOT TRUST 23:47<br><br>THE ANSWER IS ELSEWHERE</div><p>Bảng không chứa câu trả lời. Dòng chữ có vẻ được viết rất gần đây.</p>`));
-addInteract(monitor,"Sử dụng máy tính",()=>puzzle());
-addInteract(locker,"Kiểm tra tủ 10A",()=>{if(unlocked){addItem("KEY 01");say("Bạn lấy được chìa khóa.");}else doc("TỦ 10A",`<p>Một khóa điện tử nhỏ sáng đỏ.</p><div class="note">SECURITY CODE REQUIRED<br><br>Gợi ý: nhìn vào thứ mọi học sinh nhìn mỗi ngày.</div>`)});
-addInteract(door,"Mở cửa lớp học",()=>{if(unlocked)finish();else say("Cửa khóa. Tìm mã mở tủ trước.")});
 
-let inventory=[],unlocked=false,playing=false,locked=false,yaw=0,pitch=0;
-function addItem(x){if(!inventory.includes(x)){inventory.push(x);document.getElementById("items").textContent=inventory.join(" · ")}}
-function doc(title,body){document.getElementById("docTitle").textContent=title;document.getElementById("docBody").innerHTML=body;document.getElementById("doc").style.display="grid";document.exitPointerLock?.()}
+
+function addInteract(
+    mesh,
+    labelText,
+    fn,
+    range=2.4
+){
+
+    interactables.push({
+
+        mesh:mesh,
+
+        label:labelText,
+
+        fn:fn,
+
+        range:range
+
+    });
+
+    return mesh;
+
+}
+
+
+/* Teacher clue */
+
+addInteract(
+    clue,
+    "Đọc tờ giấy trên bàn giáo viên",
+    () =>
+        doc(
+            "EXERCISE 01",
+            `
+            <div class="note">
+                2 → 4 → 8 → 16 → ?
+                <br><br>
+                <span class="red">
+                    Đừng tìm câu trả lời trên bảng.
+                </span>
+            </div>
+
+            <p>
+                Một nét bút khác ghi ở góc dưới:
+                “Nếu muốn mở cửa, hãy tìm nơi
+                người ta nhìn vào mỗi ngày.”
+            </p>
+            `
+        )
+);
+
+
+/* Clock */
+
+addInteract(
+    face,
+    "Kiểm tra đồng hồ 23:47",
+    () =>
+        say(
+            "23:47. Đồng hồ không chạy. Nhưng nó đang chỉ cho bạn một con số."
+        )
+);
+
+
+/* Board */
+
+addInteract(
+    scene.getObjectByName("board"),
+    "Đọc bảng",
+    () =>
+        doc(
+            "BẢNG LỚP 10A",
+            `
+            <div class="note">
+                DO NOT TRUST 23:47
+                <br><br>
+                THE ANSWER IS ELSEWHERE
+            </div>
+
+            <p>
+                Bảng không chứa câu trả lời.
+                Dòng chữ có vẻ được viết rất gần đây.
+            </p>
+            `
+        )
+);
+
+
+/* Computer */
+
+addInteract(
+    monitor,
+    "Sử dụng máy tính",
+    () => puzzle()
+);
+
+
+/* Locker */
+
+addInteract(
+    locker,
+    "Kiểm tra tủ 10A",
+    () => {
+
+        if(unlocked){
+
+            addItem("KEY 01");
+
+            say(
+                "Bạn lấy được chìa khóa."
+            );
+
+        }
+
+        else{
+
+            doc(
+                "TỦ 10A",
+                `
+                <p>
+                    Một khóa điện tử nhỏ sáng đỏ.
+                </p>
+
+                <div class="note">
+                    SECURITY CODE REQUIRED
+                    <br><br>
+                    Gợi ý:
+                    nhìn vào thứ mọi học sinh nhìn mỗi ngày.
+                </div>
+                `
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   DOOR INTERACTION - SỬA LỖI CHÍNH
+========================================================= */
+
+addInteract(
+    door,
+    "MỞ KHÓA CỬA LỚP HỌC",
+    () => {
+
+        if(unlocked){
+
+            finish();
+
+        }
+
+        else{
+
+            say(
+                "Cửa vẫn khóa. Hãy tìm mã mở khóa trên máy tính."
+            );
+
+        }
+
+    },
+    3.0
+);
+
+
+/* =========================================================
+   GAME STATE
+========================================================= */
+
+let inventory=[];
+
+let unlocked=false;
+
+let playing=false;
+
+let locked=false;
+
+let yaw=0;
+
+let pitch=0;
+
+
+/* =========================================================
+   INVENTORY
+========================================================= */
+
+function addItem(x){
+
+    if(
+        !inventory.includes(x)
+    ){
+
+        inventory.push(x);
+
+        document.getElementById(
+            "items"
+        ).textContent =
+            inventory.join(" · ");
+
+    }
+
+}
+
+
+/* =========================================================
+   DOCUMENT
+========================================================= */
+
+function doc(
+    title,
+    body
+){
+
+    document.getElementById(
+        "docTitle"
+    ).textContent=title;
+
+    document.getElementById(
+        "docBody"
+    ).innerHTML=body;
+
+    document.getElementById(
+        "doc"
+    ).style.display="grid";
+
+    document.exitPointerLock?.();
+
+}
+
+
+/* =========================================================
+   COMPUTER PUZZLE
+========================================================= */
+
 function puzzle(){
- document.getElementById("docTitle").textContent="PROJECT 23:47";
- document.getElementById("docBody").innerHTML=`<p>Máy tính hiển thị một bài tập:</p><div class="note" style="font-size:24px;text-align:center">2 → 4 → 8 → 16 → ?</div><div class="choices"><button class="choice" data-a="24">A. 24</button><button class="choice" data-a="32">B. 32</button><button class="choice" data-a="18">C. 18</button></div><p id="feedback" style="font-size:12px"></p>`;
- document.getElementById("doc").style.display="grid";document.exitPointerLock?.();
- document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{if(b.dataset.a==="32"){unlocked=true;addItem("ACCESS 32");document.getElementById("feedback").innerHTML='<span class="green">ĐÚNG.</span> Khóa tủ chuyển sang màu xanh.';setTimeout(()=>{document.getElementById("doc").style.display="none";renderer.domElement.requestPointerLock();say("Một tiếng click vang lên ở phía tủ.");},700)}else document.getElementById("feedback").innerHTML='<span class="red">SAI.</span> Dãy số đang nhân đôi.'});
-}
-document.getElementById("closeDoc").onclick=()=>{document.getElementById("doc").style.display="none";if(playing)renderer.domElement.requestPointerLock()};
 
-function say(t){const m=document.getElementById("msg");m.textContent=t;m.style.opacity=1;clearTimeout(say.t);say.t=setTimeout(()=>m.style.opacity=0,3000)}
-function finish(){playing=false;door.rotation.y=-Math.PI*.48;document.getElementById("fade").style.opacity=.82;setTimeout(()=>document.getElementById("ending").style.display="grid",850);beep(523,.12);setTimeout(()=>beep(659,.18),160)}
+    document.getElementById(
+        "docTitle"
+    ).textContent=
+        "PROJECT 23:47";
+
+
+    document.getElementById(
+        "docBody"
+    ).innerHTML=`
+
+        <p>
+            Máy tính hiển thị một bài tập:
+        </p>
+
+        <div
+            class="note"
+            style="
+                font-size:24px;
+                text-align:center
+            "
+        >
+            2 → 4 → 8 → 16 → ?
+        </div>
+
+        <div class="choices">
+
+            <button
+                class="choice"
+                data-a="24"
+            >
+                A. 24
+            </button>
+
+            <button
+                class="choice"
+                data-a="32"
+            >
+                B. 32
+            </button>
+
+            <button
+                class="choice"
+                data-a="18"
+            >
+                C. 18
+            </button>
+
+        </div>
+
+        <p
+            id="feedback"
+            style="font-size:12px"
+        ></p>
+
+    `;
+
+
+    document.getElementById(
+        "doc"
+    ).style.display="grid";
+
+
+    document.exitPointerLock?.();
+
+
+    document
+        .querySelectorAll(".choice")
+        .forEach(
+            b=>{
+
+                b.onclick=()=>{
+
+                    if(
+                        b.dataset.a==="32"
+                    ){
+
+                        unlocked=true;
+
+                        addItem(
+                            "ACCESS 32"
+                        );
+
+
+                        document.getElementById(
+                            "objectiveText"
+                        ).textContent=
+                            "Đến cửa và nhấn E để mở khóa.";
+
+
+                        document.getElementById(
+                            "feedback"
+                        ).innerHTML=
+                            `
+                            <span class="green">
+                                ĐÚNG.
+                            </span>
+                            Khóa cửa đã chuyển sang trạng thái có thể mở.
+                            `;
+
+
+                        setTimeout(
+                            ()=>{
+
+                                document.getElementById(
+                                    "doc"
+                                ).style.display="none";
+
+                                renderer
+                                    .domElement
+                                    .requestPointerLock();
+
+                                say(
+                                    "Một tiếng click vang lên. Cánh cửa đã được mở khóa."
+                                );
+
+                            },
+                            700
+                        );
+
+                    }
+
+                    else{
+
+                        document.getElementById(
+                            "feedback"
+                        ).innerHTML=
+                            `
+                            <span class="red">
+                                SAI.
+                            </span>
+                            Dãy số đang nhân đôi.
+                            `;
+
+                    }
+
+                };
+
+            }
+        );
+
+}
+
+
+/* =========================================================
+   CLOSE DOCUMENT
+========================================================= */
+
+document.getElementById(
+    "closeDoc"
+).onclick=()=>{
+
+    document.getElementById(
+        "doc"
+    ).style.display="none";
+
+    if(playing){
+
+        renderer
+            .domElement
+            .requestPointerLock();
+
+    }
+
+};
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function say(t){
+
+    const m =
+        document.getElementById(
+            "msg"
+        );
+
+    m.textContent=t;
+
+    m.style.opacity=1;
+
+    clearTimeout(
+        say.t
+    );
+
+    say.t =
+        setTimeout(
+            ()=>{
+                m.style.opacity=0;
+            },
+            3000
+        );
+
+}
+
+
+/* =========================================================
+   ENDING
+========================================================= */
+
+function finish(){
+
+    playing=false;
+
+    document.getElementById(
+        "prompt"
+    ).style.opacity=0;
+
+
+    door.rotation.y =
+        -Math.PI*.48;
+
+
+    document.getElementById(
+        "fade"
+    ).style.opacity=.82;
+
+
+    setTimeout(
+        ()=>{
+            document.getElementById(
+                "ending"
+            ).style.display="grid";
+        },
+        850
+    );
+
+
+    beep(
+        523,
+        .12
+    );
+
+    setTimeout(
+        ()=>{
+            beep(
+                659,
+                .18
+            );
+        },
+        160
+    );
+
+}
+
+
+/* =========================================================
+   SOUND
+========================================================= */
+
 let audio;
-function beep(freq,dur){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=freq;g.gain.setValueAtTime(.025,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch(e){}}
 
-/* Controls */
-const K={};addEventListener("keydown",e=>{K[e.code]=true;if(e.code==="KeyE"&&playing)interact();if(e.code==="Escape")document.exitPointerLock?.()});addEventListener("keyup",e=>K[e.code]=false);
-renderer.domElement.addEventListener("click",()=>{if(playing)renderer.domElement.requestPointerLock?.()});
-document.addEventListener("pointerlockchange",()=>locked=document.pointerLockElement===renderer.domElement);
-document.addEventListener("mousemove",e=>{if(locked&&playing){yaw-=e.movementX*.0021;pitch=Math.max(-1.25,Math.min(1.25,pitch-e.movementY*.0017))}});
-function collides(x,z){
- if(x<.65||x>17.35||z<.65||z>11.35)return true;
- const o=[[4,3,1,.7],[7,3,1,.7],[10,3,1,.7],[13,3,1,.7],[4,6,1,.7],[7,6,1,.7],[10,6,1,.7],[13,6,1,.7],[9,1.45,1.2,.7],[16.25,2.45,.8,.65],[14.3,9.55,1,.55]];
- for(const [a,b,w,d] of o)if(Math.abs(x-a)<w+.3&&Math.abs(z-b)<d+.3)return true;
- if(!unlocked&&x>17&&Math.abs(z-6)<1.15)return true;return false;
+
+function beep(
+    freq,
+    dur
+){
+
+    try{
+
+        audio =
+            audio ||
+            new(
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+
+        const o =
+            audio.createOscillator();
+
+        const g =
+            audio.createGain();
+
+
+        o.frequency.value=freq;
+
+
+        g.gain.setValueAtTime(
+            .025,
+            audio.currentTime
+        );
+
+
+        g.gain.exponentialRampToValueAtTime(
+            .001,
+            audio.currentTime+dur
+        );
+
+
+        o.connect(g);
+
+        g.connect(
+            audio.destination
+        );
+
+
+        o.start();
+
+        o.stop(
+            audio.currentTime+dur
+        );
+
+    }
+    catch(e){}
+
 }
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+const K={};
+
+
+addEventListener(
+    "keydown",
+    e=>{
+
+        K[e.code]=true;
+
+
+        if(
+            e.code==="KeyE" &&
+            playing
+        ){
+
+            interact();
+
+        }
+
+
+        if(
+            e.code==="Escape"
+        ){
+
+            document.exitPointerLock?.();
+
+        }
+
+    }
+);
+
+
+addEventListener(
+    "keyup",
+    e=>{
+        K[e.code]=false;
+    }
+);
+
+
+renderer.domElement.addEventListener(
+    "click",
+    ()=>{
+
+        if(playing){
+
+            renderer
+                .domElement
+                .requestPointerLock?.();
+
+        }
+
+    }
+);
+
+
+document.addEventListener(
+    "pointerlockchange",
+    ()=>{
+        locked =
+            document.pointerLockElement ===
+            renderer.domElement;
+    }
+);
+
+
+document.addEventListener(
+    "mousemove",
+    e=>{
+
+        if(
+            locked &&
+            playing
+        ){
+
+            yaw -=
+                e.movementX*.0021;
+
+            pitch =
+                Math.max(
+                    -1.25,
+                    Math.min(
+                        1.25,
+                        pitch -
+                        e.movementY*.0017
+                    )
+                );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   COLLISION
+========================================================= */
+
+function collides(
+    x,
+    z
+){
+
+    const radius=.30;
+
+
+    if(
+        x<.65 ||
+        x>17.35 ||
+        z<.65 ||
+        z>11.35
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+       Collision bàn ghế.
+       Các vùng được làm gọn để
+       không tạo "góc lag".
+    */
+
+    const objects=[
+
+        [4,3,.85,.48],
+        [7,3,.85,.48],
+        [10,3,.85,.48],
+        [13,3,.85,.48],
+
+        [4,6,.85,.48],
+        [7,6,.85,.48],
+        [10,6,.85,.48],
+        [13,6,.85,.48],
+
+        [9,1.35,1.15,.55],
+
+        [16.25,2.45,.70,.55],
+
+        [14.3,9.55,.95,.55]
+
+    ];
+
+
+    for(
+        const [
+            a,
+            b,
+            w,
+            d
+        ]
+        of objects
+    ){
+
+        if(
+            Math.abs(x-a) <
+                w+radius &&
+            Math.abs(z-b) <
+                d+radius
+        ){
+
+            return true;
+
+        }
+
+    }
+
+
+    /*
+       CỬA:
+       chỉ chặn khi chưa mở.
+    */
+
+    if(
+        !unlocked &&
+        x>16.9 &&
+        Math.abs(z-6)<1.15
+    ){
+
+        return true;
+
+    }
+
+
+    return false;
+
+}
+
+
+/* =========================================================
+   MOVEMENT
+   W = UP / FORWARD
+   S = DOWN / BACK
+   A = LEFT
+   D = RIGHT
+========================================================= */
+
 function move(dt){
- let x=0,z=0;if(K.KeyW){x+=Math.sin(yaw);z+=Math.cos(yaw)}if(K.KeyS){x-=Math.sin(yaw);z-=Math.cos(yaw)}if(K.KeyA){x-=Math.cos(yaw);z+=Math.sin(yaw)}if(K.KeyD){x+=Math.cos(yaw);z-=Math.sin(yaw)}
- const l=Math.hypot(x,z);if(!l)return;const sp=3.25*(K.ShiftLeft?1.55:1)*dt;x=x/l*sp;z=z/l*sp;
- if(!collides(camera.position.x+x,camera.position.z))camera.position.x+=x;if(!collides(camera.position.x,camera.position.z+z))camera.position.z+=z;
- camera.position.y=1.65+Math.sin(performance.now()*.008)*.012;
-}
-function interact(){
- let best=null,bd=2.15,dir=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));
- for(const o of interactables){const p=o.mesh.getWorldPosition(new THREE.Vector3()),v=p.clone().sub(camera.position),d=v.length();v.normalize();if(d<bd&&v.dot(dir)>.28){bd=d;best=o}}
- if(best){best.fn();beep(330,.045)}
-}
-function prompt(){
- let best=null,bd=2.15,dir=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw));
- for(const o of interactables){const p=o.mesh.getWorldPosition(new THREE.Vector3()),v=p.clone().sub(camera.position),d=v.length();v.normalize();if(d<bd&&v.dot(dir)>.28){bd=d;best=o}}
- const el=document.getElementById("prompt");el.textContent=best?"E — "+best.label:"";el.style.opacity=best?1:0;
+
+    let x=0;
+    let z=0;
+
+
+    /*
+       Điều khiển camera-relative:
+       W = tiến
+       S = lùi
+       A = trái
+       D = phải
+    */
+
+    if(K.KeyW){
+
+        x += Math.sin(yaw);
+        z += Math.cos(yaw);
+
+    }
+
+
+    if(K.KeyS){
+
+        x -= Math.sin(yaw);
+        z -= Math.cos(yaw);
+
+    }
+
+
+    if(K.KeyA){
+
+        x -= Math.cos(yaw);
+        z += Math.sin(yaw);
+
+    }
+
+
+    if(K.KeyD){
+
+        x += Math.cos(yaw);
+        z -= Math.sin(yaw);
+
+    }
+
+
+    const l =
+        Math.hypot(
+            x,
+            z
+        );
+
+
+    if(!l)return;
+
+
+    const sp =
+        3.25 *
+        (
+            K.ShiftLeft ||
+            K.ShiftRight
+        ?1.55:1
+        ) *
+        dt;
+
+
+    x =
+        x/l*sp;
+
+    z =
+        z/l*sp;
+
+
+    /*
+       Collision X
+    */
+
+    if(
+        !collides(
+            camera.position.x+x,
+            camera.position.z
+        )
+    ){
+
+        camera.position.x+=x;
+
+    }
+
+
+    /*
+       Collision Z
+    */
+
+    if(
+        !collides(
+            camera.position.x,
+            camera.position.z+z
+        )
+    ){
+
+        camera.position.z+=z;
+
+    }
+
+
+    /*
+       Head bob nhẹ
+    */
+
+    camera.position.y =
+        1.65 +
+        Math.sin(
+            performance.now()*.008
+        )*.010;
+
 }
 
-/* Cinematic flicker + subtle rain/dust movement */
-let t=0;const c=new THREE.Clock();
-function animate(){requestAnimationFrame(animate);const dt=Math.min(c.getDelta(),.05);t+=dt;
- if(playing){move(dt);prompt();}
- camera.rotation.order="YXZ";camera.rotation.y=yaw;camera.rotation.x=pitch;
- dust.rotation.y=t*.003;dust.position.y=Math.sin(t*.25)*.015;
- if(Math.random()<.012)fluorescents.forEach((l,i)=>l.intensity=1.1+Math.random()*.9);
- else fluorescents.forEach(l=>l.intensity=2);
- if(Math.sin(t*.22)>.97)redLight.intensity=0.15;
- else redLight.intensity=0;
- renderer.render(scene,camera);
+
+/* =========================================================
+   FIND INTERACTION
+========================================================= */
+
+function findInteraction(){
+
+    let best=null;
+
+    let bd=2.4;
+
+
+    const dir =
+        new THREE.Vector3(
+            Math.sin(yaw),
+            0,
+            Math.cos(yaw)
+        );
+
+
+    for(
+        const o of interactables
+    ){
+
+        const p =
+            o.mesh.getWorldPosition(
+                new THREE.Vector3()
+            );
+
+
+        const v =
+            p.clone()
+             .sub(camera.position);
+
+
+        const d=v.length();
+
+
+        if(
+            d >
+            o.range
+        ){
+
+            continue;
+
+        }
+
+
+        v.normalize();
+
+
+        /*
+           Cho phép nhìn vật thể
+           rộng hơn một chút.
+        */
+
+        if(
+            v.dot(dir)>.12 &&
+            d<bd
+        ){
+
+            bd=d;
+
+            best=o;
+
+        }
+
+    }
+
+
+    return best;
+
 }
+
+
+/* =========================================================
+   INTERACT
+========================================================= */
+
+function interact(){
+
+    const best =
+        findInteraction();
+
+
+    if(best){
+
+        best.fn();
+
+        beep(
+            330,
+            .045
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PROMPT
+========================================================= */
+
+function prompt(){
+
+    const best =
+        findInteraction();
+
+
+    const el =
+        document.getElementById(
+            "prompt"
+        );
+
+
+    if(best){
+
+        el.textContent =
+            "E — "+best.label;
+
+        el.style.opacity=1;
+
+    }
+    else{
+
+        el.textContent="";
+
+        el.style.opacity=0;
+
+    }
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+let t=0;
+
+const clock =
+    new THREE.Clock();
+
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    const dt =
+        Math.min(
+            clock.getDelta(),
+            .05
+        );
+
+
+    t+=dt;
+
+
+    if(playing){
+
+        move(dt);
+
+        prompt();
+
+    }
+
+
+    camera.rotation.order="YXZ";
+
+    camera.rotation.y=yaw;
+
+    camera.rotation.x=pitch;
+
+
+    /*
+       Dust nhẹ
+    */
+
+    dust.rotation.y =
+        t*.003;
+
+    dust.position.y =
+        Math.sin(
+            t*.25
+        )*.015;
+
+
+    /*
+       Fluorescent flicker
+    */
+
+    if(
+        Math.random()<.008
+    ){
+
+        fluorescents.forEach(
+            l=>{
+                l.intensity =
+                    1.9+
+                    Math.random()*.7;
+            }
+        );
+
+    }
+    else{
+
+        fluorescents.forEach(
+            l=>{
+                l.intensity=2.8;
+            }
+        );
+
+    }
+
+
+    if(
+        Math.sin(t*.22)>.97
+    ){
+
+        redLight.intensity=.15;
+
+    }
+    else{
+
+        redLight.intensity=0;
+
+    }
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+
 animate();
-document.getElementById("begin").onclick=()=>{document.getElementById("start").style.display="none";playing=true;camera.position.set(9,1.65,10.2);say("23:47. Lớp học 10A. Tìm cách ra khỏi đây.");beep(220,.1);setTimeout(()=>renderer.domElement.requestPointerLock?.(),80)};
-addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+
+/* =========================================================
+   START GAME
+========================================================= */
+
+document.getElementById(
+    "begin"
+).onclick=()=>{
+
+    document.getElementById(
+        "start"
+    ).style.display="none";
+
+
+    playing=true;
+
+
+    camera.position.set(
+        9,
+        1.65,
+        10.2
+    );
+
+
+    yaw=0;
+
+    pitch=0;
+
+
+    say(
+        "23:47. Lớp học 10A. Tìm cách ra khỏi đây."
+    );
+
+
+    beep(
+        220,
+        .1
+    );
+
+
+    setTimeout(
+        ()=>{
+            renderer
+                .domElement
+                .requestPointerLock?.();
+        },
+        80
+    );
+
+};
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect =
+            innerWidth /
+            innerHeight;
+
+        camera.updateProjectionMatrix();
+
+
+        renderer.setSize(
+            innerWidth,
+            innerHeight
+        );
+
+    }
+);
+
 })();
 </script>
+
 </body>
 </html>
