@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escape Lab - LFT Demo</title>
+
+<style>
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: black;
+        font-family: Arial, sans-serif;
+    }
+
+    #info {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        color: white;
+        background: rgba(0,0,0,0.65);
+        padding: 15px;
+        border-radius: 10px;
+        z-index: 10;
+        line-height: 1.6;
+    }
+
+    #crosshair {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 25px;
+        z-index: 10;
+    }
+
+    #message {
+        position: fixed;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: white;
+        background: rgba(0,0,0,0.8);
+        padding: 15px 25px;
+        border-radius: 10px;
+        display: none;
+        z-index: 10;
+        text-align: center;
+    }
+
+    #start {
+        position: fixed;
+        inset: 0;
+        background: #080d18;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 20;
+        text-align: center;
+    }
+
+    #startBox {
+        max-width: 600px;
+        padding: 40px;
+    }
+
+    button {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 8px;
+        background: #667eea;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="start">
+    <div id="startBox">
+        <h1>ESCAPE LAB</h1>
+        <h2>Prototype nghiên cứu LFT</h2>
+
+        <p>
+            Bạn tỉnh dậy trong một phòng thí nghiệm bị khóa.
+            Hãy tìm 3 manh mối và mở cánh cửa trước khi hết thời gian.
+        </p>
+
+        <p>
+            <b>W A S D</b> — Di chuyển<br>
+            <b>Chuột</b> — Nhìn xung quanh<br>
+            <b>E</b> — Tương tác
+        </p>
+
+        <button onclick="startGame()">BẮT ĐẦU</button>
+    </div>
+</div>
+
+<div id="info">
+    ⏱ Thời gian: <span id="timer">180</span>s<br>
+    ❌ Lỗi: <span id="errors">0</span><br>
+    💡 Gợi ý: <span id="hints">0</span><br>
+    🔎 Manh mối: <span id="clues">0</span>/3
+</div>
+
+<div id="crosshair">+</div>
+
+<div id="message"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
+<script>
+
+let scene;
+let camera;
+let renderer;
+let clock;
+
+let keys = {};
+
+let gameStarted = false;
+
+let errors = 0;
+let hints = 0;
+let foundClues = 0;
+
+let startTime;
+
+let clues = [];
+
+
+// =========================
+// START GAME
+// =========================
+
+function startGame() {
+
+    document.getElementById("start").style.display = "none";
+
+    initGame();
+
+    if (renderer && renderer.domElement.requestPointerLock) {
+        renderer.domElement.requestPointerLock();
+    }
+
+    gameStarted = true;
+
+    startTime = Date.now();
+}
+
+
+// =========================
+// INITIALIZE
+// =========================
+
+function initGame() {
+
+    scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0x080c16);
+
+    scene.fog = new THREE.Fog(
+        0x080c16,
+        5,
+        25
+    );
+
+
+    camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        100
+    );
+
+    camera.position.set(
+        0,
+        1.6,
+        6
+    );
+
+
+    renderer = new THREE.WebGLRenderer({
+        antialias: true
+    });
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+    renderer.setPixelRatio(
+        window.devicePixelRatio
+    );
+
+    document.body.appendChild(
+        renderer.domElement
+    );
+
+
+    clock = new THREE.Clock();
+
+
+    // LIGHT
+
+    const ambient =
+        new THREE.AmbientLight(
+            0xffffff,
+            1.5
+        );
+
+    scene.add(ambient);
+
+
+    const light =
+        new THREE.PointLight(
+            0xffffff,
+            30,
+            20
+        );
+
+    light.position.set(
+        0,
+        4,
+        0
+    );
+
+    scene.add(light);
+
+
+    // FLOOR
+
+    createBox(
+        0,
+        -0.1,
+        0,
+        18,
+        0.2,
+        16,
+        0x222733
+    );
+
+
+    // WALLS
+
+    createBox(
+        0,
+        3,
+        -8,
+        18,
+        6,
+        0.3,
+        0x252c3b
+    );
+
+    createBox(
+        0,
+        3,
+        8,
+        18,
+        6,
+        0.3,
+        0x252c3b
+    );
+
+    createBox(
+        -9,
+        3,
+        0,
+        0.3,
+        6,
+        16,
+        0x252c3b
+    );
+
+    createBox(
+        9,
+        3,
+        0,
+        0.3,
+        6,
+        16,
+        0x252c3b
+    );
+
+
+    // DOOR
+
+    const door =
+        createBox(
+            0,
+            2,
+            -7.8,
+            3,
+            4,
+            0.3,
+            0x33466e
+        );
+
+    door.userData.type = "door";
+
+
+    // TABLES
+
+    createBox(
+        -5,
+        1,
+        -2,
+        3,
+        0.2,
+        1.5,
+        0x513c2b
+    );
+
+    createBox(
+        4,
+        1,
+        2,
+        3,
+        0.2,
+        1.5,
+        0x513c2b
+    );
+
+
+    // CLUE 1
+
+    createClue(
+        -5,
+        1.4,
+        -2,
+        "7",
+        "Bạn tìm thấy một mảnh giấy: SỐ ĐẦU TIÊN = 7"
+    );
+
+
+    // CLUE 2
+
+    createClue(
+        4,
+        1.4,
+        2,
+        "2",
+        "Màn hình máy tính hiển thị: SỐ THỨ HAI = 2"
+    );
+
+
+    // CLUE 3
+
+    createClue(
+        6,
+        1,
+        -4,
+        "4",
+        "Hộp dụng cụ ghi: SỐ CUỐI = 4"
+    );
+
+
+    // KEYPAD
+
+    const keypad =
+        createBox(
+            3,
+            1.7,
+            -7.5,
+            0.8,
+            1.2,
+            0.2,
+            0x5570a8
+        );
+
+    keypad.userData.type =
+        "keypad";
+
+
+    // KEYBOARD
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            keys[event.code] = true;
+
+            if(event.code === "KeyE") {
+
+                interact();
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keyup",
+        function(event) {
+
+            keys[event.code] = false;
+
+        }
+    );
+
+
+    // MOUSE LOOK
+
+    document.addEventListener(
+        "mousemove",
+        function(event) {
+
+            if(
+                document.pointerLockElement ===
+                renderer.domElement
+            ) {
+
+                camera.rotation.order =
+                    "YXZ";
+
+                camera.rotation.y -=
+                    event.movementX * 0.002;
+
+                camera.rotation.x -=
+                    event.movementY * 0.002;
+
+                camera.rotation.x =
+                    Math.max(
+                        -1.4,
+                        Math.min(
+                            1.4,
+                            camera.rotation.x
+                        )
+                    );
+
+            }
+
+        }
+    );
+
+
+    renderer.domElement.addEventListener(
+        "click",
+        function() {
+
+            renderer.domElement.requestPointerLock();
+
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        resize
+    );
+
+
+    animate();
+
+}
+
+
+// =========================
+// CREATE BOX
+// =========================
+
+function createBox(
+    x,
+    y,
+    z,
+    width,
+    height,
+    depth,
+    color
+) {
+
+    const geometry =
+        new THREE.BoxGeometry(
+            width,
+            height,
+            depth
+        );
+
+    const material =
+        new THREE.MeshStandardMaterial({
+            color: color
+        });
+
+    const mesh =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+    mesh.position.set(
+        x,
+        y,
+        z
+    );
+
+    scene.add(mesh);
+
+    return mesh;
+
+}
+
+
+// =========================
+// CREATE CLUE
+// =========================
+
+function createClue(
+    x,
+    y,
+    z,
+    number,
+    text
+) {
+
+    const clue =
+        createBox(
+            x,
+            y,
+            z,
+            0.8,
+            0.15,
+            0.8,
+            0xd8b35d
+        );
+
+    clue.userData.type =
+        "clue";
+
+    clue.userData.number =
+        number;
+
+    clue.userData.text =
+        text;
+
+    clues.push(clue);
+
+}
+
+
+// =========================
+// INTERACTION
+// =========================
+
+function interact() {
+
+    let nearest = null;
+
+    let nearestDistance = 2;
+
+
+    scene.traverse(
+        function(object) {
+
+            if(
+                object.userData &&
+                object.userData.type
+            ) {
+
+                const distance =
+                    object.position.distanceTo(
+                        camera.position
+                    );
+
+                if(
+                    distance < nearestDistance
+                ) {
+
+                    nearestDistance =
+                        distance;
+
+                    nearest =
+                        object;
+
+                }
+
+            }
+
+        }
+    );
+
+
+    if(!nearest) {
+
+        showMessage(
+            "Không có gì để tương tác ở đây."
+        );
+
+        return;
+
+    }
+
+
+    // CLUE
+
+    if(
+        nearest.userData.type ===
+        "clue"
+    ) {
+
+        if(!nearest.userData.found) {
+
+            nearest.userData.found =
+                true;
+
+            foundClues++;
+
+            document.getElementById(
+                "clues"
+            ).textContent =
+                foundClues;
+
+            showMessage(
+                nearest.userData.text
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    // KEYPAD
+
+    if(
+        nearest.userData.type ===
+        "keypad"
+    ) {
+
+        const code =
+            prompt(
+                "Nhập mã 3 chữ số:"
+            );
+
+
+        if(code === "724") {
+
+            showMessage(
+                "✓ MÃ CHÍNH XÁC! CÁNH CỬA ĐÃ MỞ!"
+            );
+
+            setTimeout(
+                finishGame,
+                1500
+            );
+
+        }
+        else {
+
+            errors++;
+
+            document.getElementById(
+                "errors"
+            ).textContent =
+                errors;
+
+            showMessage(
+                "✕ MÃ SAI! Hãy thử lại."
+            );
+
+        }
+
+        return;
+
+    }
+
+
+    // DOOR
+
+    if(
+        nearest.userData.type ===
+        "door"
+    ) {
+
+        if(foundClues === 3) {
+
+            showMessage(
+                "Bạn đã tìm đủ manh mối. Hãy nhập mã tại bảng điều khiển."
+            );
+
+        }
+        else {
+
+            showMessage(
+                "Cánh cửa bị khóa. Bạn chưa tìm đủ manh mối."
+            );
+
+        }
+
+    }
+
+}
+
+
+// =========================
+// MESSAGE
+// =========================
+
+function showMessage(text) {
+
+    const box =
+        document.getElementById(
+            "message"
+        );
+
+    box.textContent =
+        text;
+
+    box.style.display =
+        "block";
+
+
+    setTimeout(
+        function() {
+
+            box.style.display =
+                "none";
+
+        },
+        3000
+    );
+
+}
+
+
+// =========================
+// MOVEMENT
+// =========================
+
+function updateMovement() {
+
+    if(!gameStarted)
+        return;
+
+
+    const speed =
+        0.08;
+
+
+    const direction =
+        new THREE.Vector3();
+
+
+    if(keys["KeyW"])
+        direction.z -= 1;
+
+    if(keys["KeyS"])
+        direction.z += 1;
+
+    if(keys["KeyA"])
+        direction.x -= 1;
+
+    if(keys["KeyD"])
+        direction.x += 1;
+
+
+    direction.normalize();
+
+
+    direction.applyQuaternion(
+        new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(
+                0,
+                camera.rotation.y,
+                0
+            )
+        )
+    );
+
+
+    camera.position.add(
+        direction.multiplyScalar(
+            speed
+        )
+    );
+
+
+    // BOUNDARIES
+
+    camera.position.x =
+        Math.max(
+            -8,
+            Math.min(
+                8,
+                camera.position.x
+            )
+        );
+
+    camera.position.z =
+        Math.max(
+            -7,
+            Math.min(
+                7,
+                camera.position.z
+            )
+        );
+
+}
+
+
+// =========================
+// TIMER
+// =========================
+
+function updateTimer() {
+
+    if(!gameStarted)
+        return;
+
+
+    const elapsed =
+        Math.floor(
+            (Date.now() - startTime)
+            / 1000
+        );
+
+
+    const remaining =
+        Math.max(
+            0,
+            180 - elapsed
+        );
+
+
+    document.getElementById(
+        "timer"
+    ).textContent =
+        remaining;
+
+
+    if(remaining <= 0) {
+
+        showMessage(
+            "TIME OUT — Bạn đã hết thời gian."
+        );
+
+        gameStarted =
+            false;
+
+    }
+
+}
+
+
+// =========================
+// FINISH
+// =========================
+
+function finishGame() {
+
+    gameStarted =
+        false;
+
+
+    const time =
+        Math.floor(
+            (Date.now() - startTime)
+            / 1000
+        );
+
+
+    alert(
+        "MISSION COMPLETE!\n\n" +
+        "Thời gian: " +
+        time +
+        " giây\n" +
+        "Số lỗi: " +
+        errors +
+        "\n" +
+        "Manh mối: " +
+        foundClues +
+        "/3"
+    );
+
+}
+
+
+// =========================
+// RESIZE
+// =========================
+
+function resize() {
+
+    camera.aspect =
+        window.innerWidth /
+        window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+        window.innerWidth,
+        window.innerHeight
+    );
+
+}
+
+
+// =========================
+// LOOP
+// =========================
+
+function animate() {
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    updateMovement();
+
+    updateTimer();
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+</script>
+
+</body>
+</html>
