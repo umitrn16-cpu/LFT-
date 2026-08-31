@@ -64,8 +64,13 @@ button{font:inherit}.btn{background:#c6b878;border:0;color:#202329;padding:13px 
 </div></div>
 <div id="fade"></div>
 
-<script type="module">
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+const THREE = window.THREE;
+if (!THREE) {
+  document.body.innerHTML = '<div style="padding:40px;font-family:Arial;color:white;background:#202329;height:100vh"><h2>Không tải được engine 3D</h2><p>Hãy kết nối Internet rồi tải lại trang. Game cần tải Three.js từ CDN.</p></div>';
+  throw new Error("Three.js CDN failed to load");
+}
 
 /* ---------- CORE ---------- */
 const scene=new THREE.Scene();
@@ -245,7 +250,8 @@ function updatePlayer(dt){
 }
 addEventListener("keydown",e=>{keys[e.code]=true;if(e.code==="KeyE"&&playing)tryInteract()});
 addEventListener("keyup",e=>keys[e.code]=false);
-renderer.domElement.addEventListener("click",()=>{if(playing)renderer.domElement.requestPointerLock()});
+renderer.domElement.addEventListener("click",()=>{if(playing)try{renderer.domElement.requestPointerLock()}catch(e){}});
+renderer.domElement.addEventListener("contextmenu",e=>e.preventDefault());
 document.addEventListener("pointerlockchange",()=>locked=document.pointerLockElement===renderer.domElement);
 document.addEventListener("mousemove",e=>{if(!locked||!playing)return;yaw-=e.movementX*.0022;pitch=Math.max(-1.25,Math.min(1.25,pitch-e.movementY*.0018))});
 function tryInteract(){
@@ -273,7 +279,14 @@ function beep(freq=440,dur=.08){
 function finish(){doorUnlocked=true;door.rotation.y=-Math.PI*.48;beep(523,.12);setTimeout(()=>beep(659,.18),160);playing=false;$("fade").style.opacity=.75;setTimeout(()=>$("ending").style.display="grid",700)}
 
 /* ---------- START / LOOP ---------- */
-$("begin").onclick=()=>{ $("start").style.display="none";playing=true;renderer.domElement.requestPointerLock();say("Lớp học 10A. Tìm cách mở cửa.");beep(220,.1) };
+$("begin").addEventListener("click", (e)=>{
+  e.preventDefault();
+  $("start").style.display="none";
+  playing=true;
+  say("Lớp học 10A. Tìm cách mở cửa.");
+  try { beep(220,.1); } catch(e) {}
+  try { renderer.domElement.requestPointerLock(); } catch(e) {}
+});
 
 function animate(){
  requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);
