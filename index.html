@@ -111,7 +111,7 @@
 
 <div id="message"></div>
 
-<script src="https://unpkg.com/three@0.161.0/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
 <script>
 
 let scene;
@@ -142,7 +142,9 @@ function startGame() {
 
     initGame();
 
-    renderer.domElement.requestPointerLock();
+    if (renderer && renderer.domElement.requestPointerLock) {
+        renderer.domElement.requestPointerLock();
+    }
 
     gameStarted = true;
 
