@@ -301,32 +301,22 @@ function collides(x,z){
  return false;
 }
 
-/* FIXED MOVEMENT:
-   W/S now always move forward/backward relative to camera yaw.
-   A/D strafe perpendicular to the facing direction.
-   The previous implementation already used this convention, but this version
-   normalizes the input vector before applying it and ignores keyboard repeat
-   side effects. */
+/* MOVEMENT: fixed room directions.
+   W = luôn tiến theo một hướng cố định của căn phòng (Z giảm).
+   S = luôn lùi theo hướng ngược lại (Z tăng).
+   A/D = luôn sang trái/phải theo trục X.
+   Hướng chuột chỉ dùng để xoay camera, KHÔNG làm thay đổi hướng đi.
+*/
 function move(dt){
- // Di chuyển theo đúng hướng camera:
- // W = phía trước màn hình / hướng chuột đang nhìn
- // S = phía sau, ngược 180 độ so với W
- // A = trái, D = phải.
- // Chỉ dùng yaw để tránh pitch của chuột làm nhân vật bay/lệch hướng.
- const forwardX=Math.sin(yaw);
- const forwardZ=-Math.cos(yaw);
- const rightX=Math.cos(yaw);
- const rightZ=Math.sin(yaw);
-
+ const speed=3.25*(keys.ShiftLeft||keys.ShiftRight?1.55:1)*dt;
  let x=0,z=0;
- if(keys.KeyW){x+=forwardX;z+=forwardZ;}
- if(keys.KeyS){x-=forwardX;z-=forwardZ;}
- if(keys.KeyA){x-=rightX;z-=rightZ;}
- if(keys.KeyD){x+=rightX;z+=rightZ;}
+ if(keys.KeyW) z-=1; // W: tiến cố định
+ if(keys.KeyS) z+=1; // S: lùi cố định
+ if(keys.KeyA) x-=1; // A: trái cố định
+ if(keys.KeyD) x+=1; // D: phải cố định
 
  const len=Math.hypot(x,z);
  if(!len)return;
- const speed=3.25*(keys.ShiftLeft||keys.ShiftRight?1.55:1)*dt;
  x=(x/len)*speed;
  z=(z/len)*speed;
 
