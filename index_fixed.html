@@ -301,25 +301,26 @@ function collides(x,z){
  return false;
 }
 
-/* MOVEMENT: fixed room directions.
-   W = luôn tiến theo một hướng cố định của căn phòng (Z giảm).
-   S = luôn lùi theo hướng ngược lại (Z tăng).
-   A/D = luôn sang trái/phải theo trục X.
-   Hướng chuột chỉ dùng để xoay camera, KHÔNG làm thay đổi hướng đi.
+/*
+   W = tiến thẳng theo đúng hướng camera đang nhìn.
+   S = lùi thẳng ngược lại hướng camera.
+   A/D = di chuyển ngang trái/phải theo hướng camera.
+   Chuột điều khiển hướng nhìn và vì vậy cũng xác định hướng W/S.
 */
 function move(dt){
  const speed=3.25*(keys.ShiftLeft||keys.ShiftRight?1.55:1)*dt;
+ // W/S bám theo đúng hướng camera đang nhìn. Chuột xoay camera => hướng tiến cũng xoay theo.
+ // Camera của Three.js nhìn theo trục -Z local: forward = (-sin(yaw), 0, -cos(yaw)).
+ const forwardX=-Math.sin(yaw), forwardZ=-Math.cos(yaw);
+ const rightX=Math.cos(yaw), rightZ=-Math.sin(yaw);
  let x=0,z=0;
- if(keys.KeyW) z-=1; // W: tiến cố định
- if(keys.KeyS) z+=1; // S: lùi cố định
- if(keys.KeyA) x-=1; // A: trái cố định
- if(keys.KeyD) x+=1; // D: phải cố định
-
+ if(keys.KeyW){x+=forwardX; z+=forwardZ;}
+ if(keys.KeyS){x-=forwardX; z-=forwardZ;}
+ if(keys.KeyA){x-=rightX; z-=rightZ;}
+ if(keys.KeyD){x+=rightX; z+=rightZ;}
  const len=Math.hypot(x,z);
  if(!len)return;
- x=(x/len)*speed;
- z=(z/len)*speed;
-
+ x=(x/len)*speed; z=(z/len)*speed;
  const nextX=camera.position.x+x;
  const nextZ=camera.position.z+z;
  if(!collides(nextX,camera.position.z))camera.position.x=nextX;
