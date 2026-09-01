@@ -53,13 +53,7 @@ p{line-height:1.65;color:#555}
 .cardInner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .46s cubic-bezier(.2,.7,.2,1)}
 .memoryCard.flipped .cardInner,.memoryCard.matched .cardInner{transform:rotateY(180deg)}
 .cardFace{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;overflow:hidden}
-.cardBack{background:
- radial-gradient(circle at 30% 25%,#38484a 0 2px,transparent 3px),
- radial-gradient(circle at 70% 75%,#1e292b 0 2px,transparent 3px),
- linear-gradient(145deg,#1a2527,#070b0c);
- border:1px solid #74817e55;
- box-shadow:inset 0 0 0 2px #0a0f10, inset 0 0 22px #0008, 0 6px 18px #0009;
-}
+.cardBack{background:radial-gradient(circle at 30% 25%,#38484a 0 2px,transparent 3px),radial-gradient(circle at 70% 75%,#1e292b 0 2px,transparent 3px),linear-gradient(145deg,#1a2527,#070b0c);border:1px solid #74817e55;box-shadow:inset 0 0 0 2px #0a0f10,inset 0 0 22px #0008,0 6px 18px #0009}
 .cardBack:before{content:"";position:absolute;inset:7px;border:1px solid #d4c78638;border-radius:8px}
 .cardBack:after{content:"✦";position:absolute;left:50%;top:50%;transform:translate(-50%,-54%);font:24px Georgia;color:#d4c78688;text-shadow:0 0 13px #d4c78655}
 .cardFront{transform:rotateY(180deg);background:#e9e4d8;border:2px solid #d4c786;box-shadow:0 0 0 1px #ffffff20,0 7px 20px #0009}
@@ -79,6 +73,8 @@ p{line-height:1.65;color:#555}
 @keyframes flashFail{0%{opacity:0;background:#c34f5d22}35%{opacity:1}100%{opacity:0}}
 #restTimer{font:700 64px Georgia;text-align:center;color:#d4c786;margin:12px 0}
 #failTitle{color:#8b4b4b}
+.failChoices{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.failChoices .btn{min-width:150px}
 @media(max-width:600px){
  .memoryShell{padding:13px}
  .memoryBoard{gap:6px}
@@ -103,8 +99,8 @@ p{line-height:1.65;color:#555}
  <p>23:47. Lớp học 10A không có người. Một cơn mưa vừa dứt. Ánh đèn huỳnh quang chập chờn, đồng hồ treo tường đứng im.</p>
  <p>Bạn không nhớ mình đã vào đây bằng cách nào.</p>
  <button class="btn" id="begin" type="button">VÀO LỚP HỌC</button>
- <div class="controls"><b>W A S D</b> di chuyển · <b>Chuột</b> nhìn · <b>E</b> tương tác · <b>Shift</b> chạy · <b>ESC</b> thả chuột</div>
- <div style="font-size:11px;color:#777;margin-top:10px">Game lật thẻ: 20 giây · tối đa 25 lượt · 8 cặp hình.</div>
+ <div class="controls"><b>W</b> tiến về phía trước · <b>S</b> đi lùi · <b>A/D</b> sang trái/phải · <b>Chuột</b> nhìn · <b>E</b> tương tác · <b>Shift</b> chạy · <b>ESC</b> thả chuột</div>
+ <div style="font-size:11px;color:#777;margin-top:10px">Game lật thẻ: 40 giây · tối đa 25 lượt · 8 cặp hình.</div>
 </div></div>
 
 <div id="doc" class="overlay"><div class="panel">
@@ -115,25 +111,27 @@ p{line-height:1.65;color:#555}
  <div class="eyebrow">PROJECT 23:47</div><h2>Bạn muốn bỏ cuộc?</h2>
  <p>Bạn sẽ rời khỏi Room 01 và quay lại màn hình chính.</p>
  <div style="display:flex;gap:10px;flex-wrap:wrap">
-  <button class="btn" id="quitYes">ĐÚNG</button>
-  <button class="btn" id="quitRetry" style="background:#ddd7c7">TÔI MUỐN THỬ LẠI</button>
+  <button class="btn" id="quitYes" type="button">ĐÚNG</button>
+  <button class="btn" id="quitRetry" type="button" style="background:#ddd7c7">TÔI MUỐN THỬ LẠI</button>
  </div>
 </div></div>
 
-<div id="fail" class="overlay"><div class="panel" style="max-width:570px">
+<div id="fail" class="overlay"><div class="panel" style="max-width:620px;text-align:center">
  <div class="eyebrow">MEMORY TEST / FAILED</div>
- <h2 id="failTitle">Bạn đã thua, bạn có muốn bắt đầu lại?</h2>
- <p>Bạn đã hết thời gian hoặc lượt chơi mà chưa ghép đủ 8 cặp.</p>
- <div class="note"><b id="failStats"></b><br>Hãy thử lại. Vị trí các thẻ sẽ được xáo trộn.</div>
- <button class="btn" id="retryMemory">TÔI MUỐN CHƠI LẠI</button>
- <button class="btn" id="giveupMemory" style="background:#ddd7c7">TÔI BỎ CUỘC</button>
+ <h2 id="failTitle">Bạn đã thất bại.</h2>
+ <p style="font-size:18px;color:#333;margin-bottom:8px">Bạn có muốn chơi lại lần nữa?</p>
+ <div class="note" style="text-align:left"><b id="failStats"></b><br>Hãy thử lại. Vị trí các thẻ sẽ được xáo trộn.</div>
+ <div class="failChoices">
+  <button class="btn" id="retryMemory" type="button">CÓ</button>
+  <button class="btn" id="giveupMemory" type="button" style="background:#ddd7c7">KHÔNG</button>
+ </div>
 </div></div>
 
 <div id="rest" class="overlay"><div class="panel" style="max-width:520px;text-align:center">
  <div class="eyebrow">PROJECT 23:47 / REST</div>
- <h2>Bạn đã bỏ cuộc ở trò chơi lật thẻ.</h2>
- <p>Hệ thống cho bạn một phút nghỉ ngơi. Sau đó, cánh cửa khác sẽ được mở.</p>
- <div id="restTimer">01:00</div>
+ <h2>Bạn đã chọn không chơi lại.</h2>
+ <p>Bạn có 30 giây nghỉ ngơi. Sau đó Room 01 sẽ kết thúc.</p>
+ <div id="restTimer">00:30</div>
  <div class="note">Hãy hít thở và chuẩn bị cho khu vực tiếp theo.</div>
 </div></div>
 
@@ -143,7 +141,7 @@ p{line-height:1.65;color:#555}
  <div class="note"><span class="red">PROJECT 23:47 — SUBJECT ACTIVE</span><br>Observation status: <b>WATCHING</b></div>
  <p>Một chiếc loa cũ trên trần bật lên.</p><p style="font-family:Georgia;font-size:25px;text-align:center">“Good evening, Subject 10A.”</p>
  <p>Tiếng chuông vang lên.</p><h2 style="text-align:center">TING...</h2>
- <button class="btn" onclick="location.reload()">CHƠI LẠI ROOM 01</button>
+ <button class="btn" id="restartRoom" type="button">CHƠI LẠI ROOM 01</button>
 </div></div>
 
 <div id="fade"></div>
@@ -166,7 +164,7 @@ p{line-height:1.65;color:#555}
   <div class="memoryBoard" id="memoryBoard"></div>
   <div class="memoryFooter">
    <span>40 GIÂY · 25 LƯỢT · 8 CẶP</span>
-   <button class="memoryClose" id="memoryClose">ĐÓNG GAME</button>
+   <button class="memoryClose" id="memoryClose" type="button">ĐÓNG GAME</button>
   </div>
  </div>
 </div>
@@ -285,7 +283,7 @@ function beep(freq=440,dur=.08,type="sine",gain=.035){
 }
 let audio=null;
 function cardSound(kind){
- if(kind==="flip"){beep(390,.045,"triangle",.018)}
+ if(kind==="flip")beep(390,.045,"triangle",.018);
  if(kind==="wrong"){beep(150,.10,"sawtooth",.025);setTimeout(()=>beep(110,.12,"sawtooth",.018),65)}
  if(kind==="match"){beep(520,.08,"sine",.028);setTimeout(()=>beep(740,.12,"sine",.025),80)}
  if(kind==="win"){beep(523,.10,"sine",.03);setTimeout(()=>beep(659,.12,"sine",.03),100);setTimeout(()=>beep(784,.18,"sine",.03),220)}
@@ -298,12 +296,31 @@ function collides(x,z){
  if(x>17&&Math.abs(z-6)<1.15)return true;
  return false;
 }
+
+/* FIXED MOVEMENT:
+   W/S now always move forward/backward relative to camera yaw.
+   A/D strafe perpendicular to the facing direction.
+   The previous implementation already used this convention, but this version
+   normalizes the input vector before applying it and ignores keyboard repeat
+   side effects. */
 function move(dt){
- let x=0,z=0;if(keys.KeyW){x+=Math.sin(yaw);z-=Math.cos(yaw)}if(keys.KeyS){x-=Math.sin(yaw);z+=Math.cos(yaw)}if(keys.KeyA){x-=Math.cos(yaw);z-=Math.sin(yaw)}if(keys.KeyD){x+=Math.cos(yaw);z+=Math.sin(yaw)}
- const l=Math.hypot(x,z);if(!l)return;const sp=3.25*(keys.ShiftLeft?1.55:1)*dt;x=x/l*sp;z=z/l*sp;
- if(!collides(camera.position.x+x,camera.position.z))camera.position.x+=x;if(!collides(camera.position.x,camera.position.z+z))camera.position.z+=z;
+ let forward=0,strafe=0;
+ if(keys.KeyW)forward+=1;
+ if(keys.KeyS)forward-=1;
+ if(keys.KeyA)strafe-=1;
+ if(keys.KeyD)strafe+=1;
+
+ let x=Math.sin(yaw)*forward + Math.cos(yaw)*strafe;
+ let z=-Math.cos(yaw)*forward + Math.sin(yaw)*strafe;
+ const l=Math.hypot(x,z);
+ if(!l)return;
+ const sp=3.25*(keys.ShiftLeft?1.55:1)*dt;
+ x=x/l*sp;z=z/l*sp;
+ if(!collides(camera.position.x+x,camera.position.z))camera.position.x+=x;
+ if(!collides(camera.position.x,camera.position.z+z))camera.position.z+=z;
  camera.position.y=1.65+Math.sin(performance.now()*.008)*.012;
 }
+
 function nearest(){
  let best=null,bd=2.8;
  for(const o of interactables){
@@ -313,18 +330,56 @@ function nearest(){
  return best;
 }
 function tryInteract(){if(!playing||modalOpen||memoryActive)return;const b=nearest();if(b)b.fn();else say("Không có gì để tương tác ở đây.");}
-function updatePrompt(){if(!playing||modalOpen||memoryActive){document.getElementById("prompt").style.opacity=0;return}const b=nearest(),el=document.getElementById("prompt");el.textContent=b?"E — CHẠM ĐỂ MỞ":"";el.style.opacity=b?1:0;}
+function updatePrompt(){
+ const el=document.getElementById("prompt");
+ if(!playing||modalOpen||memoryActive){el.style.opacity=0;return}
+ const b=nearest();el.textContent=b?"E — CHẠM ĐỂ MỞ":"";el.style.opacity=b?1:0;
+}
 
 const keys={};let memoryActive=false;
-addEventListener("keydown",e=>{keys[e.code]=true;if(e.code==="KeyE")tryInteract();if(e.code==="Escape")document.exitPointerLock?.()});
+addEventListener("keydown",e=>{
+ if(["KeyW","KeyA","KeyS","KeyD","ShiftLeft","KeyE","Escape"].includes(e.code))e.preventDefault();
+ keys[e.code]=true;
+ if(e.code==="KeyE"&&!e.repeat)tryInteract();
+ if(e.code==="Escape")document.exitPointerLock?.();
+});
 addEventListener("keyup",e=>keys[e.code]=false);
 renderer.domElement.addEventListener("click",()=>{if(playing&&!modalOpen&&!memoryActive)renderer.domElement.requestPointerLock?.()});
 document.addEventListener("pointerlockchange",()=>locked=document.pointerLockElement===renderer.domElement);
 document.addEventListener("mousemove",e=>{if(locked&&playing&&!modalOpen&&!memoryActive){yaw-=e.movementX*.0021;pitch=Math.max(-1.25,Math.min(1.25,pitch-e.movementY*.0017))}});
 
-function finish(){playing=false;memoryActive=false;door.rotation.y=-Math.PI*.48;document.getElementById("fade").style.opacity=.82;beep(523,.12);setTimeout(()=>beep(659,.18),160);setTimeout(()=>document.getElementById("ending").style.display="grid",850);}
+function resetRoomState(){
+ clearInterval(memoryTimer);memoryTimer=null;clearInterval(restTimer);restTimer=null;
+ memoryActive=false;modalOpen=false;memoryBusy=false;
+ document.getElementById("memoryGame").style.display="none";
+ document.getElementById("fail").style.display="none";
+ document.getElementById("rest").style.display="none";
+ document.getElementById("confirm").style.display="none";
+ document.getElementById("doc").style.display="none";
+ document.getElementById("ending").style.display="none";
+ inventory=[];unlocked=false;
+ document.getElementById("items").textContent="TRỐNG";
+ document.getElementById("inv").style.boxShadow="";
+ camera.position.set(9,1.65,10.2);yaw=0;pitch=0;
+ playing=true;
+}
 
-document.getElementById("begin").onclick=()=>{document.getElementById("start").style.display="none";playing=true;camera.position.set(9,1.65,10.2);say("23:47. Lớp học 10A. Tìm cách ra khỏi đây.");beep(220,.1);setTimeout(()=>renderer.domElement.requestPointerLock?.(),80)};
+function finish(){
+ playing=false;memoryActive=false;modalOpen=false;
+ document.exitPointerLock?.();
+ door.rotation.y=-Math.PI*.48;
+ document.getElementById("fade").style.opacity=.82;
+ beep(523,.12);setTimeout(()=>beep(659,.18),160);
+ setTimeout(()=>document.getElementById("ending").style.display="grid",850);
+}
+
+document.getElementById("begin").onclick=()=>{
+ document.getElementById("start").style.display="none";
+ playing=true;camera.position.set(9,1.65,10.2);yaw=0;pitch=0;
+ say("23:47. Lớp học 10A. Tìm cách ra khỏi đây.");
+ beep(220,.1);
+ setTimeout(()=>renderer.domElement.requestPointerLock?.(),80);
+};
 
 let memoryTimer=null,memoryDeadline=0,memoryMoves=0,memoryPairs=0,memoryFirst=null,memorySecond=null,memoryBusy=false;
 const CARD_IMAGES=["IMG_5566.jpeg","IMG_5567.jpeg","IMG_5568.jpeg","IMG_5569.jpeg","IMG_5570.jpeg","IMG_5571.jpeg","IMG_5572.jpeg","IMG_5573.jpeg"];
@@ -332,12 +387,17 @@ const CARD_IMAGES=["IMG_5566.jpeg","IMG_5567.jpeg","IMG_5568.jpeg","IMG_5569.jpe
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;}
 function openMemoryGame(){
  if(memoryActive)return;
- memoryActive=true;modalOpen=true;document.exitPointerLock?.();document.getElementById("memoryGame").style.display="flex";startMemoryRound();
+ memoryActive=true;modalOpen=true;document.exitPointerLock?.();
+ document.getElementById("memoryGame").style.display="flex";
+ startMemoryRound();
 }
 function startMemoryRound(){
- clearInterval(memoryTimer);memoryMoves=0;memoryPairs=0;memoryFirst=null;memorySecond=null;memoryBusy=false;
- document.getElementById("memMoves").textContent="0/25";document.getElementById("memPairs").textContent="0/8";
- document.getElementById("memTime").textContent="40";document.getElementById("memTime").classList.remove("timerDanger");
+ clearInterval(memoryTimer);
+ memoryMoves=0;memoryPairs=0;memoryFirst=null;memorySecond=null;memoryBusy=false;
+ document.getElementById("memMoves").textContent="0/25";
+ document.getElementById("memPairs").textContent="0/8";
+ document.getElementById("memTime").textContent="40";
+ document.getElementById("memTime").classList.remove("timerDanger");
  const deck=shuffle([...CARD_IMAGES,...CARD_IMAGES]);
  const board=document.getElementById("memoryBoard");board.innerHTML="";
  deck.forEach((src,i)=>{
@@ -349,6 +409,7 @@ function startMemoryRound(){
  memoryTimer=setInterval(updateMemoryTimer,100);
 }
 function updateMemoryTimer(){
+ if(!memoryActive)return;
  const left=Math.max(0,memoryDeadline-Date.now()),sec=Math.ceil(left/1000);
  document.getElementById("memTime").textContent=sec;
  if(sec<=5)document.getElementById("memTime").classList.add("timerDanger");
@@ -360,51 +421,116 @@ function flipCard(card){
  if(Date.now()>=memoryDeadline){memoryFail("Hết 40 giây.");return;}
  card.classList.add("flipped");cardSound("flip");
  if(!memoryFirst){memoryFirst=card;return}
- memorySecond=card;memoryMoves++;document.getElementById("memMoves").textContent=memoryMoves+"/25";
- memoryBusy=true;
+ memorySecond=card;memoryMoves++;document.getElementById("memMoves").textContent=memoryMoves+"/25";memoryBusy=true;
  if(memoryFirst.dataset.id===memorySecond.dataset.id){
-   setTimeout(()=>{memoryFirst.classList.add("matched");memorySecond.classList.add("matched");memoryPairs++;document.getElementById("memPairs").textContent=memoryPairs+"/8";flash("success");cardSound("match");memoryFirst=null;memorySecond=null;memoryBusy=false;if(memoryPairs===8)memoryWin();},180);
+   setTimeout(()=>{
+    memoryFirst.classList.add("matched");memorySecond.classList.add("matched");
+    memoryPairs++;document.getElementById("memPairs").textContent=memoryPairs+"/8";
+    flash("success");cardSound("match");
+    memoryFirst=null;memorySecond=null;memoryBusy=false;
+    if(memoryPairs===8)memoryWin();
+   },180);
  }else{
-   const a=memoryFirst,b=memorySecond;
-   a.classList.add("wrong");b.classList.add("wrong");flash("fail");cardSound("wrong");
-   setTimeout(()=>{a.classList.remove("flipped","wrong");b.classList.remove("flipped","wrong");memoryFirst=null;memorySecond=null;memoryBusy=false;if(memoryMoves>=25)memoryFail("Bạn đã dùng hết 25 lượt.");},600);
+   const a=memoryFirst,b=memorySecond;a.classList.add("wrong");b.classList.add("wrong");flash("fail");cardSound("wrong");
+   setTimeout(()=>{
+    a.classList.remove("flipped","wrong");b.classList.remove("flipped","wrong");
+    memoryFirst=null;memorySecond=null;memoryBusy=false;
+    if(memoryMoves>=25)memoryFail("Bạn đã dùng hết 25 lượt.");
+   },600);
  }
 }
 function memoryWin(){
  clearInterval(memoryTimer);memoryTimer=null;memoryBusy=true;cardSound("win");
- setTimeout(()=>{document.getElementById("memoryGame").style.display="none";memoryActive=false;modalOpen=false;unlocked=true;document.getElementById("inv").style.boxShadow="0 0 20px #d4c78655";say("TẠCH. Hệ thống báo: tủ 10A đã được mở khóa. Đến tủ để lấy chìa khóa.");renderer.domElement.requestPointerLock?.()},750);
+ setTimeout(()=>{
+  document.getElementById("memoryGame").style.display="none";
+  memoryActive=false;modalOpen=false;unlocked=true;
+  document.getElementById("inv").style.boxShadow="0 0 20px #d4c78655";
+  say("TẠCH. Hệ thống báo: tủ 10A đã được mở khóa. Đến tủ để lấy chìa khóa.");
+  renderer.domElement.requestPointerLock?.();
+ },750);
 }
 function memoryFail(reason){
  if(!memoryActive||document.getElementById("fail").style.display==="grid")return;
  clearInterval(memoryTimer);memoryTimer=null;memoryBusy=true;
- document.getElementById("failStats").textContent=`${reason}  •  Đã dùng ${memoryMoves}/25 lượt  •  Đã ghép ${memoryPairs}/8 cặp.`;
+ document.getElementById("failStats").textContent=`${reason} • Đã dùng ${memoryMoves}/25 lượt • Đã ghép ${memoryPairs}/8 cặp.`;
  document.getElementById("fail").style.display="grid";
+ document.exitPointerLock?.();
 }
-document.getElementById("retryMemory").onclick=()=>{document.getElementById("fail").style.display="none";startMemoryRound()};
-document.getElementById("giveupMemory").onclick=()=>{document.getElementById("fail").style.display="none";document.getElementById("memoryGame").style.display="none";startRest()};
-document.getElementById("memoryClose").onclick=()=>{if(memoryBusy)return;clearInterval(memoryTimer);memoryTimer=null;document.getElementById("memoryGame").style.display="none";memoryActive=false;modalOpen=false;renderer.domElement.requestPointerLock?.();say("Bạn đóng bài kiểm tra. Tủ vẫn chưa được mở khóa.");};
+document.getElementById("retryMemory").onclick=()=>{
+ document.getElementById("fail").style.display="none";
+ startMemoryRound();
+};
+document.getElementById("giveupMemory").onclick=()=>{
+ document.getElementById("fail").style.display="none";
+ document.getElementById("memoryGame").style.display="none";
+ memoryActive=false;
+ startRest();
+};
+document.getElementById("memoryClose").onclick=()=>{
+ if(memoryBusy)return;
+ clearInterval(memoryTimer);memoryTimer=null;
+ document.getElementById("memoryGame").style.display="none";
+ memoryActive=false;modalOpen=false;
+ renderer.domElement.requestPointerLock?.();
+ say("Bạn đóng bài kiểm tra. Tủ vẫn chưa được mở khóa.");
+};
 
 let restTimer=null;
 function startRest(){
- memoryActive=false;modalOpen=true;document.exitPointerLock?.();document.getElementById("rest").style.display="grid";let left=60;document.getElementById("restTimer").textContent="01:00";
- clearInterval(restTimer);restTimer=setInterval(()=>{left--;document.getElementById("restTimer").textContent=`00:${String(Math.max(0,left)).padStart(2,"0")}`;if(left<=0){clearInterval(restTimer);document.getElementById("rest").style.display="none";modalOpen=false;playing=false;showNextDoor()}},1000);
+ memoryActive=false;modalOpen=true;playing=false;document.exitPointerLock?.();
+ document.getElementById("rest").style.display="grid";
+ let left=30;document.getElementById("restTimer").textContent="00:30";
+ clearInterval(restTimer);
+ restTimer=setInterval(()=>{
+  left--;
+  document.getElementById("restTimer").textContent=`00:${String(Math.max(0,left)).padStart(2,"0")}`;
+  if(left<=0){
+   clearInterval(restTimer);restTimer=null;
+   document.getElementById("rest").style.display="none";
+   modalOpen=false;playing=false;
+   showNextDoor();
+  }
+ },1000);
 }
 function showNextDoor(){
  document.getElementById("ending").style.display="grid";
- document.querySelector("#ending h2").textContent="Cánh cửa khác đã mở.";
- document.querySelector("#ending .note").innerHTML='<span class="red">PROJECT 23:47 — PATH CHANGED</span><br>Observation status: <b>CONTINUING</b>';
- document.querySelector("#ending p:nth-of-type(1)").textContent="Sau một phút nghỉ ngơi, hệ thống chuyển bạn sang một cánh cửa khác.";
- document.querySelector("#ending p:nth-of-type(2)").textContent="Không cần quay lại trò chơi lật thẻ.";
- document.querySelector("#ending p:nth-of-type(3)").textContent="Một tiếng khóa điện tử bật lên ở hành lang.";
- document.querySelector("#ending h2:last-of-type").textContent="CLICK...";
+ const e=document.getElementById("ending");
+ e.querySelector(".eyebrow").textContent="PROJECT 23:47 / ROOM 01 ENDED";
+ e.querySelector("h2").textContent="Room 01 kết thúc.";
+ e.querySelector("p").textContent="Bạn đã nghỉ đủ 30 giây. Hệ thống tự động chuyển sang cánh cửa tiếp theo.";
+ e.querySelector(".note").innerHTML='<span class="red">PROJECT 23:47 — PATH CHANGED</span><br>Observation status: <b>CONTINUING</b>';
+ e.querySelectorAll("p")[1].textContent="Cánh cửa phía trước đã mở. Bạn có thể tiếp tục sang khu vực khác.";
+ e.querySelectorAll("p")[2].textContent="";
+ e.querySelector("h2:last-of-type").textContent="CLICK...";
 }
-
-document.getElementById("giveupBtn").onclick=()=>{if(!playing||memoryActive)return;document.exitPointerLock?.();document.getElementById("confirm").style.display="grid";modalOpen=true};
+document.getElementById("giveupBtn").onclick=()=>{
+ if(!playing||memoryActive)return;
+ document.exitPointerLock?.();
+ document.getElementById("confirm").style.display="grid";
+ modalOpen=true;
+};
 document.getElementById("quitYes").onclick=()=>{location.reload()};
-document.getElementById("quitRetry").onclick=()=>{document.getElementById("confirm").style.display="none";modalOpen=false;playing=false;inventory=[];unlocked=false;document.getElementById("items").textContent="TRỐNG";camera.position.set(9,1.65,10.2);yaw=0;pitch=0;document.getElementById("start").style.display="grid";say("Bạn có thể bắt đầu lại từ đầu.");};
+document.getElementById("quitRetry").onclick=()=>{
+ document.getElementById("confirm").style.display="none";
+ inventory=[];unlocked=false;document.getElementById("items").textContent="TRỐNG";
+ document.getElementById("start").style.display="grid";
+ playing=false;modalOpen=false;camera.position.set(9,1.65,10.2);yaw=0;pitch=0;
+ say("Bạn có thể bắt đầu lại từ đầu.");
+};
+document.getElementById("restartRoom").onclick=()=>location.reload();
 
 let t=0;const clock=new THREE.Clock();
-function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);t+=dt;if(playing&&!modalOpen&&!memoryActive)move(dt);updatePrompt();camera.rotation.order="YXZ";camera.rotation.y=yaw;camera.rotation.x=pitch;dust.rotation.y=t*.003;dust.position.y=Math.sin(t*.25)*.015;if(Math.random()<.012)fluorescents.forEach(l=>l.intensity=1.8+Math.random()*.9);else fluorescents.forEach(l=>l.intensity=2.55);redLight.intensity=Math.sin(t*.22)>.97?.12:0;renderer.render(scene,camera);}
+function animate(){
+ requestAnimationFrame(animate);
+ const dt=Math.min(clock.getDelta(),.05);t+=dt;
+ if(playing&&!modalOpen&&!memoryActive)move(dt);
+ updatePrompt();
+ camera.rotation.order="YXZ";camera.rotation.y=yaw;camera.rotation.x=pitch;
+ dust.rotation.y=t*.003;dust.position.y=Math.sin(t*.25)*.015;
+ if(Math.random()<.012)fluorescents.forEach(l=>l.intensity=1.8+Math.random()*.9);else fluorescents.forEach(l=>l.intensity=2.55);
+ redLight.intensity=Math.sin(t*.22)>.97?.12:0;
+ renderer.render(scene,camera);
+}
 animate();
 addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 })();
