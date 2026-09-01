@@ -33,6 +33,10 @@ p{line-height:1.65;color:#555}
 .btn{background:#d4c786;border:0;padding:13px 20px;font-weight:800;color:#202329;cursor:pointer;margin-top:9px}
 .controls{border-top:1px solid #ccc;margin-top:20px;padding-top:15px;color:#666;font-size:12px}
 #doc,#confirm,#fail,#rest,#ending{display:none}
+#fail{z-index:40}
+#confirm{z-index:45}
+#rest{z-index:50}
+#ending{z-index:55}
 .note{background:#e9e4d9;border-left:4px solid #d4c786;padding:14px;line-height:1.6;font-family:Georgia}
 .red{color:#8b4b4b;font-weight:bold}.green{color:#68756a;font-weight:bold}
 
@@ -118,7 +122,7 @@ p{line-height:1.65;color:#555}
 
 <div id="fail" class="overlay"><div class="panel" style="max-width:620px;text-align:center">
  <div class="eyebrow">MEMORY TEST / FAILED</div>
- <h2 id="failTitle">Bạn đã thất bại.</h2>
+ <h2 id="failTitle">Bạn đã thất bại. Bạn muốn thử lại chứ?</h2>
  <p style="font-size:18px;color:#333;margin-bottom:8px">Bạn có muốn chơi lại lần nữa?</p>
  <div class="note" style="text-align:left"><b id="failStats"></b><br>Hãy thử lại. Vị trí các thẻ sẽ được xáo trộn.</div>
  <div class="failChoices">
@@ -304,20 +308,32 @@ function collides(x,z){
    normalizes the input vector before applying it and ignores keyboard repeat
    side effects. */
 function move(dt){
- let forward=0,strafe=0;
- if(keys.KeyW)forward+=1;
- if(keys.KeyS)forward-=1;
- if(keys.KeyA)strafe-=1;
- if(keys.KeyD)strafe+=1;
+ // Di chuyển theo đúng hướng camera:
+ // W = phía trước màn hình / hướng chuột đang nhìn
+ // S = phía sau, ngược 180 độ so với W
+ // A = trái, D = phải.
+ // Chỉ dùng yaw để tránh pitch của chuột làm nhân vật bay/lệch hướng.
+ const forwardX=Math.sin(yaw);
+ const forwardZ=-Math.cos(yaw);
+ const rightX=Math.cos(yaw);
+ const rightZ=Math.sin(yaw);
 
- let x=Math.sin(yaw)*forward + Math.cos(yaw)*strafe;
- let z=-Math.cos(yaw)*forward + Math.sin(yaw)*strafe;
- const l=Math.hypot(x,z);
- if(!l)return;
- const sp=3.25*(keys.ShiftLeft?1.55:1)*dt;
- x=x/l*sp;z=z/l*sp;
- if(!collides(camera.position.x+x,camera.position.z))camera.position.x+=x;
- if(!collides(camera.position.x,camera.position.z+z))camera.position.z+=z;
+ let x=0,z=0;
+ if(keys.KeyW){x+=forwardX;z+=forwardZ;}
+ if(keys.KeyS){x-=forwardX;z-=forwardZ;}
+ if(keys.KeyA){x-=rightX;z-=rightZ;}
+ if(keys.KeyD){x+=rightX;z+=rightZ;}
+
+ const len=Math.hypot(x,z);
+ if(!len)return;
+ const speed=3.25*(keys.ShiftLeft||keys.ShiftRight?1.55:1)*dt;
+ x=(x/len)*speed;
+ z=(z/len)*speed;
+
+ const nextX=camera.position.x+x;
+ const nextZ=camera.position.z+z;
+ if(!collides(nextX,camera.position.z))camera.position.x=nextX;
+ if(!collides(camera.position.x,nextZ))camera.position.z=nextZ;
  camera.position.y=1.65+Math.sin(performance.now()*.008)*.012;
 }
 
@@ -344,8 +360,12 @@ addEventListener("keydown",e=>{
  if(e.code==="Escape")document.exitPointerLock?.();
 });
 addEventListener("keyup",e=>keys[e.code]=false);
+addEventListener("blur",()=>Object.keys(keys).forEach(k=>keys[k]=false));
 renderer.domElement.addEventListener("click",()=>{if(playing&&!modalOpen&&!memoryActive)renderer.domElement.requestPointerLock?.()});
-document.addEventListener("pointerlockchange",()=>locked=document.pointerLockElement===renderer.domElement);
+document.addEventListener("pointerlockchange",()=>{
+  locked=document.pointerLockElement===renderer.domElement;
+  if(!locked){Object.keys(keys).forEach(k=>keys[k]=false);}
+});
 document.addEventListener("mousemove",e=>{if(locked&&playing&&!modalOpen&&!memoryActive){yaw-=e.movementX*.0021;pitch=Math.max(-1.25,Math.min(1.25,pitch-e.movementY*.0017))}});
 
 function resetRoomState(){
@@ -451,13 +471,19 @@ function memoryWin(){
 }
 function memoryFail(reason){
  if(!memoryActive||document.getElementById("fail").style.display==="grid")return;
- clearInterval(memoryTimer);memoryTimer=null;memoryBusy=true;
+ clearInterval(memoryTimer);
+ memoryTimer=null;
+ memoryBusy=true;
+ document.exitPointerLock?.();
+ // Ẩn hẳn game để hộp thất bại nằm trên cùng và luôn nhìn thấy.
+ document.getElementById("memoryGame").style.display="none";
  document.getElementById("failStats").textContent=`${reason} • Đã dùng ${memoryMoves}/25 lượt • Đã ghép ${memoryPairs}/8 cặp.`;
  document.getElementById("fail").style.display="grid";
- document.exitPointerLock?.();
+  document.getElementById("fail").style.zIndex="40";
 }
 document.getElementById("retryMemory").onclick=()=>{
  document.getElementById("fail").style.display="none";
+ document.getElementById("memoryGame").style.display="flex";
  startMemoryRound();
 };
 document.getElementById("giveupMemory").onclick=()=>{
