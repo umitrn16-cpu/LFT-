@@ -6,14 +6,14 @@
 <title>PROJECT 23:47 — Room 01 Cinematic Memory</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1114;font-family:"Times New Roman",Times,serif;color:#fff}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0b1114;font-family:Arial,sans-serif;color:#fff}
 canvas{display:block}
 #hud{position:fixed;inset:0;pointer-events:none;z-index:5;color:#fff}
 #cross{position:absolute;left:50%;top:50%;width:12px;height:12px;transform:translate(-50%,-50%);opacity:.9}
 #cross:before,#cross:after{content:"";position:absolute;background:#fff;box-shadow:0 0 6px #000}
 #cross:before{width:12px;height:1px;top:5px}#cross:after{height:12px;width:1px;left:5px}
 #top{position:absolute;right:18px;top:16px;text-align:right;text-shadow:0 2px 10px #000}
-#time{font:700 24px "Times New Roman",Times,serif;letter-spacing:.12em}
+#time{font:700 24px Georgia;letter-spacing:.12em}
 #room{font-size:9px;letter-spacing:.24em;color:#e5e8e3;margin-top:4px}
 #objective{position:absolute;left:20px;top:20px;width:min(380px,calc(100% - 40px));background:rgba(24,31,31,.76);backdrop-filter:blur(6px);border-left:3px solid #d4c786;padding:11px 14px;font-size:12px;line-height:1.5}
 #prompt{position:absolute;left:50%;bottom:17%;transform:translateX(-50%);padding:11px 17px;background:rgba(24,31,31,.92);border:1px solid #d4c786aa;border-radius:6px;font-size:12px;opacity:0;transition:.05s;white-space:nowrap}
@@ -26,9 +26,9 @@ canvas{display:block}
 .overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,rgba(105,126,132,.38),rgba(16,22,24,.97))}
 .panel{width:min(680px,calc(100% - 34px));max-height:90vh;overflow:auto;background:#f5f1e8;color:#202329;padding:34px;box-shadow:0 30px 100px #000c}
 .eyebrow{font-size:10px;letter-spacing:.25em;font-weight:bold;color:#8b4b4b;margin-bottom:13px}
-h1{font:700 clamp(40px,8vw,72px)/.88 "Times New Roman",Times,serif;margin:0 0 16px;letter-spacing:-.05em}
+h1{font:700 clamp(40px,8vw,72px)/.88 Georgia;margin:0 0 16px;letter-spacing:-.05em}
 h1 span{color:#8b4b4b}
-h2{font:700 31px "Times New Roman",Times,serif;margin:0 0 13px}
+h2{font:700 31px Georgia;margin:0 0 13px}
 p{line-height:1.65;color:#555}
 .btn{background:#d4c786;border:0;padding:13px 20px;font-weight:800;color:#202329;cursor:pointer;margin-top:9px}
 .controls{border-top:1px solid #ccc;margin-top:20px;padding-top:15px;color:#666;font-size:12px}
@@ -37,18 +37,18 @@ p{line-height:1.65;color:#555}
 #confirm{z-index:45}
 #rest{z-index:50}
 #ending{z-index:55}
-.note{background:#e9e4d9;border-left:4px solid #d4c786;padding:14px;line-height:1.6;font-family:"Times New Roman",Times,serif}
+.note{background:#e9e4d9;border-left:4px solid #d4c786;padding:14px;line-height:1.6;font-family:Georgia}
 .red{color:#8b4b4b;font-weight:bold}.green{color:#68756a;font-weight:bold}
 
 #memoryGame{display:none;position:fixed;inset:0;z-index:25;background:radial-gradient(circle at 50% 35%,rgba(61,87,89,.94),rgba(7,12,14,.98) 72%);align-items:center;justify-content:center;padding:18px}
 .memoryShell{width:min(720px,96vw);max-height:94vh;overflow:auto;padding:18px 20px 20px;border:1px solid #ffffff20;border-radius:22px;background:linear-gradient(145deg,rgba(19,29,30,.97),rgba(7,12,14,.98));box-shadow:0 30px 100px #000d}
 .memoryHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:13px}
-.memoryTitle{font:700 clamp(23px,4vw,35px) "Times New Roman",Times,serif;letter-spacing:-.02em}
+.memoryTitle{font:700 clamp(23px,4vw,35px) Georgia;letter-spacing:-.02em}
 .memorySub{font-size:10px;color:#9eaaa5;letter-spacing:.13em;margin-top:4px}
 .memoryStats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .statBox{min-width:82px;text-align:center;padding:7px 9px;border:1px solid #ffffff18;background:#10191b;border-radius:10px}
 .statBox small{display:block;color:#7f8d89;font-size:9px;letter-spacing:.1em}
-.statBox b{display:block;font:700 20px "Times New Roman",Times,serif;color:#eee8d3;margin-top:2px}
+.statBox b{display:block;font:700 20px Georgia;color:#eee8d3;margin-top:2px}
 .timerDanger{color:#ff9da5!important}
 .memoryRule{font-size:11px;line-height:1.55;color:#aeb9b5;padding:10px 12px;border:1px solid #ffffff12;background:#0c1416;border-radius:10px;margin-bottom:13px}
 .memoryBoard{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;max-width:590px;margin:0 auto}
@@ -75,7 +75,7 @@ p{line-height:1.65;color:#555}
 #memoryFlash.fail{animation:flashFail .45s ease}
 @keyframes flashSuccess{0%{opacity:0;background:#a9d2b933}35%{opacity:1}100%{opacity:0}}
 @keyframes flashFail{0%{opacity:0;background:#c34f5d22}35%{opacity:1}100%{opacity:0}}
-#restTimer{font:700 64px "Times New Roman",Times,serif;text-align:center;color:#d4c786;margin:12px 0}
+#restTimer{font:700 64px Georgia;text-align:center;color:#d4c786;margin:12px 0}
 #failTitle{color:#8b4b4b}
 .failChoices{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 .failChoices .btn{min-width:150px}
@@ -102,6 +102,11 @@ p{line-height:1.65;color:#555}
  <h1>THE LAST<br><span>BELL</span></h1>
  <p>23:47. Lớp học 10A không có người. Một cơn mưa vừa dứt. Ánh đèn huỳnh quang chập chờn, đồng hồ treo tường đứng im.</p>
  <p>Bạn không nhớ mình đã vào đây bằng cách nào.</p>
+ <div style="margin:16px 0 6px">
+  <label for="participantIdInput" style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;color:#555;margin-bottom:7px">MÃ NGƯỜI THAM GIA</label>
+  <input id="participantIdInput" type="text" maxlength="50" autocomplete="off" placeholder="Ví dụ: P001" style="width:100%;padding:12px 13px;border:1px solid #c8c3b8;background:#fffdf7;color:#202329;font-size:14px;outline:none">
+  <div id="participantIdError" style="display:none;color:#8b4b4b;font-size:11px;margin-top:6px">Vui lòng nhập mã người tham gia trước khi bắt đầu.</div>
+ </div>
  <button class="btn" id="begin" type="button">VÀO LỚP HỌC</button>
  <div class="controls"><b>W</b> tiến về phía trước · <b>S</b> đi lùi · <b>A/D</b> sang trái/phải · <b>Chuột</b> nhìn · <b>E</b> tương tác · <b>Shift</b> chạy · <b>ESC</b> thả chuột</div>
  <div style="font-size:11px;color:#777;margin-top:10px">Game lật thẻ: 40 giây · tối đa 25 lượt · 8 cặp hình.</div>
@@ -143,7 +148,7 @@ p{line-height:1.65;color:#555}
  <div class="eyebrow">PROJECT 23:47 / ROOM 01 COMPLETE</div><h2>Cánh cửa đã mở.</h2>
  <p>Hành lang bên ngoài tối hơn căn phòng. Bạn bước qua ngưỡng cửa.</p>
  <div class="note"><span class="red">PROJECT 23:47 — SUBJECT ACTIVE</span><br>Observation status: <b>WATCHING</b></div>
- <p>Một chiếc loa cũ trên trần bật lên.</p><p style="font-family:"Times New Roman",Times,serif;font-size:25px;text-align:center">“Good evening, Subject 10A.”</p>
+ <p>Một chiếc loa cũ trên trần bật lên.</p><p style="font-family:Georgia;font-size:25px;text-align:center">“Good evening, Subject 10A.”</p>
  <p>Tiếng chuông vang lên.</p><h2 style="text-align:center">TING...</h2>
  <button class="btn" id="restartRoom" type="button">CHƠI LẠI ROOM 01</button>
 </div></div>
@@ -178,6 +183,24 @@ p{line-height:1.65;color:#555}
 <script>
 (() => {
 "use strict";
+
+/* GOOGLE SHEETS BEHAVIOR TRACKING */
+const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbyEpartpjrMoemhpA1ASq9meoiep-iUb2XdlAHcr8AOWmo2zLw0BvSalNuxXv2aR3Su/exec";
+let PARTICIPANT_ID = "";
+let SESSION_ID = "";
+let ROOM_START_TIME = null;
+let memoryAttempt = 0;
+
+function generateSessionId(){return "S"+Date.now()+"_"+Math.random().toString(36).slice(2,8);}
+function resetTrackingSession(){SESSION_ID=generateSessionId();ROOM_START_TIME=Date.now();}
+function logEvent(eventName,data={}){
+ if(!PARTICIPANT_ID||!SESSION_ID)return;
+ const payload={participant_id:PARTICIPANT_ID,session_id:SESSION_ID,room:"ROOM_01",event:eventName,timestamp:new Date().toISOString(),elapsed_seconds:ROOM_START_TIME?Math.round((Date.now()-ROOM_START_TIME)/1000):"",tracking_version:"ROOM1_V1",page_url:location.href,...data};
+ const body=JSON.stringify(payload);
+ try{if(navigator.sendBeacon){const sent=navigator.sendBeacon(GAS_ENDPOINT,new Blob([body],{type:"text/plain;charset=UTF-8"}));if(sent)return;}}catch(e){}
+ fetch(GAS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body}).catch(err=>console.warn("Tracking error:",err));
+}
+
 if(!window.THREE){document.getElementById("begin").disabled=true;return;}
 const THREE=window.THREE, scene=new THREE.Scene();
 scene.background=new THREE.Color(0x526c72);
@@ -276,8 +299,14 @@ addInteract(clue,"Chạm vào bàn giáo viên",()=>doc("GỢI Ý",`<div class="
 addInteract(face,"Kiểm tra đồng hồ 23:47",()=>say("23:47. Đồng hồ không chạy. Nhưng nó đang chỉ cho bạn một con số."));
 addInteract(scene.getObjectByName("board"),"Đọc bảng",()=>doc("BẢNG LỚP 10A",`<div class="note">DO NOT TRUST 23:47<br><br>THE ANSWER IS ELSEWHERE</div><p>Bảng không chứa câu trả lời. Dòng chữ có vẻ được viết rất gần đây.</p>`));
 addInteract(monitor,"Sử dụng máy tính — game lật thẻ",()=>openMemoryGame());
-addInteract(locker,"Mở tủ — lấy chìa khóa",()=>{if(unlocked){addItem("KEY 01");say("Bạn mở tủ. Một tiếng kim loại vang lên — bạn lấy được chìa khóa.");}else doc("TỦ 10A",`<p>Khóa điện tử nhỏ đang sáng đỏ.</p><div class="note">SECURITY LOCKED<br><br>Hệ thống yêu cầu hoàn thành bài kiểm tra trí nhớ trên máy tính.</div>`)});
-addInteract(door,"Mở cửa lớp học",()=>{if(unlocked&&inventory.includes("KEY 01"))finish();else say("Cửa khóa. Hãy hoàn thành bài lật thẻ, rồi đến tủ lấy chìa khóa.")});
+addInteract(locker,"Mở tủ — lấy chìa khóa",()=>{
+ if(unlocked){addItem("KEY 01");logEvent("KEY_OBTAINED",{item:"KEY 01"});say("Bạn mở tủ. Một tiếng kim loại vang lên — bạn lấy được chìa khóa.");}
+ else{logEvent("LOCKER_LOCKED_ATTEMPT",{unlocked:false});doc("TỦ 10A",`<p>Khóa điện tử nhỏ đang sáng đỏ.</p><div class="note">SECURITY LOCKED<br><br>Hệ thống yêu cầu hoàn thành bài kiểm tra trí nhớ trên máy tính.</div>`)}
+});
+addInteract(door,"Mở cửa lớp học",()=>{
+ if(unlocked&&inventory.includes("KEY 01")){logEvent("DOOR_OPEN_ATTEMPT",{unlocked:true,has_key:true});finish();}
+ else{logEvent("DOOR_LOCKED_ATTEMPT",{unlocked,has_key:inventory.includes("KEY 01")});say("Cửa khóa. Hãy hoàn thành bài lật thẻ, rồi đến tủ lấy chìa khóa.");}
+});
 
 document.getElementById("closeDoc").onclick=()=>{document.getElementById("doc").style.display="none";modalOpen=false;if(playing)renderer.domElement.requestPointerLock?.()};
 
@@ -301,26 +330,35 @@ function collides(x,z){
  return false;
 }
 
-/*
-   W = tiến thẳng theo đúng hướng camera đang nhìn.
-   S = lùi thẳng ngược lại hướng camera.
-   A/D = di chuyển ngang trái/phải theo hướng camera.
-   Chuột điều khiển hướng nhìn và vì vậy cũng xác định hướng W/S.
-*/
+/* FIXED MOVEMENT:
+   W/S now always move forward/backward relative to camera yaw.
+   A/D strafe perpendicular to the facing direction.
+   The previous implementation already used this convention, but this version
+   normalizes the input vector before applying it and ignores keyboard repeat
+   side effects. */
 function move(dt){
- const speed=3.25*(keys.ShiftLeft||keys.ShiftRight?1.55:1)*dt;
- // W/S bám theo đúng hướng camera đang nhìn. Chuột xoay camera => hướng tiến cũng xoay theo.
- // Camera của Three.js nhìn theo trục -Z local: forward = (-sin(yaw), 0, -cos(yaw)).
- const forwardX=-Math.sin(yaw), forwardZ=-Math.cos(yaw);
- const rightX=Math.cos(yaw), rightZ=-Math.sin(yaw);
+ // Di chuyển theo đúng hướng camera:
+ // W = phía trước màn hình / hướng chuột đang nhìn
+ // S = phía sau, ngược 180 độ so với W
+ // A = trái, D = phải.
+ // Chỉ dùng yaw để tránh pitch của chuột làm nhân vật bay/lệch hướng.
+ const forwardX=Math.sin(yaw);
+ const forwardZ=-Math.cos(yaw);
+ const rightX=Math.cos(yaw);
+ const rightZ=Math.sin(yaw);
+
  let x=0,z=0;
- if(keys.KeyW){x+=forwardX; z+=forwardZ;}
- if(keys.KeyS){x-=forwardX; z-=forwardZ;}
- if(keys.KeyA){x-=rightX; z-=rightZ;}
- if(keys.KeyD){x+=rightX; z+=rightZ;}
+ if(keys.KeyW){x+=forwardX;z+=forwardZ;}
+ if(keys.KeyS){x-=forwardX;z-=forwardZ;}
+ if(keys.KeyA){x-=rightX;z-=rightZ;}
+ if(keys.KeyD){x+=rightX;z+=rightZ;}
+
  const len=Math.hypot(x,z);
  if(!len)return;
- x=(x/len)*speed; z=(z/len)*speed;
+ const speed=3.25*(keys.ShiftLeft||keys.ShiftRight?1.55:1)*dt;
+ x=(x/len)*speed;
+ z=(z/len)*speed;
+
  const nextX=camera.position.x+x;
  const nextZ=camera.position.z+z;
  if(!collides(nextX,camera.position.z))camera.position.x=nextX;
@@ -376,6 +414,7 @@ function resetRoomState(){
 }
 
 function finish(){
+ logEvent("ROOM_COMPLETE",{moves:memoryMoves,pairs:memoryPairs});
  playing=false;memoryActive=false;modalOpen=false;
  document.exitPointerLock?.();
  door.rotation.y=-Math.PI*.48;
@@ -385,12 +424,18 @@ function finish(){
 }
 
 document.getElementById("begin").onclick=()=>{
+ const input=document.getElementById("participantIdInput"),error=document.getElementById("participantIdError"),id=(input.value||"").trim();
+ if(!id){error.style.display="block";input.focus();return;}
+ error.style.display="none";PARTICIPANT_ID=id;resetTrackingSession();memoryAttempt=0;
  document.getElementById("start").style.display="none";
  playing=true;camera.position.set(9,1.65,10.2);yaw=0;pitch=0;
+ logEvent("ROOM_START");
  say("23:47. Lớp học 10A. Tìm cách ra khỏi đây.");
  beep(220,.1);
  setTimeout(()=>renderer.domElement.requestPointerLock?.(),80);
 };
+document.getElementById("participantIdInput").addEventListener("input",()=>document.getElementById("participantIdError").style.display="none");
+document.getElementById("participantIdInput").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("begin").click();});
 
 let memoryTimer=null,memoryDeadline=0,memoryMoves=0,memoryPairs=0,memoryFirst=null,memorySecond=null,memoryBusy=false;
 const CARD_IMAGES=["IMG_5566.jpeg","IMG_5567.jpeg","IMG_5568.jpeg","IMG_5569.jpeg","IMG_5570.jpeg","IMG_5571.jpeg","IMG_5572.jpeg","IMG_5573.jpeg"];
@@ -400,10 +445,12 @@ function openMemoryGame(){
  if(memoryActive)return;
  memoryActive=true;modalOpen=true;document.exitPointerLock?.();
  document.getElementById("memoryGame").style.display="flex";
+ logEvent("MEMORY_OPEN",{attempt:memoryAttempt+1});
  startMemoryRound();
 }
 function startMemoryRound(){
  clearInterval(memoryTimer);
+ memoryAttempt++;
  memoryMoves=0;memoryPairs=0;memoryFirst=null;memorySecond=null;memoryBusy=false;
  document.getElementById("memMoves").textContent="0/25";
  document.getElementById("memPairs").textContent="0/8";
@@ -431,18 +478,23 @@ function flipCard(card){
  if(memoryBusy||card.classList.contains("flipped")||card.classList.contains("matched")||memoryMoves>=25)return;
  if(Date.now()>=memoryDeadline){memoryFail("Hết 40 giây.");return;}
  card.classList.add("flipped");cardSound("flip");
+ logEvent("MEMORY_CARD_FLIP",{attempt:memoryAttempt,card_index:Number(card.dataset.index),card_id:card.dataset.id,move:memoryMoves+1});
  if(!memoryFirst){memoryFirst=card;return}
  memorySecond=card;memoryMoves++;document.getElementById("memMoves").textContent=memoryMoves+"/25";memoryBusy=true;
  if(memoryFirst.dataset.id===memorySecond.dataset.id){
    setTimeout(()=>{
     memoryFirst.classList.add("matched");memorySecond.classList.add("matched");
+    const pairsBefore=memoryPairs;
     memoryPairs++;document.getElementById("memPairs").textContent=memoryPairs+"/8";
+    logEvent("MEMORY_MATCH",{attempt:memoryAttempt,move:memoryMoves,card_id:memoryFirst.dataset.id,pairs_before:pairsBefore,pairs_after:memoryPairs});
     flash("success");cardSound("match");
     memoryFirst=null;memorySecond=null;memoryBusy=false;
     if(memoryPairs===8)memoryWin();
    },180);
  }else{
-   const a=memoryFirst,b=memorySecond;a.classList.add("wrong");b.classList.add("wrong");flash("fail");cardSound("wrong");
+   const a=memoryFirst,b=memorySecond;a.classList.add("wrong");b.classList.add("wrong");
+   logEvent("MEMORY_WRONG_MATCH",{attempt:memoryAttempt,move:memoryMoves,card1:a.dataset.id,card2:b.dataset.id,pairs:memoryPairs});
+   flash("fail");cardSound("wrong");
    setTimeout(()=>{
     a.classList.remove("flipped","wrong");b.classList.remove("flipped","wrong");
     memoryFirst=null;memorySecond=null;memoryBusy=false;
@@ -452,13 +504,13 @@ function flipCard(card){
 }
 function memoryWin(){
  clearInterval(memoryTimer);memoryTimer=null;memoryBusy=true;cardSound("win");
- setTimeout(()=>{document.getElementById("memoryGame").style.display="none";memoryActive=false;modalOpen=false;unlocked=true;
-   const m=document.getElementById("msg");m.textContent="Cửa tủ mở, có lẽ chìa khóa đang ở trong!";m.style.opacity=1;m.style.transition="opacity .35s ease";
-   clearTimeout(window.__successMsgTimer);window.__successMsgTimer=setTimeout(()=>{m.style.opacity=0},9000);
-   // Âm thanh khóa/tủ mở: dùng Web Audio để không phụ thuộc file âm thanh ngoài.
-   beep(180,.09,"square",.045);setTimeout(()=>beep(330,.11,"triangle",.035),85);setTimeout(()=>beep(520,.16,"sine",.028),190);
-   document.getElementById("inv").style.boxShadow="0 0 20px #d4c78655";
-   renderer.domElement.requestPointerLock?.();
+ logEvent("MEMORY_COMPLETE",{attempt:memoryAttempt,moves:memoryMoves,pairs:memoryPairs,elapsed_ms:Math.max(0,Date.now()-(memoryDeadline-40000))});
+ setTimeout(()=>{
+  document.getElementById("memoryGame").style.display="none";
+  memoryActive=false;modalOpen=false;unlocked=true;
+  document.getElementById("inv").style.boxShadow="0 0 20px #d4c78655";
+  say("TẠCH. Hệ thống báo: tủ 10A đã được mở khóa. Đến tủ để lấy chìa khóa.");
+  renderer.domElement.requestPointerLock?.();
  },750);
 }
 function memoryFail(reason){
@@ -470,15 +522,18 @@ function memoryFail(reason){
  // Ẩn hẳn game để hộp thất bại nằm trên cùng và luôn nhìn thấy.
  document.getElementById("memoryGame").style.display="none";
  document.getElementById("failStats").textContent=`${reason} • Đã dùng ${memoryMoves}/25 lượt • Đã ghép ${memoryPairs}/8 cặp.`;
+ logEvent("MEMORY_FAIL",{attempt:memoryAttempt,reason,moves:memoryMoves,pairs:memoryPairs,time_remaining:Math.max(0,Math.ceil((memoryDeadline-Date.now())/1000))});
  document.getElementById("fail").style.display="grid";
   document.getElementById("fail").style.zIndex="40";
 }
 document.getElementById("retryMemory").onclick=()=>{
+ logEvent("MEMORY_RETRY",{attempt:memoryAttempt,moves_used:memoryMoves,pairs_completed:memoryPairs});
  document.getElementById("fail").style.display="none";
  document.getElementById("memoryGame").style.display="flex";
  startMemoryRound();
 };
 document.getElementById("giveupMemory").onclick=()=>{
+ logEvent("MEMORY_GIVE_UP",{attempt:memoryAttempt,moves_used:memoryMoves,pairs_completed:memoryPairs});
  document.getElementById("fail").style.display="none";
  document.getElementById("memoryGame").style.display="none";
  memoryActive=false;
@@ -490,11 +545,13 @@ document.getElementById("memoryClose").onclick=()=>{
  document.getElementById("memoryGame").style.display="none";
  memoryActive=false;modalOpen=false;
  renderer.domElement.requestPointerLock?.();
+ logEvent("MEMORY_CLOSE",{attempt:memoryAttempt,moves:memoryMoves,pairs:memoryPairs});
  say("Bạn đóng bài kiểm tra. Tủ vẫn chưa được mở khóa.");
 };
 
 let restTimer=null;
 function startRest(){
+ logEvent("REST_START",{duration_seconds:30});
  memoryActive=false;modalOpen=true;playing=false;document.exitPointerLock?.();
  document.getElementById("rest").style.display="grid";
  let left=30;document.getElementById("restTimer").textContent="00:30";
@@ -506,6 +563,7 @@ function startRest(){
    clearInterval(restTimer);restTimer=null;
    document.getElementById("rest").style.display="none";
    modalOpen=false;playing=false;
+   logEvent("ROOM_ENDED_AFTER_GIVEUP",{reason:"memory_give_up_and_rest_completed"});
    showNextDoor();
   }
  },1000);
@@ -523,19 +581,27 @@ function showNextDoor(){
 }
 document.getElementById("giveupBtn").onclick=()=>{
  if(!playing||memoryActive)return;
+ logEvent("GIVE_UP_CLICK");
  document.exitPointerLock?.();
  document.getElementById("confirm").style.display="grid";
  modalOpen=true;
 };
-document.getElementById("quitYes").onclick=()=>{location.reload()};
+document.getElementById("quitYes").onclick=()=>{
+ logEvent("GIVE_UP_CONFIRM",{choice:"yes"});
+ location.reload();
+};
 document.getElementById("quitRetry").onclick=()=>{
+ logEvent("GIVE_UP_CANCEL_RETRY",{choice:"retry"});
  document.getElementById("confirm").style.display="none";
+ clearInterval(memoryTimer);memoryTimer=null;clearInterval(restTimer);restTimer=null;
+ memoryActive=false;memoryBusy=false;
  inventory=[];unlocked=false;document.getElementById("items").textContent="TRỐNG";
  document.getElementById("start").style.display="grid";
  playing=false;modalOpen=false;camera.position.set(9,1.65,10.2);yaw=0;pitch=0;
+ resetTrackingSession();
  say("Bạn có thể bắt đầu lại từ đầu.");
 };
-document.getElementById("restartRoom").onclick=()=>location.reload();
+document.getElementById("restartRoom").onclick=()=>{logEvent("ROOM_RESTART_CLICK");location.reload();};
 
 let t=0;const clock=new THREE.Clock();
 function animate(){
