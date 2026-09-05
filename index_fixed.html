@@ -11,391 +11,3799 @@ canvas{display:block}
 #hud{position:fixed;inset:0;pointer-events:none;z-index:5;color:#fff}
 #cross{position:absolute;left:50%;top:50%;width:12px;height:12px;transform:translate(-50%,-50%);opacity:.9}
 #cross:before,#cross:after{content:"";position:absolute;background:#fff;box-shadow:0 0 6px #000}
-#cross:before{width:12px;height:1px;top:5px}#cross:after{height:12px;width:1px;left:5px}
+#cross:before{width:12px;height:1px;top:5px}
+#cross:after{height:12px;width:1px;left:5px}
 #top{position:absolute;right:18px;top:16px;text-align:right;text-shadow:0 2px 10px #000}
-#time{font:700 24px Georgia;letter-spacing:.12em}#room{font-size:9px;letter-spacing:.24em;color:#e5e8e3;margin-top:4px}
+#time{font:700 24px Georgia;letter-spacing:.12em}
+#room{font-size:9px;letter-spacing:.24em;color:#e5e8e3;margin-top:4px}
 #objective{position:absolute;left:20px;top:20px;width:min(420px,calc(100% - 40px));background:rgba(24,31,31,.76);backdrop-filter:blur(6px);border-left:3px solid #d4c786;padding:11px 14px;font-size:12px;line-height:1.5}
 #prompt{position:absolute;left:50%;bottom:17%;transform:translateX(-50%);padding:11px 17px;background:rgba(24,31,31,.92);border:1px solid #d4c786aa;border-radius:6px;font-size:12px;opacity:0;transition:.05s;white-space:nowrap}
 #msg{position:absolute;left:20px;bottom:20px;max-width:520px;background:rgba(24,31,31,.88);border-left:3px solid #d4c786;padding:10px 14px;font-size:12px;opacity:0;transition:.25s}
-#inv{position:absolute;right:20px;bottom:20px;background:rgba(24,31,31,.76);padding:9px 12px;font-size:10px;letter-spacing:.08em}#inv b{color:#d4c786}
+#inv{position:absolute;right:20px;bottom:20px;background:rgba(24,31,31,.76);padding:9px 12px;font-size:10px;letter-spacing:.08em}
+#inv b{color:#d4c786}
 #giveupBtn{pointer-events:auto;position:absolute;right:18px;top:66px;padding:9px 13px;border:1px solid #a65b64;background:rgba(52,18,24,.88);color:#ffd9dd;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 5px 20px #0005}
 #giveupBtn:hover{background:#5a2029}
 .overlay{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,rgba(105,126,132,.38),rgba(16,22,24,.97))}
 .panel{width:min(680px,calc(100% - 34px));max-height:90vh;overflow:auto;background:#f5f1e8;color:#202329;padding:34px;box-shadow:0 30px 100px #000c}
 .eyebrow{font-size:10px;letter-spacing:.25em;font-weight:bold;color:#8b4b4b;margin-bottom:13px}
 h1{font:700 clamp(40px,8vw,72px)/.88 Georgia;margin:0 0 16px;letter-spacing:-.05em}
-h1 span{color:#8b4b4b}h2{font:700 31px Georgia;margin:0 0 13px}p{line-height:1.65;color:#555}
+h1 span{color:#8b4b4b}
+h2{font:700 31px Georgia;margin:0 0 13px}
+p{line-height:1.65;color:#555}
 .btn{background:#d4c786;border:0;padding:13px 20px;font-weight:800;color:#202329;cursor:pointer;margin-top:9px}
 .controls{border-top:1px solid #ccc;margin-top:20px;padding-top:15px;color:#666;font-size:12px}
 #doc,#confirm,#fail,#rest,#ending,#challengeIntro,#challengeFail{display:none}
-#fail{z-index:40}#confirm{z-index:45}#rest{z-index:50}#ending{z-index:55}
+#fail{z-index:40}
+#confirm{z-index:45}
+#rest{z-index:50}
+#ending{z-index:55}
 .note{background:#e9e4d9;border-left:4px solid #d4c786;padding:14px;line-height:1.6;font-family:Georgia}
-.red{color:#8b4b4b;font-weight:bold}.green{color:#68756a;font-weight:bold}
-#memoryGame{display:none;position:fixed;inset:0;z-index:25;background:radial-gradient(circle at 50% 35%,rgba(61,87,89,.94),rgba(7,12,14,.98) 72%);align-items:center;justify-content:center;padding:18px}
-.memoryShell{width:min(720px,96vw);max-height:94vh;overflow:auto;padding:18px 20px 20px;border:1px solid #ffffff20;border-radius:22px;background:linear-gradient(145deg,rgba(19,29,30,.97),rgba(7,12,14,.98));box-shadow:0 30px 100px #000d}
-.memoryHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:13px}.memoryTitle{font:700 clamp(23px,4vw,35px) Georgia}.memorySub{font-size:10px;color:#9eaaa5;letter-spacing:.13em;margin-top:4px}
-.memoryStats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.statBox{min-width:82px;text-align:center;padding:7px 9px;border:1px solid #ffffff18;background:#10191b;border-radius:10px}.statBox small{display:block;color:#7f8d89;font-size:9px;letter-spacing:.1em}.statBox b{display:block;font:700 20px Georgia;color:#eee8d3;margin-top:2px}.timerDanger{color:#ff9da5!important}
+.red{color:#8b4b4b;font-weight:bold}
+.green{color:#68756a;font-weight:bold}
+
+#memoryGame{
+display:none;
+position:fixed;
+inset:0;
+z-index:25;
+background:radial-gradient(circle at 50% 35%,rgba(61,87,89,.94),rgba(7,12,14,.98) 72%);
+align-items:center;
+justify-content:center;
+padding:18px
+}
+.memoryShell{
+width:min(720px,96vw);
+max-height:94vh;
+overflow:auto;
+padding:18px 20px 20px;
+border:1px solid #ffffff20;
+border-radius:22px;
+background:linear-gradient(145deg,rgba(19,29,30,.97),rgba(7,12,14,.98));
+box-shadow:0 30px 100px #000d
+}
+.memoryHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:13px}
+.memoryTitle{font:700 clamp(23px,4vw,35px) Georgia}
+.memorySub{font-size:10px;color:#9eaaa5;letter-spacing:.13em;margin-top:4px}
+.memoryStats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.statBox{min-width:82px;text-align:center;padding:7px 9px;border:1px solid #ffffff18;background:#10191b;border-radius:10px}
+.statBox small{display:block;color:#7f8d89;font-size:9px;letter-spacing:.1em}
+.statBox b{display:block;font:700 20px Georgia;color:#eee8d3;margin-top:2px}
+.timerDanger{color:#ff9da5!important}
 .memoryRule{font-size:11px;line-height:1.55;color:#aeb9b5;padding:10px 12px;border:1px solid #ffffff12;background:#0c1416;border-radius:10px;margin-bottom:13px}
-.memoryBoard{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;max-width:590px;margin:0 auto}.memoryCard{position:relative;aspect-ratio:1;border:0;background:transparent;padding:0;cursor:pointer;perspective:900px;min-width:0}.memoryCard[disabled]{cursor:default}
-.cardInner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .46s cubic-bezier(.2,.7,.2,1)}.memoryCard.flipped .cardInner,.memoryCard.matched .cardInner{transform:rotateY(180deg)}
-.cardFace{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;overflow:hidden}.cardBack{background:radial-gradient(circle at 30% 25%,#38484a 0 2px,transparent 3px),radial-gradient(circle at 70% 75%,#1e292b 0 2px,transparent 3px),linear-gradient(145deg,#1a2527,#070b0c);border:1px solid #74817e55;box-shadow:inset 0 0 0 2px #0a0f10,inset 0 0 22px #0008,0 6px 18px #0009}.cardBack:before{content:"";position:absolute;inset:7px;border:1px solid #d4c78638;border-radius:8px}.cardBack:after{content:"✦";position:absolute;left:50%;top:50%;transform:translate(-50%,-54%);font:24px Georgia;color:#d4c78688}
-.cardFront{transform:rotateY(180deg);background:#e9e4d8;border:2px solid #d4c786;box-shadow:0 0 0 1px #ffffff20,0 7px 20px #0009}.cardFront img{width:100%;height:100%;display:block;object-fit:cover}
-.memoryCard:hover:not([disabled]) .cardBack{border-color:#d4c786aa}.memoryCard.matched .cardFront{border-color:#92b99d;box-shadow:0 0 20px #92b99d45,0 7px 20px #0009}
-.memoryCard.wrong{animation:cardShake .42s ease}.memoryCard.wrong .cardFront{border-color:#d76c76}@keyframes cardShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
-.memoryFooter{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:12px;font-size:10px;color:#7e8a87}.memoryClose{border:1px solid #ffffff20;background:#121c1e;color:#cbd2cf;border-radius:8px;padding:8px 11px;cursor:pointer}
-#memoryFlash{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:28}.memoryFlashSuccess{animation:flashSuccess .45s ease}.memoryFlashFail{animation:flashFail .45s ease}
-@keyframes flashSuccess{0%{opacity:0;background:#a9d2b933}35%{opacity:1}100%{opacity:0}}@keyframes flashFail{0%{opacity:0;background:#c34f5d22}35%{opacity:1}100%{opacity:0}}
-#restTimer{font:700 64px Georgia;text-align:center;color:#d4c786;margin:12px 0}.failChoices{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}.failChoices .btn{min-width:150px}
-#challengeIntro{z-index:60}.challengeText{font-size:19px;line-height:1.6;color:#303638}.challengeText b{color:#8b4b4b}
+.memoryBoard{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;max-width:590px;margin:0 auto}
+.memoryCard{position:relative;aspect-ratio:1;border:0;background:transparent;padding:0;cursor:pointer;perspective:900px;min-width:0}
+.memoryCard[disabled]{cursor:default}
+.cardInner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .46s cubic-bezier(.2,.7,.2,1)}
+.memoryCard.flipped .cardInner,.memoryCard.matched .cardInner{transform:rotateY(180deg)}
+.cardFace{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;overflow:hidden}
+.cardBack{
+background:radial-gradient(circle at 30% 25%,#38484a 0 2px,transparent 3px),
+radial-gradient(circle at 70% 75%,#1e292b 0 2px,transparent 3px),
+linear-gradient(145deg,#1a2527,#070b0c);
+border:1px solid #74817e55;
+box-shadow:inset 0 0 0 2px #0a0f10,inset 0 0 22px #0008,0 6px 18px #0009
+}
+.cardBack:before{content:"";position:absolute;inset:7px;border:1px solid #d4c78638;border-radius:8px}
+.cardBack:after{content:"✦";position:absolute;left:50%;top:50%;transform:translate(-50%,-54%);font:24px Georgia;color:#d4c78688}
+.cardFront{transform:rotateY(180deg);background:#e9e4d8;border:2px solid #d4c786;box-shadow:0 0 0 1px #ffffff20,0 7px 20px #0009}
+.cardFront img{width:100%;height:100%;display:block;object-fit:cover}
+.memoryCard:hover:not([disabled]) .cardBack{border-color:#d4c786aa}
+.memoryCard.matched .cardFront{border-color:#92b99d;box-shadow:0 0 20px #92b99d45,0 7px 20px #0009}
+.memoryCard.wrong{animation:cardShake .42s ease}
+.memoryCard.wrong .cardFront{border-color:#d76c76}
+@keyframes cardShake{
+0%,100%{transform:translateX(0)}
+20%{transform:translateX(-7px)}
+40%{transform:translateX(6px)}
+60%{transform:translateX(-5px)}
+80%{transform:translateX(4px)}
+}
+.memoryFooter{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:12px;font-size:10px;color:#7e8a87}
+.memoryClose{border:1px solid #ffffff20;background:#121c1e;color:#cbd2cf;border-radius:8px;padding:8px 11px;cursor:pointer}
+#memoryFlash{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:28}
+.memoryFlashSuccess{animation:flashSuccess .45s ease}
+.memoryFlashFail{animation:flashFail .45s ease}
+@keyframes flashSuccess{0%{opacity:0;background:#a9d2b933}35%{opacity:1}100%{opacity:0}}
+@keyframes flashFail{0%{opacity:0;background:#c34f5d22}35%{opacity:1}100%{opacity:0}}
+#restTimer{font:700 64px Georgia;text-align:center;color:#d4c786;margin:12px 0}
+.failChoices{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.failChoices .btn{min-width:150px}
+#challengeIntro{z-index:60}
+.challengeText{font-size:19px;line-height:1.6;color:#303638}
+.challengeText b{color:#8b4b4b}
 #numberChallenge{display:none;position:fixed;inset:0;z-index:70;background:rgba(7,11,13,.93)}
 #numberHud{position:absolute;left:50%;top:20px;transform:translateX(-50%);text-align:center;pointer-events:none;text-shadow:0 3px 16px #000}
-#numberHud .big{font:700 24px Georgia;color:#f4efdc}#numberHud .small{font-size:11px;color:#b9c0bd;margin-top:5px}
+#numberHud .big{font:700 24px Georgia;color:#f4efdc}
+#numberHud .small{font-size:11px;color:#b9c0bd;margin-top:5px}
 #numberField{position:absolute;inset:70px 25px 80px 25px}
-.numBtn{position:absolute;width:62px;height:62px;border-radius:50%;border:2px solid #e9dfb4;background:rgba(22,31,31,.95);color:#fff;font:700 22px Georgia;cursor:pointer;box-shadow:0 5px 18px #000b,0 0 12px #d4c78633;transition:.12s}
-.numBtn:hover{transform:scale(1.1);background:#4b4d3a}.numBtn.correct{background:#667d69;border-color:#b5d2b9}.numBtn.wrong{background:#743d45;border-color:#ffb2b8}
-#challengeQuit{position:absolute;left:18px;bottom:18px;z-index:72;pointer-events:auto;padding:10px 14px;border-radius:7px;border:1px solid #a65b64;background:#35151b;color:#ffd9dd;font-weight:700;cursor:pointer}
-#challengeProgress{position:absolute;right:18px;bottom:20px;color:#d4c786;font:700 14px Georgia;text-shadow:0 2px 10px #000}
-#room2Notice{position:fixed;inset:0;z-index:58;display:none;place-items:center;background:rgba(0,0,0,.72);pointer-events:none}
-#room2Notice div{font:700 clamp(28px,5vw,58px) Georgia;text-align:center;max-width:1000px;padding:30px;text-shadow:0 4px 20px #000}
-#unlockBanner{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:80;display:none;background:rgba(9,14,15,.95);border:1px solid #d4c78666;padding:30px 38px;text-align:center;box-shadow:0 25px 90px #000}
+.numBtn{
+position:absolute;
+width:62px;
+height:62px;
+border-radius:50%;
+border:2px solid #e9dfb4;
+background:rgba(22,31,31,.95);
+color:#fff;
+font:700 22px Georgia;
+cursor:pointer;
+box-shadow:0 5px 18px #000b,0 0 12px #d4c78633;
+transition:.12s
+}
+.numBtn:hover{transform:scale(1.1);background:#4b4d3a}
+.numBtn.correct{background:#667d69;border-color:#b5d2b9}
+.numBtn.wrong{background:#743d45;border-color:#ffb2b8}
+#challengeQuit{
+position:absolute;
+left:18px;
+bottom:18px;
+z-index:72;
+pointer-events:auto;
+padding:10px 14px;
+border-radius:7px;
+border:1px solid #a65b64;
+background:#35151b;
+color:#ffd9dd;
+font-weight:700;
+cursor:pointer
+}
+#challengeProgress{
+position:absolute;
+right:18px;
+bottom:20px;
+color:#d4c786;
+font:700 14px Georgia;
+text-shadow:0 2px 10px #000
+}
+#room2Notice{
+position:fixed;
+inset:0;
+z-index:58;
+display:none;
+place-items:center;
+background:rgba(0,0,0,.72);
+pointer-events:none
+}
+#room2Notice div{
+font:700 clamp(28px,5vw,58px) Georgia;
+text-align:center;
+max-width:1000px;
+padding:30px;
+text-shadow:0 4px 20px #000
+}
+#unlockBanner{
+position:fixed;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+z-index:80;
+display:none;
+background:rgba(9,14,15,.95);
+border:1px solid #d4c78666;
+padding:30px 38px;
+text-align:center;
+box-shadow:0 25px 90px #000
+}
 #unlockBanner h2{color:#d4c786;margin-bottom:8px}
-#circleProgress{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);z-index:10;display:none;width:260px;height:8px;background:#ffffff22;border-radius:8px;overflow:hidden}
+#circleProgress{
+position:fixed;
+left:50%;
+bottom:70px;
+transform:translateX(-50%);
+z-index:10;
+display:none;
+width:260px;
+height:8px;
+background:#ffffff22;
+border-radius:8px;
+overflow:hidden
+}
 #circleProgress i{display:block;width:0;height:100%;background:#d4c786}
-@media(max-width:600px){.panel{padding:24px 20px}.numBtn{width:52px;height:52px;font-size:19px}#numberField{inset:80px 8px 75px}.memoryShell{padding:13px}}
+@media(max-width:600px){
+.panel{padding:24px 20px}
+.numBtn{width:52px;height:52px;font-size:19px}
+#numberField{inset:80px 8px 75px}
+.memoryShell{padding:13px}
+}
 </style>
 </head>
+
 <body>
+
 <div id="hud">
 <div id="cross"></div>
-<div id="top"><div id="time">23:47</div><div id="room">ASTERIA SCHOOL · ROOM 10A</div></div>
-<button id="giveupBtn" type="button">BỎ CUỘC</button>
-<div id="objective">Mục tiêu: <b>Tìm cách mở cửa lớp học.</b><br><span style="opacity:.65">Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.</span></div>
-<div id="prompt"></div><div id="msg"></div><div id="inv">TÚI: <b id="items">TRỐNG</b></div>
+
+<div id="top">
+<div id="time">23:47</div>
+<div id="room">ASTERIA SCHOOL · ROOM 10A</div>
 </div>
 
-<div id="start" class="overlay"><div class="panel">
+<button id="giveupBtn" type="button">BỎ CUỘC</button>
+
+<div id="objective">
+Mục tiêu: <b>Tìm cách mở cửa lớp học.</b><br>
+<span style="opacity:.65">Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.</span>
+</div>
+
+<div id="prompt"></div>
+<div id="msg"></div>
+
+<div id="inv">
+TÚI: <b id="items">TRỐNG</b>
+</div>
+</div>
+
+<div id="start" class="overlay">
+<div class="panel">
+
 <div class="eyebrow">ASTERIA SCHOOL / ROOM 01 · CINEMATIC MEMORY</div>
+
 <h1>THE LAST<br><span>BELL</span></h1>
-<p>23:47. Lớp học 10A không có người. Một cơn mưa vừa dứt. Ánh đèn huỳnh quang chập chờn, đồng hồ treo tường đứng im.</p>
+
+<p>
+23:47. Lớp học 10A không có người. Một cơn mưa vừa dứt.
+Ánh đèn huỳnh quang chập chờn, đồng hồ treo tường đứng im.
+</p>
+
 <p>Bạn không nhớ mình đã vào đây bằng cách nào.</p>
-<div style="margin:16px 0 6px"><label for="participantIdInput" style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;color:#555;margin-bottom:7px">MÃ NGƯỜI THAM GIA</label>
-<input id="participantIdInput" type="text" maxlength="50" autocomplete="off" placeholder="Ví dụ: P001" style="width:100%;padding:12px 13px;border:1px solid #c8c3b8;background:#fffdf7;color:#202329;font-size:14px;outline:none">
-<div id="participantIdError" style="display:none;color:#8b4b4b;font-size:11px;margin-top:6px">Vui lòng nhập mã người tham gia trước khi bắt đầu.</div></div>
+
+<div style="margin:16px 0 6px">
+
+<label for="participantIdInput"
+style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;color:#555;margin-bottom:7px">
+MÃ NGƯỜI THAM GIA
+</label>
+
+<input id="participantIdInput"
+type="text"
+maxlength="50"
+autocomplete="off"
+placeholder="Ví dụ: P001"
+style="width:100%;padding:12px 13px;border:1px solid #c8c3b8;background:#fffdf7;color:#202329;font-size:14px;outline:none">
+
+<div id="participantIdError"
+style="display:none;color:#8b4b4b;font-size:11px;margin-top:6px">
+Vui lòng nhập mã người tham gia trước khi bắt đầu.
+</div>
+
+</div>
+
 <button class="btn" id="begin" type="button">VÀO LỚP HỌC</button>
-<div class="controls"><b>W</b> tiến về phía trước · <b>S</b> đi lùi · <b>A/D</b> sang trái/phải · <b>Chuột</b> nhìn · <b>E</b> tương tác · <b>Shift</b> chạy · <b>ESC</b> thả chuột</div>
-<div style="font-size:11px;color:#777;margin-top:10px">Room 01: game lật thẻ 40 giây · tối đa 25 lượt · 8 cặp hình.</div>
-</div></div>
 
-<div id="doc" class="overlay"><div class="panel"><div class="eyebrow">ASTERIA / ROOM 10A</div><h2 id="docTitle"></h2><div id="docBody"></div><button class="btn" id="closeDoc">ĐÓNG</button></div></div>
+<div class="controls">
+<b>W</b> tiến về phía trước ·
+<b>S</b> đi lùi ·
+<b>A/D</b> sang trái/phải ·
+<b>Chuột</b> nhìn ·
+<b>E</b> tương tác ·
+<b>Shift</b> chạy ·
+<b>ESC</b> thả chuột
+</div>
 
-<div id="confirm" class="overlay"><div class="panel" style="max-width:500px"><div class="eyebrow">PROJECT 23:47</div><h2>Bạn muốn bỏ cuộc?</h2><p>Bạn sẽ rời khỏi Room 01 và quay lại màn hình chính.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="quitYes" type="button">ĐÚNG</button><button class="btn" id="quitRetry" type="button" style="background:#ddd7c7">TÔI MUỐN THỬ LẠI</button></div></div></div>
+<div style="font-size:11px;color:#777;margin-top:10px">
+Room 01: game lật thẻ 40 giây · tối đa 25 lượt · 8 cặp hình.
+</div>
 
-<div id="fail" class="overlay"><div class="panel" style="max-width:620px;text-align:center"><div class="eyebrow">MEMORY TEST / FAILED</div><h2>Bạn đã thất bại. Bạn muốn thử lại chứ?</h2><p style="font-size:18px;color:#333;margin-bottom:8px">Bạn có muốn chơi lại lần nữa?</p><div class="note"><b id="failStats"></b><br>Hãy thử lại. Vị trí các thẻ sẽ được xáo trộn.</div><div class="failChoices"><button class="btn" id="retryMemory" type="button">CÓ</button><button class="btn" id="giveupMemory" type="button" style="background:#ddd7c7">KHÔNG</button></div></div></div>
+</div>
+</div>
 
-<div id="rest" class="overlay"><div class="panel" style="max-width:520px;text-align:center"><div class="eyebrow">PROJECT 23:47 / REST</div><h2>Bạn đã chọn không chơi lại.</h2><p>Bạn có 30 giây nghỉ ngơi. Sau đó Room 01 sẽ kết thúc.</p><div id="restTimer">00:30</div><div class="note">Hãy hít thở và chuẩn bị cho khu vực tiếp theo.</div></div></div>
+<div id="doc" class="overlay">
+<div class="panel">
+<div class="eyebrow">ASTERIA / ROOM 10A</div>
+<h2 id="docTitle"></h2>
+<div id="docBody"></div>
+<button class="btn" id="closeDoc">ĐÓNG</button>
+</div>
+</div>
 
-<div id="ending" class="overlay"><div class="panel"><div class="eyebrow">PROJECT 23:47</div><h2 id="endingTitle">Cánh cửa đã mở.</h2><p id="endingText">Bạn bước qua ngưỡng cửa.</p><div class="note"><span class="red">PROJECT 23:47 — SUBJECT ACTIVE</span><br>Observation status: <b>WATCHING</b></div><p id="endingQuote" style="font-family:Georgia;font-size:25px;text-align:center">“Good evening, Subject 10A.”</p><button class="btn" id="restartRoom" type="button">CHƠI LẠI</button></div></div>
+<div id="confirm" class="overlay">
+<div class="panel" style="max-width:500px">
+<div class="eyebrow">PROJECT 23:47</div>
+<h2>Bạn muốn bỏ cuộc?</h2>
+<p>Bạn sẽ rời khỏi Room 01 và quay lại màn hình chính.</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn" id="quitYes" type="button">ĐÚNG</button>
+<button class="btn" id="quitRetry" type="button" style="background:#ddd7c7">
+TÔI MUỐN THỬ LẠI
+</button>
+</div>
+</div>
+</div>
 
-<div id="challengeIntro" class="overlay"><div class="panel" style="max-width:650px;text-align:center"><div class="eyebrow">ROOM 02 / CHALLENGE 01</div><h2>TÌM SỐ</h2><div class="challengeText">Bạn đã đứng trong vùng kiểm tra đủ <b>16 giây</b>.<br>Hãy lần lượt chọn các số từ <b>1 → 20</b>.<br><br>Thời gian của thử thách: <b>20 giây</b>.</div><button class="btn" id="startNumberChallenge">BẮT ĐẦU</button></div></div>
+<div id="fail" class="overlay">
+<div class="panel" style="max-width:620px;text-align:center">
+<div class="eyebrow">MEMORY TEST / FAILED</div>
+<h2>Bạn đã thất bại. Bạn muốn thử lại chứ?</h2>
+<p style="font-size:18px;color:#333;margin-bottom:8px">
+Bạn có muốn chơi lại lần nữa?
+</p>
+<div class="note">
+<b id="failStats"></b><br>
+Hãy thử lại. Vị trí các thẻ sẽ được xáo trộn.
+</div>
+<div class="failChoices">
+<button class="btn" id="retryMemory" type="button">CÓ</button>
+<button class="btn" id="giveupMemory" type="button" style="background:#ddd7c7">
+KHÔNG
+</button>
+</div>
+</div>
+</div>
 
-<div id="challengeFail" class="overlay"><div class="panel" style="max-width:650px;text-align:center"><div class="eyebrow">ROOM 02 / CHALLENGE 01</div><h2 id="numberFailTitle">Thử thách thất bại.</h2><p id="numberFailReason" style="font-size:18px"></p><div class="note">Bạn có thể thử lại. Ở lần thử lại, hệ thống sẽ không còn cố ý xáo trộn số 10.</div><div class="failChoices"><button class="btn" id="retryNumber" type="button">THỬ LẠI</button><button class="btn" id="quitNumber" type="button" style="background:#ddd7c7">KHÔNG THỬ LẠI</button></div></div></div>
+<div id="rest" class="overlay">
+<div class="panel" style="max-width:520px;text-align:center">
+<div class="eyebrow">PROJECT 23:47 / REST</div>
+<h2>Bạn đã chọn không chơi lại.</h2>
+<p>Bạn có 30 giây nghỉ ngơi. Sau đó Room 01 sẽ kết thúc.</p>
+<div id="restTimer">00:30</div>
+<div class="note">
+Hãy hít thở và chuẩn bị cho khu vực tiếp theo.
+</div>
+</div>
+</div>
 
-<div id="room2Notice"><div>Cửa đã bị khóa.<br><span style="font-size:.62em;color:#d4c786">Cần sưu tập đủ 4 chiếc chìa khóa để mở.</span></div></div>
-<div id="circleProgress"><i></i></div>
-<div id="numberChallenge"><div id="numberHud"><div class="big">CHALLENGE 01 · TÌM SỐ</div><div class="small">Chọn lần lượt từ 1 đến 20 · <span id="numberTime">20</span>s</div></div><div id="numberField"></div><button id="challengeQuit">BỎ CUỘC THỬ THÁCH</button><div id="challengeProgress">1 / 20</div></div>
-<div id="unlockBanner"><h2>Bạn đã thành công.</h2><p>Một trong các nút ẩn đã được mở khóa.<br>Hãy tìm chúng và lấy <b>chìa khóa 1</b>.</p></div>
+<div id="ending" class="overlay">
+<div class="panel">
+<div class="eyebrow">PROJECT 23:47</div>
+<h2 id="endingTitle">Cánh cửa đã mở.</h2>
+<p id="endingText">Bạn bước qua ngưỡng cửa.</p>
+<div class="note">
+<span class="red">PROJECT 23:47 — SUBJECT ACTIVE</span><br>
+Observation status: <b>WATCHING</b>
+</div>
+<p id="endingQuote"
+style="font-family:Georgia;font-size:25px;text-align:center">
+“Good evening, Subject 10A.”
+</p>
+<button class="btn" id="restartRoom" type="button">CHƠI LẠI</button>
+</div>
+</div>
 
-<div id="memoryGame"><div class="memoryShell"><div class="memoryHeader"><div><div class="eyebrow" style="color:#d4c786;margin-bottom:6px">COMPUTER / MEMORY TEST</div><div class="memoryTitle">THE 16 CARDS</div><div class="memorySub">TÌM 8 CẶP GIỐNG NHAU</div></div><div class="memoryStats"><div class="statBox"><small>THỜI GIAN</small><b id="memTime">40</b></div><div class="statBox"><small>LƯỢT</small><b id="memMoves">0/25</b></div><div class="statBox"><small>CẶP</small><b id="memPairs">0/8</b></div></div></div><div class="memoryRule">Mỗi lần lật một thẻ = 1 lượt. Lật hai thẻ giống nhau sẽ giữ ngửa; nếu khác nhau, chúng sẽ tự úp lại. Hoàn thành cả 8 cặp trước khi hết thời gian hoặc lượt chơi.</div><div class="memoryBoard" id="memoryBoard"></div><div class="memoryFooter"><span>40 GIÂY · 25 LƯỢT · 8 CẶP</span><button class="memoryClose" id="memoryClose" type="button">ĐÓNG GAME</button></div></div></div><div id="memoryFlash"></div>
+<div id="challengeIntro" class="overlay">
+<div class="panel" style="max-width:650px;text-align:center">
+<div class="eyebrow">ROOM 02 / CHALLENGE 01</div>
+<h2>TÌM SỐ</h2>
+<div class="challengeText">
+Bạn đã đứng trong vùng kiểm tra đủ <b>16 giây</b>.<br>
+Hãy lần lượt chọn các số từ <b>1 → 20</b>.<br><br>
+Thời gian của thử thách: <b>20 giây</b>.
+</div>
+<button class="btn" id="startNumberChallenge">BẮT ĐẦU</button>
+</div>
+</div>
+
+<div id="challengeFail" class="overlay">
+<div class="panel" style="max-width:650px;text-align:center">
+<div class="eyebrow">ROOM 02 / CHALLENGE 01</div>
+<h2 id="numberFailTitle">Thử thách thất bại.</h2>
+<p id="numberFailReason" style="font-size:18px"></p>
+<div class="note">
+Bạn có thể thử lại. Ở lần thử lại, hệ thống sẽ không còn cố ý xáo trộn số 10.
+</div>
+<div class="failChoices">
+<button class="btn" id="retryNumber" type="button">THỬ LẠI</button>
+<button class="btn" id="quitNumber" type="button" style="background:#ddd7c7">
+KHÔNG THỬ LẠI
+</button>
+</div>
+</div>
+</div>
+
+<div id="room2Notice">
+<div>
+Cửa đã bị khóa.<br>
+<span style="font-size:.62em;color:#d4c786">
+Cần sưu tập đủ 4 chiếc chìa khóa để mở.
+</span>
+</div>
+</div>
+
+<div id="circleProgress">
+<i></i>
+</div>
+
+<div id="numberChallenge">
+
+<div id="numberHud">
+<div class="big">CHALLENGE 01 · TÌM SỐ</div>
+<div class="small">
+Chọn lần lượt từ 1 đến 20 ·
+<span id="numberTime">20</span>s
+</div>
+</div>
+
+<div id="numberField"></div>
+
+<button id="challengeQuit">
+BỎ CUỘC THỬ THÁCH
+</button>
+
+<div id="challengeProgress">
+1 / 20
+</div>
+
+</div>
+
+<div id="unlockBanner">
+<h2>Bạn đã thành công.</h2>
+<p>
+Một trong các nút ẩn đã được mở khóa.<br>
+Hãy tìm chúng và lấy <b>chìa khóa 1</b>.
+</p>
+</div>
+
+<div id="memoryGame">
+
+<div class="memoryShell">
+
+<div class="memoryHeader">
+
+<div>
+<div class="eyebrow"
+style="color:#d4c786;margin-bottom:6px">
+COMPUTER / MEMORY TEST
+</div>
+
+<div class="memoryTitle">THE 16 CARDS</div>
+
+<div class="memorySub">
+TÌM 8 CẶP GIỐNG NHAU
+</div>
+</div>
+
+<div class="memoryStats">
+
+<div class="statBox">
+<small>THỜI GIAN</small>
+<b id="memTime">40</b>
+</div>
+
+<div class="statBox">
+<small>LƯỢT</small>
+<b id="memMoves">0/25</b>
+</div>
+
+<div class="statBox">
+<small>CẶP</small>
+<b id="memPairs">0/8</b>
+</div>
+
+</div>
+</div>
+
+<div class="memoryRule">
+Mỗi lần lật một thẻ = 1 lượt.
+Lật hai thẻ giống nhau sẽ giữ ngửa;
+nếu khác nhau, chúng sẽ tự úp lại.
+Hoàn thành cả 8 cặp trước khi hết thời gian hoặc lượt chơi.
+</div>
+
+<div class="memoryBoard" id="memoryBoard"></div>
+
+<div class="memoryFooter">
+<span>40 GIÂY · 25 LƯỢT · 8 CẶP</span>
+<button class="memoryClose" id="memoryClose" type="button">
+ĐÓNG GAME
+</button>
+</div>
+
+</div>
+</div>
+
+<div id="memoryFlash"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
 <script>
-(()=>{"use strict";
+(()=>{
+"use strict";
 
 const GAS_ENDPOINT="https://script.google.com/macros/s/AKfycbyEpartpjrMoemhpA1ASq9meoiep-iUb2XdlAHcr8AOWmo2zLw0BvSalNuxXv2aR3Su/exec";
-let PARTICIPANT_ID="",SESSION_ID="",ROOM_START_TIME=null,memoryAttempt=0;
 
-function generateSessionId(){return"S"+Date.now()+"_"+Math.random().toString(36).slice(2,8)}
-function resetTrackingSession(){SESSION_ID=generateSessionId();ROOM_START_TIME=Date.now()}
-function logEvent(eventName,data={}){
- if(!PARTICIPANT_ID||!SESSION_ID)return;
- const payload={participant_id:PARTICIPANT_ID,session_id:SESSION_ID,room:currentRoom,event:eventName,timestamp:new Date().toISOString(),elapsed_seconds:ROOM_START_TIME?Math.round((Date.now()-ROOM_START_TIME)/1000):"",tracking_version:"ROOM1_ROOM2_V1",page_url:location.href,...data},body=JSON.stringify(payload);
- try{if(navigator.sendBeacon){const sent=navigator.sendBeacon(GAS_ENDPOINT,new Blob([body],{type:"text/plain;charset=UTF-8"}));if(sent)return}}catch(e){}
- fetch(GAS_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=UTF-8"},body}).catch(()=>{});
+let PARTICIPANT_ID="";
+let SESSION_ID="";
+let ROOM_START_TIME=null;
+let memoryAttempt=0;
+
+function generateSessionId(){
+return "S"+Date.now()+"_"+Math.random().toString(36).slice(2,8)
 }
 
-if(!window.THREE){document.getElementById("begin").disabled=true;return}
-const THREE=window.THREE,scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(70,innerWidth/innerHeight,.05,100);
+function resetTrackingSession(){
+SESSION_ID=generateSessionId();
+ROOM_START_TIME=Date.now()
+}
+
+function logEvent(eventName,data={}){
+if(!PARTICIPANT_ID||!SESSION_ID)return;
+
+const payload={
+participant_id:PARTICIPANT_ID,
+session_id:SESSION_ID,
+room:currentRoom,
+event:eventName,
+timestamp:new Date().toISOString(),
+elapsed_seconds:ROOM_START_TIME?Math.round((Date.now()-ROOM_START_TIME)/1000):"",
+tracking_version:"ROOM1_ROOM2_V1",
+page_url:location.href,
+...data
+};
+
+const body=JSON.stringify(payload);
+
+try{
+if(navigator.sendBeacon){
+const sent=navigator.sendBeacon(
+GAS_ENDPOINT,
+new Blob([body],{type:"text/plain;charset=UTF-8"})
+);
+if(sent)return
+}
+}catch(e){}
+
+fetch(GAS_ENDPOINT,{
+method:"POST",
+mode:"no-cors",
+headers:{"Content-Type":"text/plain;charset=UTF-8"},
+body
+}).catch(()=>{});
+}
+
+if(!window.THREE){
+document.getElementById("begin").disabled=true;
+return
+}
+
+const THREE=window.THREE;
+const scene=new THREE.Scene();
+
+const camera=new THREE.PerspectiveCamera(
+70,
+innerWidth/innerHeight,
+.05,
+100
+);
+
 const renderer=new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;document.body.prepend(renderer.domElement);
 
-const C={wall:0xf0eee7,ink:0x27302f,blue:0x66828a,green:0x728a78,gold:0xd4c786,red:0x9c5055,wood:0x625a4c,paper:0xf7f3e8,dark:0x1b2020,white:0xffffff};
-function mat(c,r=.78,m=0,e=0,ei=0){return new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m,emissive:e,emissiveIntensity:ei})}
-const M={wall:mat(C.wall),ink:mat(C.ink),blue:mat(C.blue,.65),green:mat(C.green,.82),gold:mat(C.gold,.42,.25),red:mat(C.red),wood:mat(C.wood,.92),paper:mat(C.paper,1),dark:mat(C.dark,.95),white:mat(C.white,.95)};
-function box(n,x,y,z,w,h,d,m,cast=true){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.name=n;o.position.set(x,y,z);o.castShadow=cast;o.receiveShadow=true;scene.add(o);return o}
-function cyl(n,x,y,z,r,h,m){const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,20),m);o.name=n;o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}
-function textSprite(text,scale=1,color="#202329"){const c=document.createElement("canvas");c.width=512;c.height=128;const x=c.getContext("2d");x.clearRect(0,0,512,128);x.fillStyle=color;x.font="700 40px Arial";x.textAlign="center";x.textBaseline="middle";x.fillText(text,256,64);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true}));s.scale.set(2.7*scale,.67*scale,1);return s}
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.12;
 
-let currentRoom="ROOM_01",interactables=[],roomObjects=[],inventory=[],unlocked=false,playing=false,locked=false,yaw=0,pitch=0,modalOpen=false,memoryActive=false;
-let room2Challenge1Done=false,hiddenKeyButton=-1,insideCircleSince=null,challenge1Started=false,numberAttempt=0;
-function addObj(o){roomObjects.push(o);return o}
-function addInteract(mesh,label,fn){interactables.push({mesh,label,fn});return mesh}
-function clearWorld(){while(scene.children.length){const o=scene.children.pop();if(o.geometry)o.geometry.dispose?.();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose?.());else o.material.dispose?.()}}interactables=[];roomObjects=[]}
+document.body.prepend(renderer.domElement);
 
-function say(t){const m=document.getElementById("msg");m.textContent=t;m.style.opacity=1;clearTimeout(say.t);say.t=setTimeout(()=>m.style.opacity=0,3000)}
-function doc(title,body){document.getElementById("docTitle").textContent=title;document.getElementById("docBody").innerHTML=body;document.getElementById("doc").style.display="grid";modalOpen=true;document.exitPointerLock?.()}
-function addItem(x){if(!inventory.includes(x)){inventory.push(x);document.getElementById("items").textContent=inventory.join(" · ")}}
-function beep(freq=440,dur=.08,type="sine",gain=.035){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume();const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=freq;o.type=type;g.gain.setValueAtTime(gain,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch(e){}}
+const C={
+wall:0xf0eee7,
+ink:0x27302f,
+blue:0x66828a,
+green:0x728a78,
+gold:0xd4c786,
+red:0x9c5055,
+wood:0x625a4c,
+paper:0xf7f3e8,
+dark:0x1b2020,
+white:0xffffff
+};
+
+function mat(c,r=.78,m=0,e=0,ei=0){
+return new THREE.MeshStandardMaterial({
+color:c,
+roughness:r,
+metalness:m,
+emissive:e,
+emissiveIntensity:ei
+})
+}
+
+const M={
+wall:mat(C.wall),
+ink:mat(C.ink),
+blue:mat(C.blue,.65),
+green:mat(C.green,.82),
+gold:mat(C.gold,.42,.25),
+red:mat(C.red),
+wood:mat(C.wood,.92),
+paper:mat(C.paper,1),
+dark:mat(C.dark,.95),
+white:mat(C.white,.95)
+};
+
+function box(n,x,y,z,w,h,d,m,cast=true){
+const o=new THREE.Mesh(
+new THREE.BoxGeometry(w,h,d),
+m
+);
+o.name=n;
+o.position.set(x,y,z);
+o.castShadow=cast;
+o.receiveShadow=true;
+scene.add(o);
+return o
+}
+
+function cyl(n,x,y,z,r,h,m){
+const o=new THREE.Mesh(
+new THREE.CylinderGeometry(r,r,h,20),
+m
+);
+o.name=n;
+o.position.set(x,y,z);
+o.castShadow=true;
+o.receiveShadow=true;
+scene.add(o);
+return o
+}
+
+function textSprite(text,scale=1,color="#202329"){
+const c=document.createElement("canvas");
+c.width=512;
+c.height=128;
+
+const x=c.getContext("2d");
+x.clearRect(0,0,512,128);
+x.fillStyle=color;
+x.font="700 40px Arial";
+x.textAlign="center";
+x.textBaseline="middle";
+x.fillText(text,256,64);
+
+const t=new THREE.CanvasTexture(c);
+t.colorSpace=THREE.SRGBColorSpace;
+
+const s=new THREE.Sprite(
+new THREE.SpriteMaterial({
+map:t,
+transparent:true
+})
+);
+
+s.scale.set(2.7*scale,.67*scale,1);
+
+return s
+}
+
+let currentRoom="ROOM_01";
+let interactables=[];
+let roomObjects=[];
+let inventory=[];
+let unlocked=false;
+let playing=false;
+let locked=false;
+let yaw=0;
+let pitch=0;
+let modalOpen=false;
+let memoryActive=false;
+
+let room2Challenge1Done=false;
+let hiddenKeyButton=-1;
+let insideCircleSince=null;
+let challenge1Started=false;
+let numberAttempt=0;
+
+function addObj(o){
+roomObjects.push(o);
+return o
+}
+
+function addInteract(mesh,label,fn){
+interactables.push({
+mesh,
+label,
+fn
+});
+return mesh
+}
+
+function clearWorld(){
+while(scene.children.length){
+const o=scene.children.pop();
+
+if(o.geometry)
+o.geometry.dispose?.();
+
+if(o.material){
+if(Array.isArray(o.material))
+o.material.forEach(m=>m.dispose?.());
+else
+o.material.dispose?.();
+}
+}
+
+interactables=[];
+roomObjects=[];
+}
+
+function say(t){
+const m=document.getElementById("msg");
+m.textContent=t;
+m.style.opacity=1;
+
+clearTimeout(say.t);
+
+say.t=setTimeout(()=>{
+m.style.opacity=0
+},3000)
+}
+
+function doc(title,body){
+document.getElementById("docTitle").textContent=title;
+document.getElementById("docBody").innerHTML=body;
+document.getElementById("doc").style.display="grid";
+modalOpen=true;
+document.exitPointerLock?.()
+}
+
+function addItem(x){
+if(!inventory.includes(x)){
+inventory.push(x);
+document.getElementById("items").textContent=inventory.join(" · ")
+}
+}
+
+function beep(freq=440,dur=.08,type="sine",gain=.035){
+try{
+audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+
+if(audio.state==="suspended")
+audio.resume();
+
+const o=audio.createOscillator();
+const g=audio.createGain();
+
+o.frequency.value=freq;
+o.type=type;
+
+g.gain.setValueAtTime(gain,audio.currentTime);
+g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);
+
+o.connect(g);
+g.connect(audio.destination);
+
+o.start();
+o.stop(audio.currentTime+dur)
+}catch(e){}
+}
+
 let audio=null;
 
 // GIỮ NGUYÊN HỆ THỐNG ÂM THANH CỦA ROOM 01
 function cardSound(kind){
- if(kind==="flip")beep(390,.045,"triangle",.018);
- if(kind==="wrong"){beep(150,.10,"sawtooth",.025);setTimeout(()=>beep(110,.12,"sawtooth",.018),65)}
- if(kind==="match"){beep(520,.08,"sine",.028);setTimeout(()=>beep(740,.12,"sine",.025),80)}
- if(kind==="win"){beep(523,.10,"sine",.03);setTimeout(()=>beep(659,.12,"sine",.03),100);setTimeout(()=>beep(784,.18,"sine",.03),220)}
+if(kind==="flip")
+beep(390,.045,"triangle",.018);
+
+if(kind==="wrong"){
+beep(150,.10,"sawtooth",.025);
+setTimeout(()=>beep(110,.12,"sawtooth",.018),65)
+}
+
+if(kind==="match"){
+beep(520,.08,"sine",.028);
+setTimeout(()=>beep(740,.12,"sine",.025),80)
+}
+
+if(kind==="win"){
+beep(523,.10,"sine",.03);
+setTimeout(()=>beep(659,.12,"sine",.03),100);
+setTimeout(()=>beep(784,.18,"sine",.03),220)
+}
 }
 
 function buildRoom1(){
- currentRoom="ROOM_01";document.getElementById("room").textContent="ASTERIA SCHOOL · ROOM 10A";document.getElementById("objective").innerHTML='Mục tiêu: <b>Tìm cách mở cửa lớp học.</b><br><span style="opacity:.65">Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.</span>';
- clearWorld();scene.background=new THREE.Color(0x526c72);scene.fog=new THREE.FogExp2(0x587278,.043);
- camera.position.set(9,1.65,10.2);yaw=0;pitch=0;inventory=[];unlocked=false;document.getElementById("items").textContent="TRỐNG";
- scene.add(new THREE.HemisphereLight(0xf0eee7,0x334342,2.15));
- const moon=new THREE.DirectionalLight(0xc4dfe1,1.15);moon.position.set(-8,10,4);moon.castShadow=true;moon.shadow.mapSize.set(2048,2048);moon.shadow.camera.left=-14;moon.shadow.camera.right=14;moon.shadow.camera.top=14;moon.shadow.camera.bottom=-14;scene.add(moon);
- const warm=new THREE.PointLight(0xd4c786,1.7,10);warm.position.set(15.6,3.2,3);warm.castShadow=true;scene.add(warm);
- const fluorescents=[];for(const z of[2.6,6,9.4]){box("fixture",9,4.78,z,2.8,.09,.35,M.dark);const l=new THREE.PointLight(0xf0eee7,2.55,8);l.position.set(9,4.45,z);l.castShadow=true;scene.add(l);fluorescents.push(l)}
- const redLight=new THREE.PointLight(0x9c5055,0,5);redLight.position.set(17.1,2.4,6);scene.add(redLight);
- box("floor",9,-.08,6,18,.16,12,M.dark);box("ceiling",9,4.9,6,18,.18,12,M.wall);box("back",9,2.45,.05,18,4.9,.18,M.wall);box("left",.05,2.45,6,.18,4.9,12,M.wall);box("right",17.95,2.45,6,.18,4.9,12,M.wall);box("trimBack",9,.76,.16,17.7,1.45,.12,M.green);box("trimL",.16,.76,6,.12,1.45,11.7,M.green);box("trimR",17.84,.76,6,.12,1.45,11.7,M.green);
- box("frame1",17.7,2.2,5,.28,4.4,.34,M.ink);box("frame2",17.7,2.2,7,.28,4.4,.34,M.ink);box("frameTop",17.7,4.35,6,.28,.35,2.3,M.ink);const door=box("door",17.53,2.15,6,.18,4,1.7,M.green);box("handle",17.35,2.1,5.4,.1,.14,.14,M.gold);
- for(const z of[2.3,5.2,8.1]){box("windowFrame",.19,2.8,z,.12,2.05,1.8,M.green);box("window",.11,2.8,z,.04,1.68,1.45,mat(0x49646c,.25,.05,0x172a2f,.2));box("vbar",.06,2.8,z,.07,1.8,.05,M.ink);box("hbar",.06,2.8,z,.07,.05,1.7,M.ink)}
- box("board",.17,2.7,10,.12,2.1,4.2,M.ink);box("boardFrame",.10,2.7,10,.05,2.28,4.4,M.green);const bt=textSprite("DO NOT TRUST 23:47",.72,"#e9e6dc");bt.position.set(.04,3.05,10);bt.rotation.y=-Math.PI/2;scene.add(bt);const bt2=textSprite("THE ANSWER IS ELSEWHERE",.5,"#d4c786");bt2.position.set(.04,2.35,10);bt2.rotation.y=-Math.PI/2;scene.add(bt2);
- function desk(x,z,rot=0){const top=box("desk",x,1.02,z,1.45,.14,.72,M.wood);top.rotation.y=rot;for(const[dx,dz]of[[-.52,-.25],[.52,-.25],[-.52,.25],[.52,.25]]){const px=x+dx*Math.cos(rot)-dz*Math.sin(rot),pz=z+dx*Math.sin(rot)+dz*Math.cos(rot);box("leg",px,.52,pz,.09,1,.09,M.ink)}const chair=box("chair",x+1,.55,z,.68,1,.68,M.blue);chair.rotation.y=rot;box("notebook",x-.18,1.12,z-.08,.42,.025,.55,M.paper);box("pencil",x+.25,1.14,z+.18,.04,.035,.42,M.red)}
- [[4,3],[7,3],[10,3],[13,3],[4,6],[7,6],[10,6],[13,6]].forEach((p,i)=>desk(p[0],p[1],i%3===0?.08:0));desk(9,1.45);
- box("teacherDesk",9,1.05,1.35,2,.16,.85,M.green);const clue=box("CLUE",9,1.16,1.05,.52,.025,.34,M.paper);const pen=cyl("pen",9.2,1.18,1.35,.025,.42,M.red);pen.rotation.z=Math.PI/2;box("mug",8.55,1.25,1.43,.22,.28,.22,M.blue);
- for(let i=0;i<7;i++)box("book",2+i*.17,.13,2.1,.42,.18,.72,i%2?M.blue:M.green);
- const locker=box("LOCKER",16.25,1.9,2.45,1.25,3.5,.72,M.green);for(let i=0;i<3;i++)box("lockerSeam",16.25,1.95+i*1.03,2.08,1.1,.025,.03,M.ink);const lockerBadge=textSprite("10A",.45);lockerBadge.position.set(16.25,2.1,2.07);lockerBadge.rotation.y=Math.PI;scene.add(lockerBadge);
- box("computerTable",14.3,.85,9.55,1.9,.14,.78,M.green);const monitor=box("COMPUTER",14.3,1.62,9.52,1.02,1,.14,M.dark);box("screen",14.3,1.64,9.43,.83,.68,.025,mat(0x315e61,.25,0,0x123f40,.7));const st=textSprite("MEMORY TEST",.31,"#d4c786");st.position.set(14.3,1.65,9.4);st.scale.set(1.25,.5,1);scene.add(st);box("keyboard",14.3,1.17,9.28,1.05,.05,.34,M.paper);
- const face=new THREE.Mesh(new THREE.CircleGeometry(.7,40),mat(C.paper,.8));face.position.set(.16,3.75,7);face.rotation.y=-Math.PI/2;face.castShadow=true;scene.add(face);for(let i=0;i<12;i++){const a=i*Math.PI/6,mark=box("tick",.08,3.75+Math.cos(a)*.56,7+Math.sin(a)*.56,.03,.09,.03,M.ink);mark.rotation.x=a}const h1=box("hand",.07,3.75,7,.05,.52,.05,M.ink);h1.rotation.z=-.85;const h2=box("hand",.06,3.75,7,.035,.38,.035,M.red);h2.rotation.z=.45;const ct=textSprite("23:47",.52);ct.position.set(.05,2.98,7);ct.rotation.y=-Math.PI/2;scene.add(ct);
- const poster=box("poster",.12,2.1,4.2,.035,1.3,.9,M.paper);const pt=textSprite("ASTERIA RULE 04",.34,"#9c5055");pt.position.set(.05,2.1,4.2);pt.rotation.y=-Math.PI/2;scene.add(pt);
- const dustGeo=new THREE.BufferGeometry(),dustN=420,dustPos=new Float32Array(dustN*3);for(let i=0;i<dustN;i++){dustPos[i*3]=.7+Math.random()*16.6;dustPos[i*3+1]=.3+Math.random()*4;dustPos[i*3+2]=.7+Math.random()*10.6}dustGeo.setAttribute("position",new THREE.BufferAttribute(dustPos,3));const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({color:0xf0eee7,size:.025,transparent:true,opacity:.18,depthWrite:false}));scene.add(dust);
- addInteract(clue,"Chạm vào bàn giáo viên",()=>{logEvent("HINT_USED",{hint_id:"TEACHER_DESK",hint_type:"ROOM_01_HINT",location:"TEACHER_DESK"});doc("GỢI Ý",'<div class="note">Những thứ đáng nhớ nhất lại thường là những thứ dễ bỏ quên nhất.<br><br>Hãy tìm lại chúng ở nơi bạn quen thuộc.</div>')});
- addInteract(face,"Kiểm tra đồng hồ 23:47",()=>say("23:47. Đồng hồ không chạy. Nhưng nó đang chỉ cho bạn một con số."));
- addInteract(scene.getObjectByName("board"),"Đọc bảng",()=>doc("BẢNG LỚP 10A",'<div class="note">DO NOT TRUST 23:47<br><br>THE ANSWER IS ELSEWHERE</div><p>Bảng không chứa câu trả lời. Dòng chữ có vẻ được viết rất gần đây.</p>'));
- addInteract(monitor,"Sử dụng máy tính — game lật thẻ",()=>openMemoryGame());
- addInteract(locker,"Mở tủ — lấy chìa khóa",()=>{if(unlocked){if(!inventory.includes("KEY 01")){addItem("KEY 01");logEvent("KEY_OBTAINED",{item:"KEY 01"});say("Bạn mở tủ. Một tiếng kim loại vang lên — bạn lấy được chìa khóa.")}else say("Bạn đã lấy chìa khóa rồi.")}else{logEvent("LOCKER_LOCKED_ATTEMPT",{unlocked:false});doc("TỦ 10A",'<p>Khóa điện tử nhỏ đang sáng đỏ.</p><div class="note">SECURITY LOCKED<br><br>Hệ thống yêu cầu hoàn thành bài kiểm tra trí nhớ trên máy tính.</div>')}});
- addInteract(door,"Mở cửa lớp học",()=>{if(unlocked&&inventory.includes("KEY 01")){logEvent("DOOR_OPEN_ATTEMPT",{unlocked:true,has_key:true});enterHallway()}else{logEvent("DOOR_LOCKED_ATTEMPT",{unlocked,has_key:inventory.includes("KEY 01")});say("Cửa khóa. Hãy hoàn thành bài lật thẻ, rồi đến tủ lấy chìa khóa.")}});
- window.room1Fluorescents=fluorescents;window.room1RedLight=redLight;window.room1Dust=dust;
+
+currentRoom="ROOM_01";
+
+document.getElementById("room").textContent=
+"ASTERIA SCHOOL · ROOM 10A";
+
+document.getElementById("objective").innerHTML=
+'Mục tiêu: <b>Tìm cách mở cửa lớp học.</b><br>'+
+'<span style="opacity:.65">Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.</span>';
+
+clearWorld();
+
+scene.background=new THREE.Color(0x526c72);
+scene.fog=new THREE.FogExp2(0x587278,.043);
+
+camera.position.set(9,1.65,10.2);
+yaw=0;
+pitch=0;
+
+inventory=[];
+unlocked=false;
+
+document.getElementById("items").textContent="TRỐNG";
+
+scene.add(
+new THREE.HemisphereLight(
+0xf0eee7,
+0x334342,
+2.15
+)
+);
+
+const moon=new THREE.DirectionalLight(
+0xc4dfe1,
+1.15
+);
+
+moon.position.set(-8,10,4);
+moon.castShadow=true;
+moon.shadow.mapSize.set(2048,2048);
+moon.shadow.camera.left=-14;
+moon.shadow.camera.right=14;
+moon.shadow.camera.top=14;
+moon.shadow.camera.bottom=-14;
+
+scene.add(moon);
+
+const warm=new THREE.PointLight(
+0xd4c786,
+1.7,
+10
+);
+
+warm.position.set(15.6,3.2,3);
+warm.castShadow=true;
+scene.add(warm);
+
+const fluorescents=[];
+
+for(const z of[2.6,6,9.4]){
+
+box(
+"fixture",
+9,
+4.78,
+z,
+2.8,
+.09,
+.35,
+M.dark
+);
+
+const l=new THREE.PointLight(
+0xf0eee7,
+2.55,
+8
+);
+
+l.position.set(9,4.45,z);
+l.castShadow=true;
+
+scene.add(l);
+
+fluorescents.push(l)
 }
-function collidesRoom1(x,z){if(x<.65||x>17.35||z<.65||z>11.35)return true;const o=[[4,3,1,.7],[7,3,1,.7],[10,3,1,.7],[13,3,1,.7],[4,6,1,.7],[7,6,1,.7],[10,6,1,.7],[13,6,1,.7],[9,1.45,1.2,.7],[16.25,2.45,.8,.65],[14.3,9.55,1,.55]];for(const[a,b,w,d]of o)if(Math.abs(x-a)<w+.3&&Math.abs(z-b)<d+.3)return true;if(x>17&&Math.abs(z-6)<1.15)return true;return false}
+
+const redLight=new THREE.PointLight(
+0x9c5055,
+0,
+5
+);
+
+redLight.position.set(17.1,2.4,6);
+scene.add(redLight);
+
+box("floor",9,-.08,6,18,.16,12,M.dark);
+box("ceiling",9,4.9,6,18,.18,12,M.wall);
+box("back",9,2.45,.05,18,4.9,.18,M.wall);
+box("left",.05,2.45,6,.18,4.9,12,M.wall);
+box("right",17.95,2.45,6,.18,4.9,12,M.wall);
+
+box("trimBack",9,.76,.16,17.7,1.45,.12,M.green);
+box("trimL",.16,.76,6,.12,1.45,11.7,M.green);
+box("trimR",17.84,.76,6,.12,1.45,11.7,M.green);
+
+box("frame1",17.7,2.2,5,.28,4.4,.34,M.ink);
+box("frame2",17.7,2.2,7,.28,4.4,.34,M.ink);
+box("frameTop",17.7,4.35,6,.28,.35,2.3,M.ink);
+
+const door=box(
+"door",
+17.53,
+2.15,
+6,
+.18,
+4,
+1.7,
+M.green
+);
+
+box("handle",17.35,2.1,5.4,.1,.14,.14,M.gold);
+
+for(const z of[2.3,5.2,8.1]){
+
+box(
+"windowFrame",
+.19,
+2.8,
+z,
+.12,
+2.05,
+1.8,
+M.green
+);
+
+box(
+"window",
+.11,
+2.8,
+z,
+.04,
+1.68,
+1.45,
+mat(0x49646c,.25,.05,0x172a2f,.2)
+);
+
+box(
+"vbar",
+.06,
+2.8,
+z,
+.07,
+1.8,
+.05,
+M.ink
+);
+
+box(
+"hbar",
+.06,
+2.8,
+z,
+.07,
+.05,
+1.7,
+M.ink
+)
+}
+
+box("board",.17,2.7,10,.12,2.1,4.2,M.ink);
+box("boardFrame",.10,2.7,10,.05,2.28,4.4,M.green);
+
+const bt=textSprite(
+"DO NOT TRUST 23:47",
+.72,
+"#e9e6dc"
+);
+
+bt.position.set(.04,3.05,10);
+bt.rotation.y=-Math.PI/2;
+scene.add(bt);
+
+const bt2=textSprite(
+"THE ANSWER IS ELSEWHERE",
+.5,
+"#d4c786"
+);
+
+bt2.position.set(.04,2.35,10);
+bt2.rotation.y=-Math.PI/2;
+scene.add(bt2);
+
+function desk(x,z,rot=0){
+
+const top=box(
+"desk",
+x,
+1.02,
+z,
+1.45,
+.14,
+.72,
+M.wood
+);
+
+top.rotation.y=rot;
+
+for(const[dx,dz]of[
+[-.52,-.25],
+[.52,-.25],
+[-.52,.25],
+[.52,.25]
+]){
+
+const px=
+x+dx*Math.cos(rot)-dz*Math.sin(rot);
+
+const pz=
+z+dx*Math.sin(rot)+dz*Math.cos(rot);
+
+box(
+"leg",
+px,
+.52,
+pz,
+.09,
+1,
+.09,
+M.ink
+)
+}
+
+const chair=box(
+"chair",
+x+1,
+.55,
+z,
+.68,
+1,
+.68,
+M.blue
+);
+
+chair.rotation.y=rot;
+
+box(
+"notebook",
+x-.18,
+1.12,
+z-.08,
+.42,
+.025,
+.55,
+M.paper
+);
+
+box(
+"pencil",
+x+.25,
+1.14,
+z+.18,
+.04,
+.035,
+.42,
+M.red
+)
+}
+
+[
+[4,3],
+[7,3],
+[10,3],
+[13,3],
+[4,6],
+[7,6],
+[10,6],
+[13,6]
+].forEach((p,i)=>
+desk(
+p[0],
+p[1],
+i%3===0?.08:0
+));
+
+desk(9,1.45);
+
+box(
+"teacherDesk",
+9,
+1.05,
+1.35,
+2,
+.16,
+.85,
+M.green
+);
+
+const clue=box(
+"CLUE",
+9,
+1.16,
+1.05,
+.52,
+.025,
+.34,
+M.paper
+);
+
+const pen=cyl(
+"pen",
+9.2,
+1.18,
+1.35,
+.025,
+.42,
+M.red
+);
+
+pen.rotation.z=Math.PI/2;
+
+box(
+"mug",
+8.55,
+1.25,
+1.43,
+.22,
+.28,
+.22,
+M.blue
+);
+
+for(let i=0;i<7;i++)
+box(
+"book",
+2+i*.17,
+.13,
+2.1,
+.42,
+.18,
+.72,
+i%2?M.blue:M.green
+);
+
+const locker=box(
+"LOCKER",
+16.25,
+1.9,
+2.45,
+1.25,
+3.5,
+.72,
+M.green
+);
+
+for(let i=0;i<3;i++)
+box(
+"lockerSeam",
+16.25,
+1.95+i*1.03,
+2.08,
+1.1,
+.025,
+.03,
+M.ink
+);
+
+const lockerBadge=textSprite("10A",.45);
+lockerBadge.position.set(16.25,2.1,2.07);
+lockerBadge.rotation.y=Math.PI;
+scene.add(lockerBadge);
+
+box(
+"computerTable",
+14.3,
+.85,
+9.55,
+1.9,
+.14,
+.78,
+M.green
+);
+
+const monitor=box(
+"COMPUTER",
+14.3,
+1.62,
+9.52,
+1.02,
+1,
+.14,
+M.dark
+);
+
+box(
+"screen",
+14.3,
+1.64,
+9.43,
+.83,
+.68,
+.025,
+mat(0x315e61,.25,0,0x123f40,.7)
+);
+
+const st=textSprite(
+"MEMORY TEST",
+.31,
+"#d4c786"
+);
+
+st.position.set(14.3,1.65,9.4);
+st.scale.set(1.25,.5,1);
+scene.add(st);
+
+box(
+"keyboard",
+14.3,
+1.17,
+9.28,
+1.05,
+.05,
+.34,
+M.paper
+);
+
+const face=new THREE.Mesh(
+new THREE.CircleGeometry(.7,40),
+mat(C.paper,.8)
+);
+
+face.position.set(.16,3.75,7);
+face.rotation.y=-Math.PI/2;
+face.castShadow=true;
+scene.add(face);
+
+for(let i=0;i<12;i++){
+
+const a=i*Math.PI/6;
+
+const mark=box(
+"tick",
+.08,
+3.75+Math.cos(a)*.56,
+7+Math.sin(a)*.56,
+.03,
+.09,
+.03,
+M.ink
+);
+
+mark.rotation.x=a
+}
+
+const h1=box(
+"hand",
+.07,
+3.75,
+7,
+.05,
+.52,
+.05,
+M.ink
+);
+
+h1.rotation.z=-.85;
+
+const h2=box(
+"hand",
+.06,
+3.75,
+7,
+.035,
+.38,
+.035,
+M.red
+);
+
+h2.rotation.z=.45;
+
+const ct=textSprite("23:47",.52);
+
+ct.position.set(.05,2.98,7);
+ct.rotation.y=-Math.PI/2;
+
+scene.add(ct);
+
+const poster=box(
+"poster",
+.12,
+2.1,
+4.2,
+.035,
+1.3,
+.9,
+M.paper
+);
+
+const pt=textSprite(
+"ASTERIA RULE 04",
+.34,
+"#9c5055"
+);
+
+pt.position.set(.05,2.1,4.2);
+pt.rotation.y=-Math.PI/2;
+scene.add(pt);
+
+const dustGeo=new THREE.BufferGeometry();
+const dustN=420;
+const dustPos=new Float32Array(dustN*3);
+
+for(let i=0;i<dustN;i++){
+
+dustPos[i*3]=.7+Math.random()*16.6;
+dustPos[i*3+1]=.3+Math.random()*4;
+dustPos[i*3+2]=.7+Math.random()*10.6
+
+}
+
+dustGeo.setAttribute(
+"position",
+new THREE.BufferAttribute(dustPos,3)
+);
+
+const dust=new THREE.Points(
+dustGeo,
+new THREE.PointsMaterial({
+color:0xf0eee7,
+size:.025,
+transparent:true,
+opacity:.18,
+depthWrite:false
+})
+);
+
+scene.add(dust);
+
+addInteract(
+clue,
+"Chạm vào bàn giáo viên",
+()=>{
+logEvent(
+"HINT_USED",
+{
+hint_id:"TEACHER_DESK",
+hint_type:"ROOM_01_HINT",
+location:"TEACHER_DESK"
+}
+);
+
+doc(
+"GỢI Ý",
+'<div class="note">Những thứ đáng nhớ nhất lại thường là những thứ dễ bỏ quên nhất.<br><br>Hãy tìm lại chúng ở nơi bạn quen thuộc.</div>'
+)
+}
+);
+
+addInteract(
+face,
+"Kiểm tra đồng hồ 23:47",
+()=>{
+say(
+"23:47. Đồng hồ không chạy. Nhưng nó đang chỉ cho bạn một con số."
+)
+}
+);
+
+addInteract(
+scene.getObjectByName("board"),
+"Đọc bảng",
+()=>{
+doc(
+"BẢNG LỚP 10A",
+'<div class="note">DO NOT TRUST 23:47<br><br>THE ANSWER IS ELSEWHERE</div><p>Bảng không chứa câu trả lời. Dòng chữ có vẻ được viết rất gần đây.</p>'
+)
+}
+);
+
+addInteract(
+monitor,
+"Sử dụng máy tính — game lật thẻ",
+()=>openMemoryGame()
+);
+
+addInteract(
+locker,
+"Mở tủ — lấy chìa khóa",
+()=>{
+if(unlocked){
+
+if(!inventory.includes("KEY 01")){
+
+addItem("KEY 01");
+
+logEvent(
+"KEY_OBTAINED",
+{item:"KEY 01"}
+);
+
+say(
+"Bạn mở tủ. Một tiếng kim loại vang lên — bạn lấy được chìa khóa."
+)
+
+}else{
+
+say("Bạn đã lấy chìa khóa rồi.")
+
+}
+
+}else{
+
+logEvent(
+"LOCKER_LOCKED_ATTEMPT",
+{unlocked:false}
+);
+
+doc(
+"TỦ 10A",
+'<p>Khóa điện tử nhỏ đang sáng đỏ.</p><div class="note">SECURITY LOCKED<br><br>Hệ thống yêu cầu hoàn thành bài kiểm tra trí nhớ trên máy tính.</div>'
+)
+
+}
+}
+);
+
+addInteract(
+door,
+"Mở cửa lớp học",
+()=>{
+if(unlocked&&inventory.includes("KEY 01")){
+
+logEvent(
+"DOOR_OPEN_ATTEMPT",
+{
+unlocked:true,
+has_key:true
+}
+);
+
+enterHallway()
+
+}else{
+
+logEvent(
+"DOOR_LOCKED_ATTEMPT",
+{
+unlocked,
+has_key:inventory.includes("KEY 01")
+}
+);
+
+say(
+"Cửa khóa. Hãy hoàn thành bài lật thẻ, rồi đến tủ lấy chìa khóa."
+)
+
+}
+}
+);
+
+window.room1Fluorescents=fluorescents;
+window.room1RedLight=redLight;
+window.room1Dust=dust;
+}
+
+function collidesRoom1(x,z){
+
+if(
+x<.65||
+x>17.35||
+z<.65||
+z>11.35
+)return true;
+
+const o=[
+[4,3,1,.7],
+[7,3,1,.7],
+[10,3,1,.7],
+[13,3,1,.7],
+[4,6,1,.7],
+[7,6,1,.7],
+[10,6,1,.7],
+[13,6,1,.7],
+[9,1.45,1.2,.7],
+[16.25,2.45,.8,.65],
+[14.3,9.55,1,.55]
+];
+
+for(const[a,b,w,d]of o)
+if(
+Math.abs(x-a)<w+.3&&
+Math.abs(z-b)<d+.3
+)return true;
+
+if(x>17&&Math.abs(z-6)<1.15)
+return true;
+
+return false
+}
 
 function buildHallway(){
- currentRoom="HALLWAY";document.getElementById("room").textContent="ASTERIA SCHOOL · EAST HALLWAY";document.getElementById("objective").innerHTML='Mục tiêu: <b>Tìm căn phòng duy nhất đang mở.</b><br><span style="opacity:.65">Các phòng còn lại đã bị khóa.</span>';
- clearWorld();scene.background=new THREE.Color(0x151a19);scene.fog=new THREE.FogExp2(0x1c2524,.026);camera.position.set(0,1.65,22);yaw=0;pitch=0;
- scene.add(new THREE.HemisphereLight(0x9baaa5,0x0b0e0e,.7));
- const hallLight=new THREE.DirectionalLight(0xe8e5d6,.65);hallLight.position.set(0,8,0);scene.add(hallLight);
- box("hfloor",0,-.08,0,14,.16,44,mat(0x3a3933,.5));
- box("hceil",0,4.9,0,14,.18,44,mat(0x77756b,.9));box("hleft",-7,2.45,0,.18,4.9,44,mat(0xd1d0c7,.9));box("hright",7,2.45,0,.18,4.9,44,mat(0xd1d0c7,.9));
- for(let z=-20;z<=20;z+=4){box("ceilingPanel",0,4.78,z,3.1,.05,2.1,M.dark,false);const l=new THREE.PointLight(0xeceadf,z===4?2.0:1.45,7);l.position.set(0,4.45,z);scene.add(l);box("tube",0,4.67,z,2.2,.08,.28,M.wall,false)}
- for(const side of[-1,1]){for(let z=-18;z<=18;z+=2){const locker=box("locker",side*6.55,1.8,z,.85,3.3,1.65,mat(0x3e4542,.75));box("vent",side*6.1,2.7,z,.03,.42,.75,M.ink,false);box("handle",side*6.08,1.55,z,.04,.16,.12,M.gold,false)}}
- const doorPositions=[-15,-7,1,9,17];
- doorPositions.forEach((z,i)=>{for(const side of[-1,1]){box("doorFrame",side*6.83,2.25,z,.24,4.4,2.2,M.ink);const d=box("hallDoor",side*6.9,2.1,z,.12,4,1.8,i===1&&side===1?M.green:M.dark);if(i===1&&side===1){const light=new THREE.PointLight(0xd4c786,2.2,5);light.position.set(5.9,2.6,z);scene.add(light);const sign=textSprite("ROOM 02",.42,"#d4c786");sign.position.set(6.72,3.75,z);sign.rotation.y=Math.PI/2;scene.add(sign);addInteract(d,"Vào ROOM 02",()=>enterRoom2())}else{const sign=textSprite("LOCKED",.25,"#7f8885");sign.position.set(side*6.76,2.8,z);sign.rotation.y=side<0?-Math.PI/2:Math.PI/2;scene.add(sign);addInteract(d,"Phòng học bị khóa",()=>{logEvent("HALL_LOCKED_DOOR_ATTEMPT",{door_index:i,side});say("Căn phòng này đã bị khóa.")})}}});
- box("hallEnd",0,2.45,-23,.18,4.9,.2,M.wall);
- const endSign=textSprite("EAST WING",.5,"#b8b8ad");endSign.position.set(0,3.1,-22.8);endSign.rotation.y=Math.PI;scene.add(endSign);
- logEvent("ROOM1_COMPLETE_TO_HALLWAY");say("Cánh cửa mở. Một hành lang tối xuất hiện phía trước.");
- setTimeout(()=>{const n=document.getElementById("room2Notice");n.style.display="grid";setTimeout(()=>n.style.display="none",10000)},350);
+
+currentRoom="HALLWAY";
+
+document.getElementById("room").textContent=
+"ASTERIA SCHOOL · EAST HALLWAY";
+
+document.getElementById("objective").innerHTML=
+'Mục tiêu: <b>Tìm căn phòng duy nhất đang mở.</b><br>'+
+'<span style="opacity:.65">Các phòng còn lại đã bị khóa.</span>';
+
+clearWorld();
+
+scene.background=new THREE.Color(0x151a19);
+scene.fog=new THREE.FogExp2(0x1c2524,.026);
+
+/*
+=================================================
+FIX 01:
+Không spawn ở z=22 nữa vì collidesHall()
+chỉ cho phép z <= 21.5.
+
+Spawn mới nằm bên trong hành lang.
+=================================================
+*/
+camera.position.set(0,1.65,20.5);
+
+yaw=0;
+pitch=0;
+
+scene.add(
+new THREE.HemisphereLight(
+0x9baaa5,
+0x0b0e0e,
+.7
+)
+);
+
+const hallLight=new THREE.DirectionalLight(
+0xe8e5d6,
+.65
+);
+
+hallLight.position.set(0,8,0);
+scene.add(hallLight);
+
+box(
+"hfloor",
+0,
+-.08,
+0,
+14,
+.16,
+44,
+mat(0x3a3933,.5)
+);
+
+box(
+"hceil",
+0,
+4.9,
+0,
+14,
+.18,
+44,
+mat(0x77756b,.9)
+);
+
+box(
+"hleft",
+-7,
+2.45,
+0,
+.18,
+4.9,
+44,
+mat(0xd1d0c7,.9)
+);
+
+box(
+"hright",
+7,
+2.45,
+0,
+.18,
+4.9,
+44,
+mat(0xd1d0c7,.9)
+);
+
+for(let z=-20;z<=20;z+=4){
+
+box(
+"ceilingPanel",
+0,
+4.78,
+z,
+3.1,
+.05,
+2.1,
+M.dark,
+false
+);
+
+const l=new THREE.PointLight(
+0xeceadf,
+z===4?2.0:1.45,
+7
+);
+
+l.position.set(0,4.45,z);
+scene.add(l);
+
+box(
+"tube",
+0,
+4.67,
+z,
+2.2,
+.08,
+.28,
+M.wall,
+false
+)
 }
-function collidesHall(x,z){if(x<-6.15||x>6.15||z<-21.7||z>21.5)return true;for(const zz of[-15,-7,1,9,17]){if(Math.abs(Math.abs(x)-6.2)<.8&&Math.abs(z-zz)<1.25)return true}return false}
+
+for(const side of[-1,1]){
+
+for(let z=-18;z<=18;z+=2){
+
+const locker=box(
+"locker",
+side*6.55,
+1.8,
+z,
+.85,
+3.3,
+1.65,
+mat(0x3e4542,.75)
+);
+
+box(
+"vent",
+side*6.1,
+2.7,
+z,
+.03,
+.42,
+.75,
+M.ink,
+false
+);
+
+box(
+"handle",
+side*6.08,
+1.55,
+z,
+.04,
+.16,
+.12,
+M.gold,
+false
+)
+}
+}
+
+const doorPositions=[
+-15,
+-7,
+1,
+9,
+17
+];
+
+doorPositions.forEach((z,i)=>{
+
+for(const side of[-1,1]){
+
+box(
+"doorFrame",
+side*6.83,
+2.25,
+z,
+.24,
+4.4,
+2.2,
+M.ink
+);
+
+const d=box(
+"hallDoor",
+side*6.9,
+2.1,
+z,
+.12,
+4,
+1.8,
+i===1&&side===1?M.green:M.dark
+);
+
+if(i===1&&side===1){
+
+const light=new THREE.PointLight(
+0xd4c786,
+2.2,
+5
+);
+
+light.position.set(5.9,2.6,z);
+scene.add(light);
+
+const sign=textSprite(
+"ROOM 02",
+.42,
+"#d4c786"
+);
+
+sign.position.set(6.72,3.75,z);
+sign.rotation.y=Math.PI/2;
+
+scene.add(sign);
+
+addInteract(
+d,
+"Vào ROOM 02",
+()=>enterRoom2()
+);
+
+}else{
+
+const sign=textSprite(
+"LOCKED",
+.25,
+"#7f8885"
+);
+
+sign.position.set(
+side*6.76,
+2.8,
+z
+);
+
+sign.rotation.y=
+side<0?-Math.PI/2:Math.PI/2;
+
+scene.add(sign);
+
+addInteract(
+d,
+"Phòng học bị khóa",
+()=>{
+logEvent(
+"HALL_LOCKED_DOOR_ATTEMPT",
+{
+door_index:i,
+side
+}
+);
+
+say("Căn phòng này đã bị khóa.")
+}
+);
+
+}
+
+}
+
+});
+
+box(
+"hallEnd",
+0,
+2.45,
+-23,
+.18,
+4.9,
+.2,
+M.wall
+);
+
+const endSign=textSprite(
+"EAST WING",
+.5,
+"#b8b8ad"
+);
+
+endSign.position.set(
+0,
+3.1,
+-22.8
+);
+
+endSign.rotation.y=Math.PI;
+scene.add(endSign);
+
+logEvent("ROOM1_COMPLETE_TO_HALLWAY");
+
+say(
+"Cánh cửa mở. Một hành lang tối xuất hiện phía trước."
+);
+
+/*
+=================================================
+FIX 02:
+ĐÃ XÓA đoạn setTimeout() tự động hiện
+room2Notice ở đây.
+
+Thông báo khóa KHÔNG còn xuất hiện khi
+vừa vào hành lang.
+=================================================
+*/
+}
+
+function collidesHall(x,z){
+
+if(
+x<-6.15||
+x>6.15||
+z<-21.7||
+z>21.5
+)return true;
+
+for(
+const zz of[-15,-7,1,9,17]
+){
+
+if(
+Math.abs(Math.abs(x)-6.2)<.8&&
+Math.abs(z-zz)<1.25
+)
+return true
+
+}
+
+return false
+}
 
 function buildRoom2(){
- currentRoom="ROOM_02";document.getElementById("room").textContent="ASTERIA SCHOOL · ROOM 02";document.getElementById("objective").innerHTML='Mục tiêu: <b>Khám phá căn phòng trắng.</b><br><span style="opacity:.65">Tìm vùng tròn ở góc trong cùng và đứng yên 16 giây.</span>';
- clearWorld();scene.background=new THREE.Color(0xf4f4f1);scene.fog=new THREE.FogExp2(0xdfe4e2,.055);camera.position.set(0,1.65,7.8);yaw=Math.PI;pitch=0;
- scene.add(new THREE.HemisphereLight(0xffffff,0xb9c1bf,2.7));
- const ceilingLight=new THREE.DirectionalLight(0xffffff,1.8);ceilingLight.position.set(0,8,5);ceilingLight.castShadow=true;scene.add(ceilingLight);
- box("r2floor",0,-.08,0,18,.16,16,mat(0xf2f1ed,.78));box("r2ceil",0,4.9,0,18,.18,16,mat(0xffffff,.9));box("r2back",0,2.45,-8,18,4.9,.18,M.white);box("r2left",-9,2.45,0,.18,4.9,16,M.white);box("r2right",9,2.45,0,.18,4.9,16,M.white);
- // Door behind the player: it is visibly closed as soon as Room 02 loads.
- box("r2doorFrameL",-1.25,2.25,7.86,.22,4.4,.28,M.ink);
- box("r2doorFrameR",1.25,2.25,7.86,.22,4.4,.28,M.ink);
- const r2Door=box("r2LockedDoor",0,2.15,7.86,.16,4,2.1,M.dark);
- box("r2Handle",.72,2.1,7.72,.08,.14,.12,M.gold);
- addInteract(r2Door,"Cửa ROOM 02",()=>{say("Cửa đã bị khóa. Cần sưu tập đủ 4 chiếc chìa khóa để mở.")});
 
- for(const x of[-6,-2,2,6]){box("r2light",x,4.65,-.5,2.2,.08,.65,M.dark,false);const l=new THREE.PointLight(0xffffff,1.8,7);l.position.set(x,4.35,-.5);scene.add(l)}
- // 20 numbered wall buttons, distributed across the white room.
- const hints=[
- "Có một vòng tròn ở góc trong cùng. Hãy đứng yên ở đó.",
- "Đừng tin mọi dòng chữ bạn đọc được.",
- "Thời gian ngắn thường khiến người chơi chọn nhanh hơn.",
- "Một nút có thể hữu ích. Một nút khác chỉ làm bạn mất phương hướng.",
- "Hãy nhớ số thứ tự của thử thách.",
- "Khi hệ thống nói lỗi, hãy quan sát lựa chọn trước khi quyết định.",
- "Gợi ý nhiễu: Chìa khóa 1 nằm dưới sàn.",
- "Bạn sẽ cần nhiều hơn một chiếc chìa khóa để rời khu vực này.",
- "20 con số không phải 20 đáp án.",
- "Nếu thấy số 10, đừng vội nghĩ đó là đích cuối.",
- "Vùng tròn là điểm kích hoạt thử thách.",
- "Thử thách 01 giới hạn 20 giây.",
- "Có những căn phòng chỉ là mồi nhử.",
- "Một số manh mối chỉ có tác dụng sau khi thử thách hoàn thành.",
- "Đừng bỏ qua những thứ nằm ở góc phòng.",
- "Gợi ý nhiễu: hãy bấm tất cả các nút cùng lúc.",
- "Sự kiên nhẫn đôi khi là một phần của thử nghiệm.",
- "Khi một nút sáng lên, hãy quay lại kiểm tra nó.",
- "Không phải nút nào cũng cho bạn thông tin thật.",
- "Nút cuối cùng: hãy kiểm tra lại mọi thứ bạn đã học."
- ];
- const buttonPositions=[];
- for(let i=0;i<20;i++){
-   const wall=i<10?"back":"side",j=i%10;
-   let x,z,rot;
-   if(wall==="back"){x=-7.2+(j%5)*3.6;z=-7.86;rot=0}
-   else{x=8.86;z=-6.5+j*1.35;rot=Math.PI/2}
-   buttonPositions.push({x,z,rot});
- }
- buttonPositions.forEach((p,i)=>{
-   const plate=box("hiddenButton_"+(i+1),p.x,1.35,p.z,.62,.62,.10,mat(0x2c3433,.48,.1),true);plate.rotation.y=p.rot;
-   const n=textSprite(String(i+1),.55,"#f4f1df");n.position.set(p.x+(p.rot?-.08:0),1.35,p.z+(p.rot?0:.08));n.rotation.y=p.rot;scene.add(n);
-   addInteract(plate,"Nút "+(i+1),()=>buttonHint(i+1,hints[i],plate));
- });
- // Circle in the far corner. It is the only trigger.
- const ring=new THREE.Mesh(new THREE.RingGeometry(.7,.88,48),new THREE.MeshBasicMaterial({color:0xd4c786,transparent:true,opacity:.9,side:THREE.DoubleSide}));
- ring.rotation.x=-Math.PI/2;ring.position.set(6.8,.015,-6.7);scene.add(ring);
- const core=new THREE.Mesh(new THREE.CircleGeometry(.7,48),new THREE.MeshBasicMaterial({color:0x59615e,transparent:true,opacity:.12}));core.rotation.x=-Math.PI/2;core.position.set(6.8,.02,-6.7);scene.add(core);
- window.room2Circle={x:6.8,z:-6.7};
- hiddenKeyButton=Math.floor(Math.random()*20)+1;
- room2Challenge1Done=false;challenge1Started=false;insideCircleSince=null;numberAttempt=0;
- logEvent("ROOM2_ENTER");
+currentRoom="ROOM_02";
+
+document.getElementById("room").textContent=
+"ASTERIA SCHOOL · ROOM 02";
+
+document.getElementById("objective").innerHTML=
+'Mục tiêu: <b>Khám phá căn phòng trắng.</b><br>'+
+'<span style="opacity:.65">Tìm vùng tròn ở góc trong cùng và đứng yên 16 giây.</span>';
+
+clearWorld();
+
+scene.background=new THREE.Color(0xf4f4f1);
+scene.fog=new THREE.FogExp2(0xdfe4e2,.055);
+
+/*
+Spawn Room 02 hơi lùi khỏi cửa để người chơi
+thực sự bước vào phòng.
+*/
+camera.position.set(0,1.65,6.8);
+
+yaw=Math.PI;
+pitch=0;
+
+scene.add(
+new THREE.HemisphereLight(
+0xffffff,
+0xb9c1bf,
+2.7
+)
+);
+
+const ceilingLight=new THREE.DirectionalLight(
+0xffffff,
+1.8
+);
+
+ceilingLight.position.set(0,8,5);
+ceilingLight.castShadow=true;
+
+scene.add(ceilingLight);
+
+box(
+"r2floor",
+0,
+-.08,
+0,
+18,
+.16,
+16,
+mat(0xf2f1ed,.78)
+);
+
+box(
+"r2ceil",
+0,
+4.9,
+0,
+18,
+.18,
+16,
+mat(0xffffff,.9)
+);
+
+box(
+"r2back",
+0,
+2.45,
+-8,
+18,
+4.9,
+.18,
+M.white
+);
+
+box(
+"r2left",
+-9,
+2.45,
+0,
+.18,
+4.9,
+16,
+M.white
+);
+
+box(
+"r2right",
+9,
+2.45,
+0,
+.18,
+4.9,
+16,
+M.white
+);
+
+// Door behind player
+box(
+"r2doorFrameL",
+-1.25,
+2.25,
+7.86,
+.22,
+4.4,
+.28,
+M.ink
+);
+
+box(
+"r2doorFrameR",
+1.25,
+2.25,
+7.86,
+.22,
+4.4,
+.28,
+M.ink
+);
+
+const r2Door=box(
+"r2LockedDoor",
+0,
+2.15,
+7.86,
+.16,
+4,
+2.1,
+M.dark
+);
+
+box(
+"r2Handle",
+.72,
+2.1,
+7.72,
+.08,
+.14,
+.12,
+M.gold
+);
+
+addInteract(
+r2Door,
+"Cửa ROOM 02",
+()=>{
+say(
+"Cửa đã bị khóa. Cần sưu tập đủ 4 chiếc chìa khóa để mở."
+)
 }
+);
+
+for(const x of[-6,-2,2,6]){
+
+box(
+"r2light",
+x,
+4.65,
+-.5,
+2.2,
+.08,
+.65,
+M.dark,
+false
+);
+
+const l=new THREE.PointLight(
+0xffffff,
+1.8,
+7
+);
+
+l.position.set(x,4.35,-.5);
+
+scene.add(l)
+}
+
+// 20 numbered wall buttons
+
+const hints=[
+"Có một vòng tròn ở góc trong cùng. Hãy đứng yên ở đó.",
+"Đừng tin mọi dòng chữ bạn đọc được.",
+"Thời gian ngắn thường khiến người chơi chọn nhanh hơn.",
+"Một nút có thể hữu ích. Một nút khác chỉ làm bạn mất phương hướng.",
+"Hãy nhớ số thứ tự của thử thách.",
+"Khi hệ thống nói lỗi, hãy quan sát lựa chọn trước khi quyết định.",
+"Gợi ý nhiễu: Chìa khóa 1 nằm dưới sàn.",
+"Bạn sẽ cần nhiều hơn một chiếc chìa khóa để rời khu vực này.",
+"20 con số không phải 20 đáp án.",
+"Nếu thấy số 10, đừng vội nghĩ đó là đích cuối.",
+"Vùng tròn là điểm kích hoạt thử thách.",
+"Thử thách 01 giới hạn 20 giây.",
+"Có những căn phòng chỉ là mồi nhử.",
+"Một số manh mối chỉ có tác dụng sau khi thử thách hoàn thành.",
+"Đừng bỏ qua những thứ nằm ở góc phòng.",
+"Gợi ý nhiễu: hãy bấm tất cả các nút cùng lúc.",
+"Sự kiên nhẫn đôi khi là một phần của thử nghiệm.",
+"Khi một nút sáng lên, hãy quay lại kiểm tra nó.",
+"Không phải nút nào cũng cho bạn thông tin thật.",
+"Nút cuối cùng: hãy kiểm tra lại mọi thứ bạn đã học."
+];
+
+const buttonPositions=[];
+
+for(let i=0;i<20;i++){
+
+const wall=i<10?"back":"side";
+const j=i%10;
+
+let x,z,rot;
+
+if(wall==="back"){
+
+x=-7.2+(j%5)*3.6;
+z=-7.86;
+rot=0
+
+}else{
+
+x=8.86;
+z=-6.5+j*1.35;
+rot=Math.PI/2
+
+}
+
+buttonPositions.push({
+x,
+z,
+rot
+});
+
+}
+
+buttonPositions.forEach((p,i)=>{
+
+const plate=box(
+"hiddenButton_"+(i+1),
+p.x,
+1.35,
+p.z,
+.62,
+.62,
+.10,
+mat(0x2c3433,.48,.1),
+true
+);
+
+plate.rotation.y=p.rot;
+
+const n=textSprite(
+String(i+1),
+.55,
+"#f4f1df"
+);
+
+n.position.set(
+p.x+(p.rot?-.08:0),
+1.35,
+p.z+(p.rot?0:.08)
+);
+
+n.rotation.y=p.rot;
+
+scene.add(n);
+
+addInteract(
+plate,
+"Nút "+(i+1),
+()=>buttonHint(
+i+1,
+hints[i],
+plate
+)
+);
+
+});
+
+// Challenge circle
+
+const ring=new THREE.Mesh(
+new THREE.RingGeometry(.7,.88,48),
+new THREE.MeshBasicMaterial({
+color:0xd4c786,
+transparent:true,
+opacity:.9,
+side:THREE.DoubleSide
+})
+);
+
+ring.rotation.x=-Math.PI/2;
+ring.position.set(6.8,.015,-6.7);
+
+scene.add(ring);
+
+const core=new THREE.Mesh(
+new THREE.CircleGeometry(.7,48),
+new THREE.MeshBasicMaterial({
+color:0x59615e,
+transparent:true,
+opacity:.12
+})
+);
+
+core.rotation.x=-Math.PI/2;
+core.position.set(6.8,.02,-6.7);
+
+scene.add(core);
+
+window.room2Circle={
+x:6.8,
+z:-6.7
+};
+
+hiddenKeyButton=
+Math.floor(Math.random()*20)+1;
+
+room2Challenge1Done=false;
+challenge1Started=false;
+insideCircleSince=null;
+numberAttempt=0;
+
+logEvent("ROOM2_ENTER");
+}
+
 function buttonHint(num,hint,plate){
- if(num===hiddenKeyButton&&!room2Challenge1Done){logEvent("ROOM2_BUTTON_HINT",{button:num,hint_type:"LOCKED_KEY_BUTTON"});doc("NÚT "+num,'<div class="note">Bề mặt nút đang khóa.</div><p>Hoàn thành Challenge 01 để kích hoạt nút này.</p>');return}
- logEvent("ROOM2_BUTTON_HINT",{button:num,hint_type:num===hiddenKeyButton?"KEY_BUTTON":"HINT"});
- if(num===hiddenKeyButton&&room2Challenge1Done){
-   if(!inventory.includes("ROOM2 KEY 01")){addItem("ROOM2 KEY 01");logEvent("ROOM2_KEY_OBTAINED",{key:"ROOM2 KEY 01",button:num});say("Nút ẩn bật sáng. Bạn lấy được chìa khóa 1.");}else say("Bạn đã lấy chìa khóa từ nút này.");
-   return;
- }
- doc("NÚT "+num,'<div class="note">'+hint+'</div>');
+
+if(
+num===hiddenKeyButton&&
+!room2Challenge1Done
+){
+
+logEvent(
+"ROOM2_BUTTON_HINT",
+{
+button:num,
+hint_type:"LOCKED_KEY_BUTTON"
+}
+);
+
+doc(
+"NÚT "+num,
+'<div class="note">Bề mặt nút đang khóa.</div><p>Hoàn thành Challenge 01 để kích hoạt nút này.</p>'
+);
+
+return
 }
 
-function enterHallway(){playing=false;modalOpen=true;document.exitPointerLock?.();document.getElementById("ending").style.display="none";buildHallway();setTimeout(()=>{playing=true;modalOpen=false;renderer.domElement.requestPointerLock?.()},500)}
-function enterRoom2(){playing=false;modalOpen=true;document.exitPointerLock?.();buildRoom2();setTimeout(()=>{playing=true;modalOpen=false;renderer.domElement.requestPointerLock?.();say("Cửa đã khóa. Tìm vòng tròn ở góc trong cùng.")},400)}
+logEvent(
+"ROOM2_BUTTON_HINT",
+{
+button:num,
+hint_type:num===hiddenKeyButton?"KEY_BUTTON":"HINT"
+}
+);
 
-document.getElementById("closeDoc").onclick=()=>{document.getElementById("doc").style.display="none";modalOpen=false;if(playing)renderer.domElement.requestPointerLock?.()};
+if(
+num===hiddenKeyButton&&
+room2Challenge1Done
+){
 
-let memoryTimer=null,memoryDeadline=0,memoryMoves=0,memoryPairs=0,memoryFirst=null,memorySecond=null,memoryBusy=false,restTimer=null;
-const CARD_IMAGES=["IMG_5566.jpeg","IMG_5567.jpeg","IMG_5568.jpeg","IMG_5569.jpeg","IMG_5570.jpeg","IMG_5571.jpeg","IMG_5572.jpeg","IMG_5573.jpeg"];
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function openMemoryGame(){if(memoryActive)return;memoryActive=true;modalOpen=true;document.exitPointerLock?.();document.getElementById("memoryGame").style.display="flex";logEvent("MEMORY_OPEN",{attempt:memoryAttempt+1});startMemoryRound()}
-function startMemoryRound(){clearInterval(memoryTimer);memoryAttempt++;memoryMoves=0;memoryPairs=0;memoryFirst=null;memorySecond=null;memoryBusy=false;document.getElementById("memMoves").textContent="0/25";document.getElementById("memPairs").textContent="0/8";document.getElementById("memTime").textContent="40";document.getElementById("memTime").classList.remove("timerDanger");const deck=shuffle([...CARD_IMAGES,...CARD_IMAGES]),board=document.getElementById("memoryBoard");board.innerHTML="";deck.forEach((src,i)=>{const b=document.createElement("button");b.className="memoryCard";b.type="button";b.dataset.id=src;b.dataset.index=i;b.innerHTML=`<div class="cardInner"><div class="cardFace cardBack"></div><div class="cardFace cardFront"><img src="${src}" alt="Thẻ ${i+1}" draggable="false"></div></div>`;b.addEventListener("click",()=>flipCard(b));board.appendChild(b)});memoryDeadline=Date.now()+40000;memoryTimer=setInterval(updateMemoryTimer,100)}
-function updateMemoryTimer(){if(!memoryActive)return;const left=Math.max(0,memoryDeadline-Date.now()),sec=Math.ceil(left/1000);document.getElementById("memTime").textContent=sec;if(sec<=5)document.getElementById("memTime").classList.add("timerDanger");if(left<=0){clearInterval(memoryTimer);memoryTimer=null;memoryFail("Hết 40 giây.")}}
-function flash(kind){const f=document.getElementById("memoryFlash");f.className="";void f.offsetWidth;f.className=kind==="success"?"memoryFlashSuccess":"memoryFlashFail"}
-function flipCard(card){if(memoryBusy||card.classList.contains("flipped")||card.classList.contains("matched")||memoryMoves>=25)return;if(Date.now()>=memoryDeadline){memoryFail("Hết 40 giây.");return}card.classList.add("flipped");cardSound("flip");logEvent("MEMORY_CARD_FLIP",{attempt:memoryAttempt,card_index:Number(card.dataset.index),card_id:card.dataset.id,move:memoryMoves+1});if(!memoryFirst){memoryFirst=card;return}memorySecond=card;memoryMoves++;document.getElementById("memMoves").textContent=memoryMoves+"/25";memoryBusy=true;if(memoryFirst.dataset.id===memorySecond.dataset.id){setTimeout(()=>{memoryFirst.classList.add("matched");memorySecond.classList.add("matched");const pairsBefore=memoryPairs;memoryPairs++;document.getElementById("memPairs").textContent=memoryPairs+"/8";logEvent("MEMORY_MATCH",{attempt:memoryAttempt,move:memoryMoves,card_id:memoryFirst.dataset.id,pairs_before:pairsBefore,pairs_after:memoryPairs});cardSound("match");memoryFirst=null;memorySecond=null;memoryBusy=false;if(memoryPairs===8)memoryWin()},180)}else{const a=memoryFirst,b=memorySecond;a.classList.add("wrong");b.classList.add("wrong");logEvent("MEMORY_WRONG_MATCH",{attempt:memoryAttempt,move:memoryMoves,card1:a.dataset.id,card2:b.dataset.id,pairs:memoryPairs});cardSound("wrong");setTimeout(()=>{a.classList.remove("flipped","wrong");b.classList.remove("flipped","wrong");memoryFirst=null;memorySecond=null;memoryBusy=false;if(memoryMoves>=25)memoryFail("Bạn đã dùng hết 25 lượt.")},600)}}
-function memoryWin(){clearInterval(memoryTimer);memoryTimer=null;memoryBusy=true;cardSound("win");logEvent("MEMORY_COMPLETE",{attempt:memoryAttempt,moves:memoryMoves,pairs:memoryPairs,elapsed_ms:Math.max(0,Date.now()-(memoryDeadline-40000))});setTimeout(()=>{document.getElementById("memoryGame").style.display="none";memoryActive=false;modalOpen=false;unlocked=true;document.getElementById("inv").style.boxShadow="0 0 20px #d4c78655";say("TẠCH. Hệ thống báo: tủ 10A đã được mở khóa. Đến tủ để lấy chìa khóa.");renderer.domElement.requestPointerLock?.()},750)}
-function memoryFail(reason){if(!memoryActive)return;clearInterval(memoryTimer);memoryTimer=null;memoryBusy=true;document.exitPointerLock?.();document.getElementById("memoryGame").style.display="none";document.getElementById("failStats").textContent=`${reason} • Đã dùng ${memoryMoves}/25 lượt • Đã ghép ${memoryPairs}/8 cặp.`;logEvent("MEMORY_FAIL",{attempt:memoryAttempt,reason,moves:memoryMoves,pairs:memoryPairs});document.getElementById("fail").style.display="grid"}
-document.getElementById("retryMemory").onclick=()=>{document.getElementById("fail").style.display="none";document.getElementById("memoryGame").style.display="flex";startMemoryRound()};
-document.getElementById("giveupMemory").onclick=()=>{document.getElementById("fail").style.display="none";document.getElementById("memoryGame").style.display="none";memoryActive=false;startRest()};
-document.getElementById("memoryClose").onclick=()=>{if(memoryBusy)return;clearInterval(memoryTimer);memoryTimer=null;document.getElementById("memoryGame").style.display="none";memoryActive=false;modalOpen=false;renderer.domElement.requestPointerLock?.();say("Bạn đóng bài kiểm tra. Tủ vẫn chưa được mở khóa.")};
-function startRest(){logEvent("REST_START",{duration_seconds:30});memoryActive=false;modalOpen=true;playing=false;document.getElementById("rest").style.display="grid";let left=30;document.getElementById("restTimer").textContent="00:30";clearInterval(restTimer);restTimer=setInterval(()=>{left--;document.getElementById("restTimer").textContent=`00:${String(Math.max(0,left)).padStart(2,"0")}`;if(left<=0){clearInterval(restTimer);restTimer=null;document.getElementById("rest").style.display="none";modalOpen=false;enterHallway()}},1000)}
+if(!inventory.includes("ROOM2 KEY 01")){
+
+addItem("ROOM2 KEY 01");
+
+logEvent(
+"ROOM2_KEY_OBTAINED",
+{
+key:"ROOM2 KEY 01",
+button:num
+}
+);
+
+say(
+"Nút ẩn bật sáng. Bạn lấy được chìa khóa 1."
+);
+
+}else{
+
+say(
+"Bạn đã lấy chìa khóa từ nút này."
+)
+
+}
+
+return
+}
+
+doc(
+"NÚT "+num,
+'<div class="note">'+hint+'</div>'
+);
+}
+
+function enterHallway(){
+
+playing=false;
+modalOpen=true;
+
+document.exitPointerLock?.();
+
+document.getElementById("ending").style.display="none";
+
+buildHallway();
+
+setTimeout(()=>{
+playing=true;
+modalOpen=false;
+
+renderer.domElement.requestPointerLock?.();
+
+},500)
+}
+
+function enterRoom2(){
+
+playing=false;
+modalOpen=true;
+
+document.exitPointerLock?.();
+
+buildRoom2();
+
+setTimeout(()=>{
+
+playing=true;
+modalOpen=false;
+
+renderer.domElement.requestPointerLock?.();
+
+/*
+=================================================
+FIX 03:
+Thông báo khóa chỉ xuất hiện ở đây,
+sau khi Room 02 đã được load.
+
+Không còn xuất hiện ở hành lang.
+=================================================
+*/
+
+const n=document.getElementById("room2Notice");
+
+n.style.display="grid";
+
+setTimeout(()=>{
+n.style.display="none";
+},10000);
+
+say(
+"Cửa đã khóa. Tìm vòng tròn ở góc trong cùng."
+);
+
+},400)
+}
+
+document.getElementById("closeDoc").onclick=()=>{
+
+document.getElementById("doc").style.display="none";
+
+modalOpen=false;
+
+if(playing)
+renderer.domElement.requestPointerLock?.();
+
+};
+
+let memoryTimer=null;
+let memoryDeadline=0;
+let memoryMoves=0;
+let memoryPairs=0;
+let memoryFirst=null;
+let memorySecond=null;
+let memoryBusy=false;
+let restTimer=null;
+
+const CARD_IMAGES=[
+"IMG_5566.jpeg",
+"IMG_5567.jpeg",
+"IMG_5568.jpeg",
+"IMG_5569.jpeg",
+"IMG_5570.jpeg",
+"IMG_5571.jpeg",
+"IMG_5572.jpeg",
+"IMG_5573.jpeg"
+];
+
+function shuffle(a){
+
+for(
+let i=a.length-1;
+i>0;
+i--
+){
+
+const j=Math.floor(
+Math.random()*(i+1)
+);
+
+[a[i],a[j]]=
+[a[j],a[i]]
+}
+
+return a
+}
+
+function openMemoryGame(){
+
+if(memoryActive)return;
+
+memoryActive=true;
+modalOpen=true;
+
+document.exitPointerLock?.();
+
+document.getElementById("memoryGame").style.display="flex";
+
+logEvent(
+"MEMORY_OPEN",
+{
+attempt:memoryAttempt+1
+}
+);
+
+startMemoryRound()
+}
+
+function startMemoryRound(){
+
+clearInterval(memoryTimer);
+
+memoryAttempt++;
+
+memoryMoves=0;
+memoryPairs=0;
+memoryFirst=null;
+memorySecond=null;
+memoryBusy=false;
+
+document.getElementById("memMoves").textContent="0/25";
+document.getElementById("memPairs").textContent="0/8";
+document.getElementById("memTime").textContent="40";
+
+document.getElementById("memTime")
+.classList.remove("timerDanger");
+
+const deck=shuffle([
+...CARD_IMAGES,
+...CARD_IMAGES
+]);
+
+const board=document.getElementById("memoryBoard");
+
+board.innerHTML="";
+
+deck.forEach((src,i)=>{
+
+const b=document.createElement("button");
+
+b.className="memoryCard";
+b.type="button";
+
+b.dataset.id=src;
+b.dataset.index=i;
+
+b.innerHTML=
+`<div class="cardInner">
+<div class="cardFace cardBack"></div>
+<div class="cardFace cardFront">
+<img src="${src}" alt="Thẻ ${i+1}" draggable="false">
+</div>
+</div>`;
+
+b.addEventListener(
+"click",
+()=>flipCard(b)
+);
+
+board.appendChild(b)
+
+});
+
+memoryDeadline=
+Date.now()+40000;
+
+memoryTimer=
+setInterval(
+updateMemoryTimer,
+100
+)
+}
+
+function updateMemoryTimer(){
+
+if(!memoryActive)return;
+
+const left=Math.max(
+0,
+memoryDeadline-Date.now()
+);
+
+const sec=Math.ceil(left/1000);
+
+document.getElementById("memTime").textContent=sec;
+
+if(sec<=5)
+document.getElementById("memTime")
+.classList.add("timerDanger");
+
+if(left<=0){
+
+clearInterval(memoryTimer);
+memoryTimer=null;
+
+memoryFail("Hết 40 giây.")
+}
+}
+
+function flash(kind){
+
+const f=document.getElementById("memoryFlash");
+
+f.className="";
+
+void f.offsetWidth;
+
+f.className=
+kind==="success"
+?"memoryFlashSuccess"
+:"memoryFlashFail"
+}
+
+function flipCard(card){
+
+if(
+memoryBusy||
+card.classList.contains("flipped")||
+card.classList.contains("matched")||
+memoryMoves>=25
+)return;
+
+if(Date.now()>=memoryDeadline){
+
+memoryFail("Hết 40 giây.");
+
+return
+}
+
+card.classList.add("flipped");
+
+cardSound("flip");
+
+logEvent(
+"MEMORY_CARD_FLIP",
+{
+attempt:memoryAttempt,
+card_index:Number(card.dataset.index),
+card_id:card.dataset.id,
+move:memoryMoves+1
+}
+);
+
+if(!memoryFirst){
+
+memoryFirst=card;
+
+return
+}
+
+memorySecond=card;
+
+memoryMoves++;
+
+document.getElementById("memMoves").textContent=
+memoryMoves+"/25";
+
+memoryBusy=true;
+
+if(
+memoryFirst.dataset.id===
+memorySecond.dataset.id
+){
+
+setTimeout(()=>{
+
+memoryFirst.classList.add("matched");
+memorySecond.classList.add("matched");
+
+const pairsBefore=memoryPairs;
+
+memoryPairs++;
+
+document.getElementById("memPairs").textContent=
+memoryPairs+"/8";
+
+logEvent(
+"MEMORY_MATCH",
+{
+attempt:memoryAttempt,
+move:memoryMoves,
+card_id:memoryFirst.dataset.id,
+pairs_before:pairsBefore,
+pairs_after:memoryPairs
+}
+);
+
+cardSound("match");
+
+memoryFirst=null;
+memorySecond=null;
+memoryBusy=false;
+
+if(memoryPairs===8)
+memoryWin();
+
+},180)
+
+}else{
+
+const a=memoryFirst;
+const b=memorySecond;
+
+a.classList.add("wrong");
+b.classList.add("wrong");
+
+logEvent(
+"MEMORY_WRONG_MATCH",
+{
+attempt:memoryAttempt,
+move:memoryMoves,
+card1:a.dataset.id,
+card2:b.dataset.id,
+pairs:memoryPairs
+}
+);
+
+cardSound("wrong");
+
+setTimeout(()=>{
+
+a.classList.remove(
+"flipped",
+"wrong"
+);
+
+b.classList.remove(
+"flipped",
+"wrong"
+);
+
+memoryFirst=null;
+memorySecond=null;
+memoryBusy=false;
+
+if(memoryMoves>=25)
+memoryFail(
+"Bạn đã dùng hết 25 lượt."
+);
+
+},600)
+
+}
+
+}
+
+function memoryWin(){
+
+clearInterval(memoryTimer);
+memoryTimer=null;
+
+memoryBusy=true;
+
+cardSound("win");
+
+logEvent(
+"MEMORY_COMPLETE",
+{
+attempt:memoryAttempt,
+moves:memoryMoves,
+pairs:memoryPairs,
+elapsed_ms:
+Math.max(
+0,
+Date.now()-(memoryDeadline-40000)
+)
+}
+);
+
+setTimeout(()=>{
+
+document.getElementById("memoryGame")
+.style.display="none";
+
+memoryActive=false;
+modalOpen=false;
+unlocked=true;
+
+document.getElementById("inv")
+.style.boxShadow="0 0 20px #d4c78655";
+
+say(
+"TẠCH. Hệ thống báo: tủ 10A đã được mở khóa. Đến tủ để lấy chìa khóa."
+);
+
+renderer.domElement.requestPointerLock?.();
+
+},750)
+}
+
+function memoryFail(reason){
+
+if(!memoryActive)return;
+
+clearInterval(memoryTimer);
+memoryTimer=null;
+
+memoryBusy=true;
+
+document.exitPointerLock?.();
+
+document.getElementById("memoryGame")
+.style.display="none";
+
+document.getElementById("failStats")
+.textContent=
+`${reason} • Đã dùng ${memoryMoves}/25 lượt • Đã ghép ${memoryPairs}/8 cặp.`;
+
+logEvent(
+"MEMORY_FAIL",
+{
+attempt:memoryAttempt,
+reason,
+moves:memoryMoves,
+pairs:memoryPairs
+}
+);
+
+document.getElementById("fail")
+.style.display="grid";
+}
+
+document.getElementById("retryMemory").onclick=()=>{
+
+document.getElementById("fail")
+.style.display="none";
+
+document.getElementById("memoryGame")
+.style.display="flex";
+
+startMemoryRound()
+};
+
+document.getElementById("giveupMemory").onclick=()=>{
+
+document.getElementById("fail")
+.style.display="none";
+
+document.getElementById("memoryGame")
+.style.display="none";
+
+memoryActive=false;
+
+startRest()
+};
+
+document.getElementById("memoryClose").onclick=()=>{
+
+if(memoryBusy)return;
+
+clearInterval(memoryTimer);
+memoryTimer=null;
+
+document.getElementById("memoryGame")
+.style.display="none";
+
+memoryActive=false;
+modalOpen=false;
+
+renderer.domElement.requestPointerLock?.();
+
+say(
+"Bạn đóng bài kiểm tra. Tủ vẫn chưa được mở khóa."
+)
+};
+
+function startRest(){
+
+logEvent(
+"REST_START",
+{
+duration_seconds:30
+}
+);
+
+memoryActive=false;
+modalOpen=true;
+playing=false;
+
+document.getElementById("rest")
+.style.display="grid";
+
+let left=30;
+
+document.getElementById("restTimer")
+.textContent="00:30";
+
+clearInterval(restTimer);
+
+restTimer=setInterval(()=>{
+
+left--;
+
+document.getElementById("restTimer")
+.textContent=
+`00:${String(Math.max(0,left)).padStart(2,"0")}`;
+
+if(left<=0){
+
+clearInterval(restTimer);
+restTimer=null;
+
+document.getElementById("rest")
+.style.display="none";
+
+modalOpen=false;
+
+enterHallway()
+}
+
+},1000)
+}
 
 const keys={};
+
 function collides(x,z){
- if(currentRoom==="ROOM_01")return collidesRoom1(x,z);
- if(currentRoom==="HALLWAY")return collidesHall(x,z);
- if(currentRoom==="ROOM_02")return x<-8.25||x>8.25||z<-7.25||z>7.25;
- return false;
+
+if(currentRoom==="ROOM_01")
+return collidesRoom1(x,z);
+
+if(currentRoom==="HALLWAY")
+return collidesHall(x,z);
+
+if(currentRoom==="ROOM_02")
+return x<-8.25||
+x>8.25||
+z<-7.25||
+z>7.25;
+
+return false
 }
-function move(dt){const forwardX=-Math.sin(yaw),forwardZ=-Math.cos(yaw),rightX=Math.cos(yaw),rightZ=-Math.sin(yaw);let mx=0,mz=0;if(keys.KeyW){mx+=forwardX;mz+=forwardZ}if(keys.KeyS){mx-=forwardX;mz-=forwardZ}if(keys.KeyA){mx-=rightX;mz-=rightZ}if(keys.KeyD){mx+=rightX;mz+=rightZ}const len=Math.hypot(mx,mz);if(!len)return;mx/=len;mz/=len;let speed=3.25;if(keys.ShiftLeft||keys.ShiftRight)speed*=1.55;const dist=speed*dt,nx=camera.position.x+mx*dist,nz=camera.position.z+mz*dist;if(!collides(nx,camera.position.z))camera.position.x=nx;if(!collides(camera.position.x,nz))camera.position.z=nz;camera.position.y=1.65+Math.sin(performance.now()*.008)*.012}
 
-const raycaster=new THREE.Raycaster(),screenCenter=new THREE.Vector2(0,0);
-function nearest(){if(!playing||modalOpen||memoryActive)return null;raycaster.setFromCamera(screenCenter,camera);const hits=raycaster.intersectObjects(interactables.map(o=>o.mesh),true);for(const hit of hits){if(hit.distance>3.2)break;let obj=hit.object;while(obj){const found=interactables.find(o=>o.mesh===obj);if(found)return found;obj=obj.parent}}return null}
-function tryInteract(){const b=nearest();if(b)b.fn();else say("Không có gì để tương tác ở đây.")}
-function updatePrompt(){const el=document.getElementById("prompt");if(!playing||modalOpen||memoryActive){el.style.opacity=0;return}const b=nearest();el.textContent=b?"E — "+b.label:"";el.style.opacity=b?1:0}
+function move(dt){
 
-addEventListener("keydown",e=>{if(["KeyW","KeyA","KeyS","KeyD","ShiftLeft","ShiftRight","KeyE","Escape"].includes(e.code))e.preventDefault();keys[e.code]=true;if(e.code==="KeyE"&&!e.repeat)tryInteract();if(e.code==="Escape")document.exitPointerLock?.()});
-addEventListener("keyup",e=>keys[e.code]=false);addEventListener("blur",()=>Object.keys(keys).forEach(k=>keys[k]=false));
-renderer.domElement.addEventListener("click",()=>{if(playing&&!modalOpen&&!memoryActive)renderer.domElement.requestPointerLock?.()});
-document.addEventListener("pointerlockchange",()=>{locked=document.pointerLockElement===renderer.domElement;if(!locked)Object.keys(keys).forEach(k=>keys[k]=false)});
-document.addEventListener("mousemove",e=>{if(locked&&playing&&!modalOpen&&!memoryActive){yaw-=e.movementX*.0021;pitch=Math.max(-1.25,Math.min(1.25,pitch-e.movementY*.0017))}});
+const forwardX=-Math.sin(yaw);
+const forwardZ=-Math.cos(yaw);
 
-// ---------------- ROOM 02 / CHALLENGE 01 ----------------
-function pointInsideChallengeCircle(){if(currentRoom!=="ROOM_02"||!room2Circle)return false;return Math.hypot(camera.position.x-room2Circle.x,camera.position.z-room2Circle.z)<1.0}
+const rightX=Math.cos(yaw);
+const rightZ=-Math.sin(yaw);
+
+let mx=0;
+let mz=0;
+
+if(keys.KeyW){
+mx+=forwardX;
+mz+=forwardZ
+}
+
+if(keys.KeyS){
+mx-=forwardX;
+mz-=forwardZ
+}
+
+if(keys.KeyA){
+mx-=rightX;
+mz-=rightZ
+}
+
+if(keys.KeyD){
+mx+=rightX;
+mz+=rightZ
+}
+
+const len=Math.hypot(mx,mz);
+
+if(!len)return;
+
+mx/=len;
+mz/=len;
+
+let speed=3.25;
+
+if(
+keys.ShiftLeft||
+keys.ShiftRight
+)
+speed*=1.55;
+
+const dist=speed*dt;
+
+const nx=
+camera.position.x+
+mx*dist;
+
+const nz=
+camera.position.z+
+mz*dist;
+
+if(
+!collides(
+nx,
+camera.position.z
+)
+)
+camera.position.x=nx;
+
+if(
+!collides(
+camera.position.x,
+nz
+)
+)
+camera.position.z=nz;
+
+camera.position.y=
+1.65+
+Math.sin(performance.now()*.008)*.012
+}
+
+const raycaster=new THREE.Raycaster();
+const screenCenter=new THREE.Vector2(0,0);
+
+function nearest(){
+
+if(
+!playing||
+modalOpen||
+memoryActive
+)return null;
+
+raycaster.setFromCamera(
+screenCenter,
+camera
+);
+
+const hits=
+raycaster.intersectObjects(
+interactables.map(o=>o.mesh),
+true
+);
+
+for(const hit of hits){
+
+if(hit.distance>3.2)
+break;
+
+let obj=hit.object;
+
+while(obj){
+
+const found=
+interactables.find(
+o=>o.mesh===obj
+);
+
+if(found)
+return found;
+
+obj=obj.parent
+}
+}
+
+return null
+}
+
+function tryInteract(){
+
+const b=nearest();
+
+if(b)
+b.fn();
+else
+say("Không có gì để tương tác ở đây.")
+}
+
+function updatePrompt(){
+
+const el=document.getElementById("prompt");
+
+if(
+!playing||
+modalOpen||
+memoryActive
+){
+
+el.style.opacity=0;
+
+return
+}
+
+const b=nearest();
+
+el.textContent=
+b?"E — "+b.label:"";
+
+el.style.opacity=
+b?1:0
+}
+
+addEventListener(
+"keydown",
+e=>{
+
+if([
+"KeyW",
+"KeyA",
+"KeyS",
+"KeyD",
+"ShiftLeft",
+"ShiftRight",
+"KeyE",
+"Escape"
+].includes(e.code))
+e.preventDefault();
+
+keys[e.code]=true;
+
+if(
+e.code==="KeyE"&&
+!e.repeat
+)
+tryInteract();
+
+if(e.code==="Escape")
+document.exitPointerLock?.();
+
+}
+);
+
+addEventListener(
+"keyup",
+e=>keys[e.code]=false
+);
+
+addEventListener(
+"blur",
+()=>{
+Object.keys(keys)
+.forEach(k=>keys[k]=false)
+}
+);
+
+renderer.domElement.addEventListener(
+"click",
+()=>{
+if(
+playing&&
+!modalOpen&&
+!memoryActive
+)
+renderer.domElement.requestPointerLock?.()
+}
+);
+
+document.addEventListener(
+"pointerlockchange",
+()=>{
+locked=
+document.pointerLockElement===
+renderer.domElement;
+
+if(!locked)
+Object.keys(keys)
+.forEach(k=>keys[k]=false)
+}
+);
+
+document.addEventListener(
+"mousemove",
+e=>{
+if(
+locked&&
+playing&&
+!modalOpen&&
+!memoryActive
+){
+
+yaw-=e.movementX*.0021;
+
+pitch=Math.max(
+-1.25,
+Math.min(
+1.25,
+pitch-e.movementY*.0017
+)
+)
+
+}
+}
+);
+
+// =========================================
+// ROOM 02 / CHALLENGE 01
+// =========================================
+
+function pointInsideChallengeCircle(){
+
+if(
+currentRoom!=="ROOM_02"||
+!room2Circle
+)return false;
+
+return Math.hypot(
+camera.position.x-room2Circle.x,
+camera.position.z-room2Circle.z
+)<1.0
+}
+
 function updateCircleTrigger(dt){
- const bar=document.getElementById("circleProgress");
- if(currentRoom!=="ROOM_02"||challenge1Started||room2Challenge1Done||modalOpen){bar.style.display="none";insideCircleSince=null;return}
- if(pointInsideChallengeCircle()){
-   if(insideCircleSince===null){insideCircleSince=Date.now();bar.style.display="block";logEvent("CH1_CIRCLE_ENTER")}
-   const p=Math.min(1,(Date.now()-insideCircleSince)/16000);bar.querySelector("i").style.width=(p*100)+"%";
-   if(p>=1){insideCircleSince=null;bar.style.display="none";challenge1Started=true;logEvent("CH1_TRIGGER_AFTER_16S");document.getElementById("challengeIntro").style.display="grid";modalOpen=true;document.exitPointerLock?.()}
- }else{insideCircleSince=null;bar.style.display="none"}
+
+const bar=
+document.getElementById("circleProgress");
+
+if(
+currentRoom!=="ROOM_02"||
+challenge1Started||
+room2Challenge1Done||
+modalOpen
+){
+
+bar.style.display="none";
+insideCircleSince=null;
+
+return
 }
 
-let numberTimer=null,numberDeadline=0,nextNumber=1,numberBusy=false,numberCards=[];
+if(pointInsideChallengeCircle()){
+
+if(insideCircleSince===null){
+
+insideCircleSince=Date.now();
+
+bar.style.display="block";
+
+logEvent("CH1_CIRCLE_ENTER")
+}
+
+const p=Math.min(
+1,
+(Date.now()-insideCircleSince)/16000
+);
+
+bar.querySelector("i")
+.style.width=(p*100)+"%";
+
+if(p>=1){
+
+insideCircleSince=null;
+
+bar.style.display="none";
+
+challenge1Started=true;
+
+logEvent(
+"CH1_TRIGGER_AFTER_16S"
+);
+
+document.getElementById(
+"challengeIntro"
+).style.display="grid";
+
+modalOpen=true;
+
+document.exitPointerLock?.();
+
+}
+
+}else{
+
+insideCircleSince=null;
+
+bar.style.display="none";
+
+}
+}
+
+let numberTimer=null;
+let numberDeadline=0;
+let nextNumber=1;
+let numberBusy=false;
+let numberCards=[];
+
 function startNumberChallengeRound(){
- document.getElementById("challengeFail").style.display="none";document.getElementById("numberChallenge").style.display="block";modalOpen=true;document.exitPointerLock?.();
- nextNumber=1;numberBusy=false;numberAttempt++;numberCards=[];document.getElementById("challengeProgress").textContent="1 / 20";document.getElementById("numberTime").textContent="20";
- const field=document.getElementById("numberField");field.innerHTML="";
- const positions=[];
- for(let i=0;i<20;i++){positions.push({x:3+Math.random()*92,y:4+Math.random()*88})}
- shuffle(positions);
- for(let n=1;n<=20;n++){
-   const b=document.createElement("button");b.className="numBtn";b.textContent=n;b.dataset.n=n;b.style.left=positions[n-1].x+"%";b.style.top=positions[n-1].y+"%";b.addEventListener("click",()=>clickNumber(n,b));field.appendChild(b);numberCards.push(b);
- }
- numberDeadline=Date.now()+20000;clearInterval(numberTimer);numberTimer=setInterval(updateNumberTimer,100);logEvent("CH1_START",{attempt:numberAttempt,timeout_seconds:20,shuffle_at_10:numberAttempt===1});
+
+document.getElementById(
+"challengeFail"
+).style.display="none";
+
+document.getElementById(
+"numberChallenge"
+).style.display="block";
+
+modalOpen=true;
+
+document.exitPointerLock?.();
+
+nextNumber=1;
+numberBusy=false;
+
+numberAttempt++;
+
+numberCards=[];
+
+document.getElementById(
+"challengeProgress"
+).textContent="1 / 20";
+
+document.getElementById(
+"numberTime"
+).textContent="20";
+
+const field=
+document.getElementById(
+"numberField"
+);
+
+field.innerHTML="";
+
+const positions=[];
+
+for(let i=0;i<20;i++){
+
+positions.push({
+x:3+Math.random()*92,
+y:4+Math.random()*88
+});
+
 }
-function updateNumberTimer(){const left=Math.max(0,numberDeadline-Date.now()),s=Math.ceil(left/1000);document.getElementById("numberTime").textContent=s;if(left<=0){clearInterval(numberTimer);numberTimer=null;numberFail("Hết thời gian. Thử thách thất bại.");}}
+
+shuffle(positions);
+
+for(let n=1;n<=20;n++){
+
+const b=
+document.createElement("button");
+
+b.className="numBtn";
+
+b.textContent=n;
+
+b.dataset.n=n;
+
+b.style.left=
+positions[n-1].x+"%";
+
+b.style.top=
+positions[n-1].y+"%";
+
+b.addEventListener(
+"click",
+()=>clickNumber(n,b)
+);
+
+field.appendChild(b);
+
+numberCards.push(b)
+}
+
+numberDeadline=
+Date.now()+20000;
+
+clearInterval(numberTimer);
+
+numberTimer=
+setInterval(
+updateNumberTimer,
+100
+);
+
+logEvent(
+"CH1_START",
+{
+attempt:numberAttempt,
+timeout_seconds:20,
+shuffle_at_10:numberAttempt===1
+}
+);
+}
+
+function updateNumberTimer(){
+
+const left=
+Math.max(
+0,
+numberDeadline-Date.now()
+);
+
+const s=Math.ceil(left/1000);
+
+document.getElementById(
+"numberTime"
+).textContent=s;
+
+if(left<=0){
+
+clearInterval(numberTimer);
+
+numberTimer=null;
+
+numberFail(
+"Hết thời gian. Thử thách thất bại."
+);
+
+}
+}
+
 function clickNumber(n,b){
- if(numberBusy||n!==nextNumber)return;
- if(Date.now()>=numberDeadline){numberFail("Hết thời gian. Thử thách thất bại.");return}
- b.classList.add("correct");b.disabled=true;nextNumber++;document.getElementById("challengeProgress").textContent=Math.min(nextNumber,20)+" / 20";
- logEvent("CH1_NUMBER_CLICK",{attempt:numberAttempt,number:n,elapsed_ms:20000-Math.max(0,numberDeadline-Date.now())});
- // FIRST attempt: exactly when 10 is found, deliberately shuffle.
- if(n===10&&numberAttempt===1){
-   numberBusy=true;clearInterval(numberTimer);numberTimer=null;
-   setTimeout(()=>{shuffleNumberPositions();setTimeout(()=>{document.getElementById("numberChallenge").style.display="none";document.getElementById("challengeFail").style.display="grid";document.getElementById("numberFailTitle").textContent="Hệ thống xảy ra lỗi.";document.getElementById("numberFailReason").textContent="Bạn đã tìm đến số 10. Hệ thống vừa xáo trộn các chữ số.";logEvent("CH1_SYSTEM_ERROR_AT_10",{attempt:numberAttempt});},500)},120);
-   return;
- }
- if(n===20){clearInterval(numberTimer);numberTimer=null;numberBusy=true;setTimeout(numberChallengeSuccess,250)}
+
+if(
+numberBusy||
+n!==nextNumber
+)return;
+
+if(
+Date.now()>=numberDeadline
+){
+
+numberFail(
+"Hết thời gian. Thử thách thất bại."
+);
+
+return
 }
+
+b.classList.add("correct");
+
+b.disabled=true;
+
+nextNumber++;
+
+document.getElementById(
+"challengeProgress"
+).textContent=
+Math.min(nextNumber,20)+" / 20";
+
+logEvent(
+"CH1_NUMBER_CLICK",
+{
+attempt:numberAttempt,
+number:n,
+elapsed_ms:
+20000-
+Math.max(
+0,
+numberDeadline-Date.now()
+)
+}
+);
+
+// FIRST ATTEMPT: ERROR AT 10
+
+if(
+n===10&&
+numberAttempt===1
+){
+
+numberBusy=true;
+
+clearInterval(numberTimer);
+numberTimer=null;
+
+setTimeout(()=>{
+
+shuffleNumberPositions();
+
+setTimeout(()=>{
+
+document.getElementById(
+"numberChallenge"
+).style.display="none";
+
+document.getElementById(
+"challengeFail"
+).style.display="grid";
+
+document.getElementById(
+"numberFailTitle"
+).textContent=
+"Hệ thống xảy ra lỗi.";
+
+document.getElementById(
+"numberFailReason"
+).textContent=
+"Bạn đã tìm đến số 10. Hệ thống vừa xáo trộn các chữ số.";
+
+logEvent(
+"CH1_SYSTEM_ERROR_AT_10",
+{
+attempt:numberAttempt
+}
+);
+
+},500)
+
+},120);
+
+return
+}
+
+if(n===20){
+
+clearInterval(numberTimer);
+
+numberTimer=null;
+
+numberBusy=true;
+
+setTimeout(
+numberChallengeSuccess,
+250
+)
+}
+
+}
+
 function shuffleNumberPositions(){
- const remaining=numberCards.filter(b=>!b.disabled),positions=[];remaining.forEach(()=>positions.push({x:3+Math.random()*92,y:4+Math.random()*88}));shuffle(positions);remaining.forEach((b,i)=>{b.style.left=positions[i].x+"%";b.style.top=positions[i].y+"%"});
+
+const remaining=
+numberCards.filter(
+b=>!b.disabled
+);
+
+const positions=[];
+
+remaining.forEach(()=>{
+positions.push({
+x:3+Math.random()*92,
+y:4+Math.random()*88
+})
+});
+
+shuffle(positions);
+
+remaining.forEach(
+(b,i)=>{
+b.style.left=
+positions[i].x+"%";
+
+b.style.top=
+positions[i].y+"%"
 }
+);
+}
+
 function numberChallengeSuccess(){
- document.getElementById("numberChallenge").style.display="none";modalOpen=false;playing=true;room2Challenge1Done=true;hiddenKeyButton=hiddenKeyButton||Math.floor(Math.random()*20)+1;logEvent("CH1_COMPLETE",{attempt:numberAttempt});const banner=document.getElementById("unlockBanner");banner.style.display="block";setTimeout(()=>{banner.style.display="none";renderer.domElement.requestPointerLock?.()},3500);say("Challenge 01 hoàn thành. Một nút ẩn đã được mở khóa.");
+
+document.getElementById(
+"numberChallenge"
+).style.display="none";
+
+modalOpen=false;
+playing=true;
+
+room2Challenge1Done=true;
+
+hiddenKeyButton=
+hiddenKeyButton||
+Math.floor(Math.random()*20)+1;
+
+logEvent(
+"CH1_COMPLETE",
+{
+attempt:numberAttempt
 }
+);
+
+const banner=
+document.getElementById(
+"unlockBanner"
+);
+
+banner.style.display="block";
+
+setTimeout(()=>{
+
+banner.style.display="none";
+
+renderer.domElement
+.requestPointerLock?.();
+
+},3500);
+
+say(
+"Challenge 01 hoàn thành. Một nút ẩn đã được mở khóa."
+);
+}
+
 function numberFail(reason){
- clearInterval(numberTimer);numberTimer=null;numberBusy=true;document.getElementById("numberChallenge").style.display="none";document.getElementById("numberFailTitle").textContent=reason.includes("Hết thời gian")?"Hết thời gian. Thử thách thất bại.":"Hệ thống xảy ra lỗi.";document.getElementById("numberFailReason").textContent=reason+" Bạn muốn thử lại?";document.getElementById("challengeFail").style.display="grid";logEvent("CH1_FAIL",{attempt:numberAttempt,reason,next_number:nextNumber});
+
+clearInterval(numberTimer);
+
+numberTimer=null;
+
+numberBusy=true;
+
+document.getElementById(
+"numberChallenge"
+).style.display="none";
+
+document.getElementById(
+"numberFailTitle"
+).textContent=
+reason.includes("Hết thời gian")
+?"Hết thời gian. Thử thách thất bại."
+:"Hệ thống xảy ra lỗi.";
+
+document.getElementById(
+"numberFailReason"
+).textContent=
+reason+
+" Bạn muốn thử lại?";
+
+document.getElementById(
+"challengeFail"
+).style.display="grid";
+
+logEvent(
+"CH1_FAIL",
+{
+attempt:numberAttempt,
+reason,
+next_number:nextNumber
 }
-document.getElementById("startNumberChallenge").onclick=()=>{document.getElementById("challengeIntro").style.display="none";startNumberChallengeRound()};
-document.getElementById("retryNumber").onclick=()=>{document.getElementById("challengeFail").style.display="none";startNumberChallengeRound()};
-document.getElementById("quitNumber").onclick=()=>{document.getElementById("challengeFail").style.display="none";challenge1Started=false;modalOpen=false;numberBusy=false;document.getElementById("objective").innerHTML='Mục tiêu: <b>Khám phá Room 02.</b><br><span style="opacity:.65">Bạn đã bỏ qua Challenge 01. Bạn có thể kích hoạt lại bằng cách đứng trong vòng tròn 16 giây.</span>';say("Bạn đã bỏ cuộc thử thách 1.");playing=true;renderer.domElement.requestPointerLock?.();logEvent("CH1_GIVE_UP",{attempt:numberAttempt})};
-document.getElementById("challengeQuit").onclick=()=>{if(numberBusy)return;clearInterval(numberTimer);numberTimer=null;document.getElementById("numberChallenge").style.display="none";challenge1Started=false;numberBusy=false;modalOpen=false;playing=true;logEvent("CH1_GIVE_UP_BUTTON",{attempt:numberAttempt,next_number:nextNumber});say("Bạn đã thoát Challenge 01.");renderer.domElement.requestPointerLock?.()};
-
-document.getElementById("begin").onclick=()=>{
- const input=document.getElementById("participantIdInput"),error=document.getElementById("participantIdError"),id=(input.value||"").trim();
- if(!id){error.style.display="block";input.focus();return}
- error.style.display="none";PARTICIPANT_ID=id;resetTrackingSession();memoryAttempt=0;document.getElementById("start").style.display="none";playing=true;buildRoom1();logEvent("ROOM_START");say("23:47. Lớp học 10A. Tìm cách ra khỏi đây.");beep(220,.1);setTimeout(()=>renderer.domElement.requestPointerLock?.(),80)
-};
-document.getElementById("participantIdInput").addEventListener("input",()=>document.getElementById("participantIdError").style.display="none");
-document.getElementById("participantIdInput").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("begin").click()});
-
-document.getElementById("giveupBtn").onclick=()=>{
- if(!playing||memoryActive||currentRoom!=="ROOM_01")return;
- logEvent("GIVE_UP_CLICK");document.exitPointerLock?.();document.getElementById("confirm").style.display="grid";modalOpen=true
-};
-document.getElementById("quitYes").onclick=()=>{logEvent("GIVE_UP_CONFIRM",{choice:"yes"});location.reload()};
-document.getElementById("quitRetry").onclick=()=>{logEvent("GIVE_UP_CANCEL_RETRY",{choice:"retry"});document.getElementById("confirm").style.display="none";modalOpen=false;playing=false;clearInterval(memoryTimer);memoryTimer=null;memoryActive=false;inventory=[];unlocked=false;document.getElementById("items").textContent="TRỐNG";document.getElementById("start").style.display="grid";camera.position.set(9,1.65,10.2);yaw=0;pitch=0;resetTrackingSession()};
-document.getElementById("restartRoom").onclick=()=>location.reload();
-
-let t=0;const clock=new THREE.Clock();
-function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.05);t+=dt;
- if(playing&&!modalOpen&&!memoryActive)move(dt);
- updateCircleTrigger(dt);updatePrompt();
- camera.rotation.order="YXZ";camera.rotation.y=yaw;camera.rotation.x=pitch;
- if(currentRoom==="ROOM_01"&&window.room1Dust){window.room1Dust.rotation.y=t*.003;window.room1Dust.position.y=Math.sin(t*.25)*.015;if(Math.random()<.012)window.room1Fluorescents.forEach(l=>l.intensity=1.8+Math.random()*.9);else window.room1Fluorescents.forEach(l=>l.intensity=2.55);window.room1RedLight.intensity=Math.sin(t*.22)>.97?.12:0}
- renderer.render(scene,camera)
+);
 }
+
+document.getElementById(
+"startNumberChallenge"
+).onclick=()=>{
+document.getElementById(
+"challengeIntro"
+).style.display="none";
+
+startNumberChallengeRound()
+};
+
+document.getElementById(
+"retryNumber"
+).onclick=()=>{
+document.getElementById(
+"challengeFail"
+).style.display="none";
+
+startNumberChallengeRound()
+};
+
+document.getElementById(
+"quitNumber"
+).onclick=()=>{
+
+document.getElementById(
+"challengeFail"
+).style.display="none";
+
+challenge1Started=false;
+
+modalOpen=false;
+numberBusy=false;
+
+document.getElementById(
+"objective"
+).innerHTML=
+'Mục tiêu: <b>Khám phá Room 02.</b><br>'+
+'<span style="opacity:.65">Bạn đã bỏ qua Challenge 01. Bạn có thể kích hoạt lại bằng cách đứng trong vòng tròn 16 giây.</span>';
+
+say(
+"Bạn đã bỏ cuộc thử thách 1."
+);
+
+playing=true;
+
+renderer.domElement
+.requestPointerLock?.();
+
+logEvent(
+"CH1_GIVE_UP",
+{
+attempt:numberAttempt
+}
+)
+};
+
+document.getElementById(
+"challengeQuit"
+).onclick=()=>{
+
+if(numberBusy)return;
+
+clearInterval(numberTimer);
+
+numberTimer=null;
+
+document.getElementById(
+"numberChallenge"
+).style.display="none";
+
+challenge1Started=false;
+numberBusy=false;
+modalOpen=false;
+playing=true;
+
+logEvent(
+"CH1_GIVE_UP_BUTTON",
+{
+attempt:numberAttempt,
+next_number:nextNumber
+}
+);
+
+say(
+"Bạn đã thoát Challenge 01."
+);
+
+renderer.domElement
+.requestPointerLock?.();
+
+};
+
+document.getElementById(
+"begin"
+).onclick=()=>{
+
+const input=
+document.getElementById(
+"participantIdInput"
+);
+
+const error=
+document.getElementById(
+"participantIdError"
+);
+
+const id=
+(input.value||"").trim();
+
+if(!id){
+
+error.style.display="block";
+
+input.focus();
+
+return
+}
+
+error.style.display="none";
+
+PARTICIPANT_ID=id;
+
+resetTrackingSession();
+
+memoryAttempt=0;
+
+document.getElementById(
+"start"
+).style.display="none";
+
+playing=true;
+
+buildRoom1();
+
+logEvent("ROOM_START");
+
+say(
+"23:47. Lớp học 10A. Tìm cách ra khỏi đây."
+);
+
+beep(220,.1);
+
+setTimeout(
+()=>renderer.domElement
+.requestPointerLock?.(),
+80
+);
+
+};
+
+document.getElementById(
+"participantIdInput"
+).addEventListener(
+"input",
+()=>{
+document.getElementById(
+"participantIdError"
+).style.display="none"
+}
+);
+
+document.getElementById(
+"participantIdInput"
+).addEventListener(
+"keydown",
+e=>{
+if(e.key==="Enter")
+document.getElementById("begin").click()
+}
+);
+
+document.getElementById(
+"giveupBtn"
+).onclick=()=>{
+
+if(
+!playing||
+memoryActive||
+currentRoom!=="ROOM_01"
+)return;
+
+logEvent("GIVE_UP_CLICK");
+
+document.exitPointerLock?.();
+
+document.getElementById(
+"confirm"
+).style.display="grid";
+
+modalOpen=true
+};
+
+document.getElementById(
+"quitYes"
+).onclick=()=>{
+logEvent(
+"GIVE_UP_CONFIRM",
+{
+choice:"yes"
+}
+);
+
+location.reload()
+};
+
+document.getElementById(
+"quitRetry"
+).onclick=()=>{
+
+logEvent(
+"GIVE_UP_CANCEL_RETRY",
+{
+choice:"retry"
+}
+);
+
+document.getElementById(
+"confirm"
+).style.display="none";
+
+modalOpen=false;
+playing=false;
+
+clearInterval(memoryTimer);
+memoryTimer=null;
+
+memoryActive=false;
+
+inventory=[];
+unlocked=false;
+
+document.getElementById(
+"items"
+).textContent="TRỐNG";
+
+document.getElementById(
+"start"
+).style.display="grid";
+
+camera.position.set(
+9,
+1.65,
+10.2
+);
+
+yaw=0;
+pitch=0;
+
+resetTrackingSession()
+};
+
+document.getElementById(
+"restartRoom"
+).onclick=()=>location.reload();
+
+let t=0;
+
+const clock=new THREE.Clock();
+
+function animate(){
+
+requestAnimationFrame(animate);
+
+const dt=
+Math.min(
+clock.getDelta(),
+.05
+);
+
+t+=dt;
+
+if(
+playing&&
+!modalOpen&&
+!memoryActive
+)
+move(dt);
+
+updateCircleTrigger(dt);
+updatePrompt();
+
+camera.rotation.order="YXZ";
+camera.rotation.y=yaw;
+camera.rotation.x=pitch;
+
+if(
+currentRoom==="ROOM_01"&&
+window.room1Dust
+){
+
+window.room1Dust.rotation.y=
+t*.003;
+
+window.room1Dust.position.y=
+Math.sin(t*.25)*.015;
+
+if(Math.random()<.012)
+
+window.room1Fluorescents
+.forEach(
+l=>l.intensity=
+1.8+Math.random()*.9
+);
+
+else
+
+window.room1Fluorescents
+.forEach(
+l=>l.intensity=2.55
+);
+
+window.room1RedLight.intensity=
+Math.sin(t*.22)>.97?.12:0
+
+}
+
+renderer.render(
+scene,
+camera
+)
+}
+
 animate();
-addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+
+addEventListener(
+"resize",
+()=>{
+camera.aspect=
+innerWidth/innerHeight;
+
+camera.updateProjectionMatrix();
+
+renderer.setSize(
+innerWidth,
+innerHeight
+)
+}
+);
 
 })();
 </script>
+
 </body>
 </html>
