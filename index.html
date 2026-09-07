@@ -3936,7 +3936,7 @@ document.getElementById(
 ).innerHTML=
 'Mục tiêu: <b>Khám phá căn phòng trắng.</b><br>'+
 '<span style="opacity:.65">'+
-'Tìm vùng tròn ở góc trong cùng và đứng yên 16 giây.'+
+'Bạn có thể đứng trong vòng tròn để vào Challenge 01, hoặc chạy theo đường START → END ở vách đối diện để vào Challenge 02.'+
 '</span>';
 
 
@@ -4382,16 +4382,16 @@ core.position.set(
 scene.add(core);
 
 
-/* CHALLENGE 02 RUNWAY — START → END along the back wall */
+/* CHALLENGE 02 RUNWAY — START → END along the wall opposite Challenge 01 */
 
-box("ch2Runway",0,.012,-6.35,14.2,.025,1.15,mat(0x50616f,.28));
+box("ch2Runway",-8.35,.012,0,1.15,.025,14.2,mat(0x50616f,.28));
 
 const startLabel=textSprite("START",.48,"#a8d1a7");
-startLabel.position.set(-6.1,.12,-6.35);
+startLabel.position.set(-8.35,.12,6.1);
 scene.add(startLabel);
 
 const endLabel=textSprite("END",.48,"#e6c885");
-endLabel.position.set(6.1,.12,-6.35);
+endLabel.position.set(-8.35,.12,-6.1);
 scene.add(endLabel);
 
 
@@ -4400,7 +4400,7 @@ x:6.8,
 z:-6.7
 };
 
-challenge2Track={startX:-6.1,endX:6.1,z:-6.35,halfWidth:.58};
+challenge2Track={x:-8.35,startZ:6.1,endZ:-6.1,halfWidth:.58};
 
 
 /*
@@ -5955,17 +5955,17 @@ return list
 
 function updateChallenge2Trigger(){
 const bar=document.getElementById("circleProgress");
-if(currentRoom!=="ROOM_02"||!room2Challenge1Done||challenge2Started||room2Challenge2Done||modalOpen||!challenge2Track){
+if(currentRoom!=="ROOM_02"||challenge2Started||room2Challenge2Done||modalOpen||!challenge2Track){
 challenge2TrackStarted=false;
 return
 }
 
 const q=challenge2Track;
-const onTrack=Math.abs(camera.position.z-q.z)<q.halfWidth&&camera.position.x>=q.startX-.75&&camera.position.x<=q.endX+.75;
+const onTrack=Math.abs(camera.position.x-q.x)<q.halfWidth&&camera.position.z<=q.startZ+.75&&camera.position.z>=q.endZ-.75;
 const running=keys.ShiftLeft||keys.ShiftRight;
 
 if(!challenge2TrackStarted){
-if(onTrack&&camera.position.x<=q.startX+.65&&running){
+if(onTrack&&camera.position.z>=q.startZ-.65&&running){
 challenge2TrackStarted=true;
 bar.style.display="block";
 bar.querySelector("i").style.width="0%";
@@ -5982,7 +5982,7 @@ say("Bạn đã rời đường chạy. Hãy bắt đầu lại từ START.");
 return
 }
 
-const progress=Math.max(0,Math.min(1,(camera.position.x-q.startX)/(q.endX-q.startX)));
+const progress=Math.max(0,Math.min(1,(q.startZ-camera.position.z)/(q.startZ-q.endZ)));
 bar.querySelector("i").style.width=(progress*100)+"%";
 
 if(progress>=.96){
