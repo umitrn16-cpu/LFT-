@@ -14,7 +14,7 @@ width:100%;
 height:100%;
 overflow:hidden;
 background:#0b1114;
-font-family:Arial,sans-serif;
+font-family:"Segoe UI",Arial,sans-serif;
 color:#fff
 }
 
@@ -837,6 +837,21 @@ transition:transform .16s,opacity .16s
 
 #bookTarget{color:#d4c786;line-height:1.6}
 
+#bookQuit{
+position:absolute;
+left:18px;
+top:18px;
+padding:10px 14px;
+border-radius:7px;
+border:1px solid #a65b64;
+background:#35151b;
+color:#ffd9dd;
+font-weight:700;
+cursor:pointer
+}
+
+#challenge2QuitConfirm{display:none;z-index:76}
+
 
 /* =========================================================
    UNLOCK
@@ -1367,7 +1382,7 @@ KHÔNG THỬ LẠI
 <div class="eyebrow">ROOM 02 / CHALLENGE 02</div>
 <h2>Đã xảy ra lỗi. Bạn muốn thử lại?</h2>
 <p id="bookFailReason" style="font-size:18px"></p>
-<div class="note">Kệ sách vừa rung chuyển và sách đã rơi xuống. Lượt chơi lại sẽ không còn động đất.</div>
+<div class="note">Thử thách sẽ được thiết lập lại nếu bạn chọn thử lại.</div>
 <div class="failChoices">
 <button class="btn" id="retryBooks" type="button">CÓ</button>
 <button class="btn" id="quitBooks" type="button" style="background:#ddd7c7">KHÔNG</button>
@@ -1375,7 +1390,19 @@ KHÔNG THỬ LẠI
 </div>
 </div>
 
+<div id="challenge2QuitConfirm" class="overlay">
+<div class="panel" style="max-width:520px;text-align:center">
+<div class="eyebrow">ROOM 02 / CHALLENGE 02</div>
+<h2>Bạn có chắc muốn bỏ cuộc?</h2>
+<div class="failChoices">
+<button class="btn" id="confirmQuitBooks" type="button">CÓ</button>
+<button class="btn" id="cancelQuitBooks" type="button" style="background:#ddd7c7">KHÔNG</button>
+</div>
+</div>
+</div>
+
 <div id="bookChallenge">
+<button id="bookQuit" type="button">BỎ CUỘC CHALLENGE 02</button>
 <div class="bookShell">
 <div class="eyebrow" style="color:#d4c786">ROOM 02 / CHALLENGE 02</div>
 <h2 style="color:#f4efdc">SẮP XẾP SÁCH THEO MÀU</h2>
@@ -3936,10 +3963,11 @@ document.getElementById(
 document.getElementById(
 "objective"
 ).innerHTML=
-'Mục tiêu: <b>Khám phá căn phòng trắng.</b><br>'+
-'<span style="opacity:.65">'+
-'Bạn có thể đứng trong vòng tròn để vào Challenge 01, hoặc chạy theo đường START → END ở vách đối diện để vào Challenge 02.'+
-'</span>';
+"";
+
+document.getElementById(
+"objective"
+).style.display="none";
 
 
 clearWorld();
@@ -6029,6 +6057,7 @@ document.getElementById("bookStatus").textContent="Chọn cuốn sách số 1: "
 
 function startBookChallenge(){
 document.getElementById("challenge2Fail").style.display="none";
+document.getElementById("challenge2QuitConfirm").style.display="none";
 document.getElementById("bookChallenge").style.display="flex";
 modalOpen=true;
 buildBookRound();
@@ -6095,6 +6124,31 @@ say("Challenge 02 hoàn thành. Bạn nhận được chìa khóa 2.")
 }
 
 document.getElementById("retryBooks").onclick=()=>startBookChallenge();
+
+document.getElementById("bookQuit").onclick=()=>{
+document.getElementById("challenge2QuitConfirm").style.display="grid";
+modalOpen=true;
+document.exitPointerLock?.()
+};
+
+document.getElementById("confirmQuitBooks").onclick=()=>{
+document.getElementById("challenge2QuitConfirm").style.display="none";
+document.getElementById("bookChallenge").style.display="none";
+challenge2Started=false;
+challenge2TrackStarted=false;
+challenge2EarthquakeUsed=false;
+modalOpen=false;
+playing=true;
+renderer.domElement.requestPointerLock?.();
+say("Bạn đã rời khỏi Challenge 02.");
+logEvent("CH2_GIVE_UP_BUTTON")
+};
+
+document.getElementById("cancelQuitBooks").onclick=()=>{
+startBookChallenge();
+logEvent("CH2_GIVE_UP_CANCELLED_RESTART")
+};
+
 document.getElementById("quitBooks").onclick=()=>{
 document.getElementById("challenge2Fail").style.display="none";
 challenge2Started=false;
