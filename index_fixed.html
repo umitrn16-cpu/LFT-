@@ -3850,7 +3850,7 @@ Lùi khỏi cửa để người chơi thực sự
 camera.position.set(
 0,
 1.65,
-5.2
+3.5
 );
 
 /*
@@ -4308,6 +4308,10 @@ insideCircleSince=null;
 numberAttempt=0;
 
 
+/* ROOM 02 luôn sẵn sàng nhận W/A/S/D sau khi dựng phòng. */
+playing=true;
+modalOpen=false;
+
 /*
 TRACKING
 */
@@ -4524,7 +4528,6 @@ vì gọi sau 400ms có thể bị trình duyệt chặn.
 */
 playing=true;
 modalOpen=false;
-renderer.domElement.requestPointerLock?.();
 
 /* Notice chỉ hiển thị sau khi đã vào phòng. */
 const n=document.getElementById("room2Notice");
