@@ -808,9 +808,6 @@ background:#d4c786
 }
 
 
-
-/* CHALLENGE 02 CSS */
-#colorChallenge{display:none;position:fixed;inset:0;z-index:75;background:rgba(7,11,13,.94);align-items:center;justify-content:center;padding:16px}.colorShell{width:min(1050px,96vw);max-height:94vh;overflow:auto;background:linear-gradient(145deg,#182021,#080d0f);border:1px solid #ffffff20;border-radius:20px;padding:20px;box-shadow:0 30px 100px #000e}.colorTitle{font:700 clamp(24px,4vw,38px) Georgia}.colorSub{font-size:10px;letter-spacing:.13em;color:#9eaaa5;margin-top:5px}.colorRule{font-size:12px;line-height:1.55;color:#b8c0bc;background:#0c1416;border:1px solid #ffffff12;border-radius:10px;padding:11px 13px;margin-bottom:14px}.colorTarget{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-height:48px;padding:10px 12px;background:#10191b;border:1px solid #ffffff14;border-radius:10px;margin-bottom:14px}.colorTarget b{font:700 13px Georgia;color:#d4c786;margin-right:5px}.targetDot{width:24px;height:24px;border-radius:5px;border:1px solid #fff8;box-shadow:0 2px 7px #0008}.targetDot.correct{outline:2px solid #92b99d}.shelfVisual{background:#0d1517;border:1px solid #ffffff14;border-radius:12px;padding:12px}.shelfSlots{display:grid;grid-template-columns:repeat(16,minmax(28px,1fr));gap:5px;align-items:end;border-bottom:9px solid #625a4c;padding:10px 7px 8px;background:#11191b}.bookSlot{height:100px;border:1px dashed #ffffff30;border-radius:4px;background:#ffffff06;display:flex;align-items:flex-end;justify-content:center;padding:3px;cursor:pointer}.bookSlot.selected{outline:2px solid #d4c786;outline-offset:1px}.book{width:100%;height:82px;border-radius:3px;box-shadow:2px 3px 6px #0009;display:flex;align-items:flex-end;justify-content:center;color:#fff;font:700 8px Arial;writing-mode:vertical-rl;user-select:none;padding:5px 2px;text-shadow:0 1px 3px #000}.book.selected{outline:2px solid #f4efdc;transform:translateY(-5px)}.book.fallen{animation:bookFall .8s ease forwards}@keyframes bookFall{0%{transform:translateY(0) rotate(0)}45%{transform:translateY(30px) rotate(35deg)}100%{transform:translateY(115px) rotate(75deg);opacity:.2}}.book.blue1{background:#315d8b}.book.blue2{background:#4777aa}.book.blue3{background:#6594c0}.book.blue4{background:#86accf}.book.yellow1{background:#a98528}.book.yellow2{background:#c09b35}.book.yellow3{background:#d2b252}.book.yellow4{background:#e0c878}.book.red1{background:#71353b}.book.red2{background:#8f4249}.book.red3{background:#aa555b}.book.red4{background:#c16d72}.book.green1{background:#3f654d}.book.green2{background:#52785d}.book.green3{background:#6f9174}.book.green4{background:#8bab88}.bookRack{height:9px;background:#625a4c;margin-top:5px}.colorProgress{display:flex;justify-content:space-between;gap:10px;margin-top:12px;color:#87928e;font-size:10px}.colorProgress b{color:#d4c786;font:700 18px Georgia}.colorQuit{border:1px solid #a65b64;background:#35151b;color:#ffd9dd;padding:9px 13px;border-radius:7px;font-weight:700;cursor:pointer;margin-top:10px}.colorEarthquake{animation:quake .11s infinite}.earthquakeStrong{animation:quakeStrong .08s infinite}@keyframes quake{0%,100%{transform:translate(0)}25%{transform:translate(-6px,2px)}50%{transform:translate(5px,-2px)}75%{transform:translate(-4px,-1px)}}@keyframes quakeStrong{0%,100%{transform:translate(0)}20%{transform:translate(-12px,5px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-8px,3px)}80%{transform:translate(10px,-3px)}}#colorFail{display:none;z-index:90}@media(max-width:700px){.shelfSlots{grid-template-columns:repeat(8,minmax(28px,1fr))}.bookSlot{height:72px}.book{height:61px}}
 /* =========================================================
    RESPONSIVE
 ========================================================= */
@@ -1315,9 +1312,6 @@ Cần sưu tập đủ 4 chiếc chìa khóa để mở.
 </div>
 
 
-<!-- CHALLENGE 02 UI -->
-<div id="colorChallenge"><div class="colorShell" id="colorShell"><div class="eyebrow" style="color:#d4c786;margin-bottom:6px">ROOM 02 / CHALLENGE 02</div><div class="colorTitle">SẮP XẾP SÁCH THEO MÀU</div><div class="colorSub">16 CUỐN SÁCH · 4 MÀU · 4 SẮC ĐỘ</div><div class="colorRule">Hệ thống đưa ra một thứ tự màu. Chọn một cuốn sách rồi chọn vị trí khác để đổi chỗ. Xanh dương, vàng, đỏ và xanh lá — mỗi màu có 4 sắc độ khác nhau.</div><div class="colorTarget" id="colorTarget"><b>THỨ TỰ CẦN XẾP:</b></div><div class="shelfVisual" id="shelfVisual"><div class="shelfSlots" id="shelfSlots"></div><div class="bookRack"></div></div><div class="colorProgress"><span>Ở lần đầu, khi còn 1 cuốn nữa sẽ hoàn thành, hệ thống phát sinh động đất.</span><b id="colorProgressText">0 / 16</b></div><button class="colorQuit" id="colorQuit" type="button">BỎ QUA THỬ THÁCH</button></div></div>
-<div id="colorFail" class="overlay"><div class="panel"><div class="eyebrow">ROOM 02 / CHALLENGE 02</div><h2>Đã xảy ra lỗi.</h2><p style="font-size:18px">Bạn muốn thử lại?</p><div class="note">Một cơn động đất đã làm kệ sách rung chuyển và sách rơi khỏi vị trí.</div><div class="failChoices"><button class="btn" id="retryColor" type="button">CÓ</button><button class="btn" id="quitColor" type="button" style="background:#ddd7c7">KHÔNG</button></div></div></div>
 <!-- =======================================================
      NUMBER CHALLENGE
 ======================================================= -->
@@ -1860,9 +1854,6 @@ let challenge1Started=false;
 let numberAttempt=0;
 
 let room2Circle=null;
-let room2Challenge2Done=false, challenge2Active=false, challenge2Attempt=0, challenge2Consecutive=0;
-let challenge2Books=[], challenge2Order=[], challenge2Selected=null, challenge2EndZone=null, challenge2StartReached=false;
-let challenge2ShelfObjects=[];
 
 
 /* =========================================================
@@ -3850,15 +3841,10 @@ Lùi khỏi cửa để người chơi thực sự
 camera.position.set(
 0,
 1.65,
-3.5
+6.8
 );
 
-/*
-ROOM 02 MOVEMENT FIX
-Spawn vào sâu trong phòng và nhìn thẳng vào bên trong
-để W/A/S/D hoạt động ngay khi vừa vào Room 02.
-*/
-yaw=0;
+yaw=Math.PI;
 
 pitch=0;
 
@@ -4279,15 +4265,6 @@ room2Circle={
 x:6.8,
 z:-6.7
 };
-const ch2LaneX=-7.35; box("ch2Lane",ch2LaneX,.012,0,.5,.025,11.5,mat(0x2b3030,.9),false); const ch2Start=textSprite("START",.38,"#d4c786"); ch2Start.position.set(ch2LaneX-.15,.06,5.25); ch2Start.rotation.y=Math.PI/2; scene.add(ch2Start); const ch2End=textSprite("END",.38,"#d4c786"); ch2End.position.set(ch2LaneX-.15,.06,-5.25); ch2End.rotation.y=Math.PI/2; scene.add(ch2End); challenge2EndZone={x:ch2LaneX,z:-5.25};
-challenge2StartReached=false;
-/* Kệ sách chỉ xuất hiện khi Challenge 02 thực sự bắt đầu. */
-challenge2ShelfObjects=[];
-challenge2ShelfObjects.push(box("ch2ShelfTop",-4.8,2.65,-1.8,5.5,.18,.65,M.wood));
-challenge2ShelfObjects.push(box("ch2ShelfMid",-4.8,1.65,-1.8,5.5,.14,.65,M.wood));
-challenge2ShelfObjects.push(box("ch2ShelfBottom",-4.8,.65,-1.8,5.5,.18,.65,M.wood));
-for(const rx of[-7.5,-2.1]) challenge2ShelfObjects.push(box("ch2ShelfPost",rx,1.65,-1.8,.14,4.1,.65,M.wood));
-challenge2ShelfObjects.forEach(o=>o.visible=false);
 
 
 /*
@@ -4307,10 +4284,6 @@ insideCircleSince=null;
 
 numberAttempt=0;
 
-
-/* ROOM 02 luôn sẵn sàng nhận W/A/S/D sau khi dựng phòng. */
-playing=true;
-modalOpen=false;
 
 /*
 TRACKING
@@ -4447,21 +4420,6 @@ hint+
 }
 
 
-/* CHALLENGE 02 */
-const COLOR_DEFS=[{color:"blue",name:"XANH DƯƠNG",classes:["blue1","blue2","blue3","blue4"]},{color:"yellow",name:"VÀNG",classes:["yellow1","yellow2","yellow3","yellow4"]},{color:"red",name:"ĐỎ",classes:["red1","red2","red3","red4"]},{color:"green",name:"XANH LÁ",classes:["green1","green2","green3","green4"]}];
-function cHex(c){return({blue:"#4777aa",yellow:"#c09b35",red:"#9f4b52",green:"#62856b"})[c]}
-function openChallenge2(){if(challenge2Active||room2Challenge2Done)return;challenge2ShelfObjects.forEach(o=>o.visible=true);challenge2Active=true;challenge2Attempt++;challenge2Consecutive++;modalOpen=true;playing=false;document.exitPointerLock?.();document.getElementById("colorChallenge").style.display="flex";buildChallenge2Round();logEvent("CH2_START",{attempt:challenge2Attempt,consecutive_attempt:challenge2Consecutive,earthquake:challenge2Consecutive===1})}
-function buildChallenge2Round(){challenge2Selected=null;const a=[];COLOR_DEFS.forEach(d=>{for(let i=0;i<4;i++)a.push(d.color)});challenge2Order=shuffle(a);challenge2Books=[];COLOR_DEFS.forEach(d=>d.classes.forEach((cl,i)=>challenge2Books.push({id:d.color+"_"+(i+1),color:d.color,shade:i+1,cls:cl})));shuffle(challenge2Books);renderChallenge2()}
-function renderChallenge2(){const t=document.getElementById("colorTarget");t.innerHTML="<b>THỨ TỰ CẦN XẾP:</b>";challenge2Order.forEach((c,i)=>{const d=document.createElement("div");d.className="targetDot";d.style.background=cHex(c);d.title=(i+1)+" — "+c; t.appendChild(d)});const slots=document.getElementById("shelfSlots");slots.innerHTML="";challenge2Books.forEach((b,i)=>{const sl=document.createElement("div");sl.className="bookSlot";const e=document.createElement("div");e.className="book "+b.cls;e.textContent=b.shade;e.dataset.color=b.color;sl.appendChild(e);sl.onclick=()=>selectChallenge2Book(i);slots.appendChild(sl)});updateChallenge2Progress()}
-function selectChallenge2Book(i){if(!challenge2Active)return;if(challenge2Selected===null){challenge2Selected=i;refreshChallenge2Selection();return}if(challenge2Selected===i){challenge2Selected=null;refreshChallenge2Selection();return}const a=challenge2Selected;[challenge2Books[a],challenge2Books[i]]=[challenge2Books[i],challenge2Books[a]];challenge2Selected=null;renderChallenge2();checkChallenge2Progress()}
-function refreshChallenge2Selection(){document.querySelectorAll(".bookSlot").forEach((s,i)=>{s.classList.toggle("selected",i===challenge2Selected);s.querySelector(".book")?.classList.toggle("selected",i===challenge2Selected)})}
-function updateChallenge2Progress(correct){if(correct===undefined)correct=challenge2Books.reduce((n,b,i)=>n+(b.color===challenge2Order[i]?1:0),0);document.getElementById("colorProgressText").textContent=correct+" / 16";document.querySelectorAll(".targetDot").forEach((d,i)=>d.classList.toggle("correct",challenge2Books[i]?.color===challenge2Order[i]))}
-function checkChallenge2Progress(){let c=0;for(let i=0;i<16;i++)if(challenge2Books[i].color===challenge2Order[i])c++;updateChallenge2Progress(c);if(c===15&&challenge2Consecutive===1){triggerChallenge2Earthquake();return}if(c===16)finishChallenge2()}
-function triggerChallenge2Earthquake(){logEvent("CH2_EARTHQUAKE",{attempt:challenge2Attempt,consecutive_attempt:challenge2Consecutive,correct_before_event:15});const shell=document.getElementById("colorShell");shell.classList.add("earthquakeStrong");document.getElementById("shelfVisual").classList.add("colorEarthquake");document.querySelectorAll(".bookSlot .book").forEach((b,i)=>setTimeout(()=>b.classList.add("fallen"),i*30));beep(80,.35,"sawtooth",.045);setTimeout(()=>beep(50,.3,"sawtooth",.035),120);setTimeout(()=>{shell.classList.remove("earthquakeStrong");document.getElementById("shelfVisual").classList.remove("colorEarthquake");document.getElementById("colorChallenge").style.display="none";document.getElementById("colorFail").style.display="grid";modalOpen=true;playing=false},1100)}
-function finishChallenge2(){if(!challenge2Active)return;challenge2ShelfObjects.forEach(o=>o.visible=false);challenge2Active=false;room2Challenge2Done=true;document.getElementById("colorChallenge").style.display="none";modalOpen=false;playing=true;addItem("ROOM2 KEY 02");logEvent("CH2_COMPLETE",{attempt:challenge2Attempt,consecutive_attempt:challenge2Consecutive});say("Challenge 02 hoàn thành. Bạn nhận được chìa khóa 2.");document.getElementById("objective").innerHTML='Mục tiêu: <b>Chìa khóa 2 đã được tìm thấy.</b><br><span style="opacity:.65">Tiếp tục khám phá Room 02 và tìm các chìa khóa còn lại.</span>';renderer.domElement.requestPointerLock?.()}
-function exitChallenge2(reason){challenge2ShelfObjects.forEach(o=>o.visible=false);challenge2Active=false;challenge2Consecutive=0;challenge2StartReached=false;document.getElementById("colorChallenge").style.display="none";document.getElementById("colorFail").style.display="none";modalOpen=false;playing=true;logEvent("CH2_GIVE_UP",{attempt:challenge2Attempt,consecutive_attempt:challenge2Consecutive,reason});say("Bạn đã rời Challenge 02.");renderer.domElement.requestPointerLock?.()}
-document.getElementById("retryColor").onclick=()=>{document.getElementById("colorFail").style.display="none";document.getElementById("colorChallenge").style.display="flex";challenge2Active=true;challenge2Consecutive++;buildChallenge2Round();modalOpen=true;playing=false;logEvent("CH2_RETRY",{attempt:challenge2Attempt,consecutive_attempt:challenge2Consecutive,earthquake:false})};document.getElementById("quitColor").onclick=()=>exitChallenge2("fail_screen_no");document.getElementById("colorQuit").onclick=()=>exitChallenge2("manual_quit");
-
 /* =========================================================
    ENTER HALLWAY
 ========================================================= */
@@ -4520,22 +4478,59 @@ document.getElementById(
 
 buildRoom2();
 
-/*
-ROOM 02 MOVEMENT FIX 2
-Không chờ setTimeout mới bật game/requestPointerLock.
-Pointer Lock phải được gọi ngay trong cùng user action (E/click),
-vì gọi sau 400ms có thể bị trình duyệt chặn.
-*/
+
+setTimeout(
+()=>{
+
 playing=true;
+
 modalOpen=false;
 
-/* Notice chỉ hiển thị sau khi đã vào phòng. */
-const n=document.getElementById("room2Notice");
-n.style.display="grid";
-clearTimeout(enterRoom2.noticeTimer);
-enterRoom2.noticeTimer=setTimeout(()=>{n.style.display="none"},10000);
+renderer.domElement
+.requestPointerLock?.();
 
-say("Cửa đã khóa. Tìm vòng tròn ở góc trong cùng.");
+
+/*
+=================================================
+ROOM 02 NOTICE
+
+Chỉ xuất hiện tại thời điểm người chơi
+thực sự vào ROOM 02.
+
+Không xuất hiện ở Hallway.
+=================================================
+*/
+
+const n=
+document.getElementById(
+"room2Notice"
+);
+
+n.style.display="grid";
+
+
+clearTimeout(
+enterRoom2.noticeTimer
+);
+
+enterRoom2.noticeTimer=
+setTimeout(
+()=>{
+
+n.style.display="none";
+
+},
+10000
+);
+
+
+say(
+"Cửa đã khóa. Tìm vòng tròn ở góc trong cùng."
+);
+
+},
+400
+)
 
 }
 
@@ -5760,8 +5755,6 @@ room2Circle.z
 }
 
 
-function updateChallenge2Trigger(){if(currentRoom!=="ROOM_02"||room2Challenge2Done||challenge2Active||modalOpen||!challenge2EndZone)return;const sx=camera.position.x-ch2LaneX,sz=camera.position.z-5.25;if(Math.hypot(sx,sz)<1.15){challenge2StartReached=true;say("START. Hãy chạy đến END.")}if(!challenge2StartReached)return;const dx=camera.position.x-challenge2EndZone.x,dz=camera.position.z-challenge2EndZone.z;if(Math.hypot(dx,dz)<1)openChallenge2()}
-
 /* =========================================================
    CIRCLE TRIGGER
 ========================================================= */
@@ -6943,7 +6936,6 @@ move(dt);
 
 
 updateCircleTrigger(dt);
-updateChallenge2Trigger();
 
 updatePrompt();
 
