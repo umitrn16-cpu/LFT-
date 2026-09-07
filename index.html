@@ -2001,7 +2001,7 @@ let room2Challenge2Circle=null;
 let challenge2Started=false;
 let challenge2Track=null;
 let challenge2TrackStarted=false;
-let challenge2EarthquakeUsed=false;
+let challenge2Attempt=0;
 let bookOrder=[];
 let bookIndex=0;
 
@@ -4450,7 +4450,7 @@ challenge1Started=false;
 
 challenge2Started=false;
 challenge2TrackStarted=false;
-challenge2EarthquakeUsed=false;
+challenge2Attempt=0;
 
 numberAttempt=0;
 
@@ -6060,8 +6060,9 @@ document.getElementById("challenge2Fail").style.display="none";
 document.getElementById("challenge2QuitConfirm").style.display="none";
 document.getElementById("bookChallenge").style.display="flex";
 modalOpen=true;
+challenge2Attempt++;
 buildBookRound();
-logEvent("CH2_START",{earthquake_expected:!challenge2EarthquakeUsed})
+logEvent("CH2_START",{attempt:challenge2Attempt})
 }
 
 function placeBook(book){
@@ -6073,7 +6074,7 @@ book.animate([{transform:"translateX(0)"},{transform:"translateX(-8px)"},{transf
 return
 }
 
-if(bookIndex===15&&!challenge2EarthquakeUsed){
+if(bookIndex===15&&challenge2Attempt<=2){
 triggerBookEarthquake();
 return
 }
@@ -6087,7 +6088,6 @@ document.getElementById("bookStatus").textContent="Đúng. Chọn cuốn sách s
 }
 
 function triggerBookEarthquake(){
-challenge2EarthquakeUsed=true;
 const shell=document.querySelector(".bookShell");
 const shelf=document.getElementById("bookShelf");
 shell.classList.add("floorQuake");
@@ -6136,7 +6136,7 @@ document.getElementById("challenge2QuitConfirm").style.display="none";
 document.getElementById("bookChallenge").style.display="none";
 challenge2Started=false;
 challenge2TrackStarted=false;
-challenge2EarthquakeUsed=false;
+challenge2Attempt=0;
 modalOpen=false;
 playing=true;
 renderer.domElement.requestPointerLock?.();
@@ -6153,7 +6153,7 @@ document.getElementById("quitBooks").onclick=()=>{
 document.getElementById("challenge2Fail").style.display="none";
 challenge2Started=false;
 challenge2TrackStarted=false;
-challenge2EarthquakeUsed=false;
+challenge2Attempt=0;
 modalOpen=false;
 playing=true;
 renderer.domElement.requestPointerLock?.();
