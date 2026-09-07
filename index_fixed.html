@@ -12,15 +12,102 @@ html,body{
 margin:0;
 width:100%;
 height:100%;
-overflow:hidden;
-background:#0b1114;
-font-family:Arial,sans-serif;
-color:#fff
+
+#room2Notice div{
+font:700 clamp(28px,5vw,58px) Georgia;
+#room2Notice div{
+font:700 clamp(28px,5vw,58px) Georgia;
+text-align:center;
+text-shadow:0 4px 20px #000
+}
 }
 
-canvas{display:block}
+/* =========================================================
+   ROOM 02 / CHALLENGE 02 — SIGNAL MEMORY
+========================================================= */
 
-#hud{
+#challenge2Intro,
+#challenge2Fail,
+#signalChallenge{
+display:none
+}
+
+#challenge2Intro{z-index:61}
+#challenge2Fail{z-index:75}
+
+#signalChallenge{
+position:fixed;
+inset:0;
+z-index:72;
+background:radial-gradient(circle at 50% 35%,#263537,#070b0c 72%);
+padding:18px;
+align-items:center;
+justify-content:center
+}
+
+.signalShell{
+width:min(560px,96vw);
+padding:28px;
+text-align:center;
+border:1px solid #d4c78655;
+background:rgba(10,16,17,.97);
+box-shadow:0 30px 100px #000d
+}
+
+#signalStatus{
+min-height:28px;
+margin:16px 0;
+font:700 20px Georgia;
+color:#eee8d3
+}
+
+.signalBoard{
+display:grid;
+grid-template-columns:repeat(2,minmax(100px,1fr));
+gap:12px;
+max-width:330px;
+margin:0 auto
+}
+
+.signalBtn{
+height:92px;
+border:1px solid #d4c78666;
+background:#152124;
+color:#eee8d3;
+font:700 38px Georgia;
+cursor:pointer;
+transition:background .12s,transform .12s,box-shadow .12s
+}
+
+.signalBtn:hover:not(:disabled){background:#34494a;transform:scale(1.03)}
+.signalBtn.lit{background:#d4c786;color:#202329;box-shadow:0 0 30px #d4c78699}
+.signalBtn:disabled{cursor:default}
+
+#signalTimer{color:#d4c786}
+
+</body>
+</html>
+</html>
+</div>
+</div>
+
+
+<!-- =======================================================
+     ROOM 02 NOTICE
+======================================================= -->
+</div>
+
+
+<!-- =======================================================
+     CHALLENGE 02
+======================================================= -->
+
+<div id="challenge2Intro" class="overlay">
+<div class="panel" style="max-width:650px;text-align:center">
+<div class="eyebrow">ROOM 02 / CHALLENGE 02</div>
+<h2>NHỚ TÍN HIỆU</h2>
+<div class="challengeText">
+Bạn đã hoàn thành thử thách đầu tiên.#hud{
 position:fixed;
 inset:0;
 pointer-events:none;
