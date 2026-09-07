@@ -12,102 +12,15 @@ html,body{
 margin:0;
 width:100%;
 height:100%;
-
-#room2Notice div{
-font:700 clamp(28px,5vw,58px) Georgia;
-#room2Notice div{
-font:700 clamp(28px,5vw,58px) Georgia;
-text-align:center;
-text-shadow:0 4px 20px #000
-}
+overflow:hidden;
+background:#0b1114;
+font-family:Arial,sans-serif;
+color:#fff
 }
 
-/* =========================================================
-   ROOM 02 / CHALLENGE 02 — SIGNAL MEMORY
-========================================================= */
+canvas{display:block}
 
-#challenge2Intro,
-#challenge2Fail,
-#signalChallenge{
-display:none
-}
-
-#challenge2Intro{z-index:61}
-#challenge2Fail{z-index:75}
-
-#signalChallenge{
-position:fixed;
-inset:0;
-z-index:72;
-background:radial-gradient(circle at 50% 35%,#263537,#070b0c 72%);
-padding:18px;
-align-items:center;
-justify-content:center
-}
-
-.signalShell{
-width:min(560px,96vw);
-padding:28px;
-text-align:center;
-border:1px solid #d4c78655;
-background:rgba(10,16,17,.97);
-box-shadow:0 30px 100px #000d
-}
-
-#signalStatus{
-min-height:28px;
-margin:16px 0;
-font:700 20px Georgia;
-color:#eee8d3
-}
-
-.signalBoard{
-display:grid;
-grid-template-columns:repeat(2,minmax(100px,1fr));
-gap:12px;
-max-width:330px;
-margin:0 auto
-}
-
-.signalBtn{
-height:92px;
-border:1px solid #d4c78666;
-background:#152124;
-color:#eee8d3;
-font:700 38px Georgia;
-cursor:pointer;
-transition:background .12s,transform .12s,box-shadow .12s
-}
-
-.signalBtn:hover:not(:disabled){background:#34494a;transform:scale(1.03)}
-.signalBtn.lit{background:#d4c786;color:#202329;box-shadow:0 0 30px #d4c78699}
-.signalBtn:disabled{cursor:default}
-
-#signalTimer{color:#d4c786}
-
-</body>
-</html>
-</html>
-</div>
-</div>
-
-
-<!-- =======================================================
-     ROOM 02 NOTICE
-======================================================= -->
-</div>
-
-
-<!-- =======================================================
-     CHALLENGE 02
-======================================================= -->
-
-<div id="challenge2Intro" class="overlay">
-<div class="panel" style="max-width:650px;text-align:center">
-<div class="eyebrow">ROOM 02 / CHALLENGE 02</div>
-<h2>NHỚ TÍN HIỆU</h2>
-<div class="challengeText">
-Bạn đã hoàn thành thử thách đầu tiên.#hud{
+#hud{
 position:fixed;
 inset:0;
 pointer-events:none;
@@ -844,6 +757,86 @@ padding:30px;
 text-shadow:0 4px 20px #000
 }
 
+/* =========================================================
+   ROOM 02 / CHALLENGE 02 — SIGNAL MEMORY
+========================================================= */
+
+#challenge2Fail,
+#bookChallenge{
+display:none
+}
+
+#challenge2Fail{z-index:75}
+
+#bookChallenge{
+position:fixed;
+inset:0;
+z-index:72;
+background:radial-gradient(circle at 50% 35%,#263537,#070b0c 72%);
+padding:18px;
+align-items:center;
+justify-content:center
+}
+
+.bookShell{
+width:min(930px,96vw);
+max-height:94vh;
+overflow:auto;
+padding:28px;
+text-align:center;
+border:1px solid #d4c78655;
+background:rgba(10,16,17,.97);
+box-shadow:0 30px 100px #000d
+}
+
+#bookStatus{
+min-height:28px;
+margin:16px 0;
+font:700 20px Georgia;
+color:#eee8d3
+}
+
+.bookShelf,
+.bookPile{
+display:grid;
+grid-template-columns:repeat(8,minmax(46px,1fr));
+gap:7px;
+max-width:760px;
+margin:14px auto
+}
+
+.shelfSlot{
+height:84px;
+border-bottom:8px solid #745638;
+background:#0c1112;
+display:flex;
+align-items:flex-end;
+justify-content:center
+}
+
+.book{
+height:72px;
+width:75%;
+border:0;
+border-radius:3px 3px 0 0;
+cursor:pointer;
+box-shadow:inset 4px 0 #ffffff38,2px 3px 7px #0009;
+transition:transform .16s,opacity .16s
+}
+
+.book:hover:not(:disabled){transform:translateY(-7px)}
+.book:disabled{cursor:default;opacity:.48}
+.book.falling{animation:bookFall .85s cubic-bezier(.3,.7,.4,1) forwards}
+.bookPile{padding:14px;border:1px dashed #d4c78655;background:#081012}
+.shelfShaking{animation:shelfShake .85s ease}
+.floorQuake{animation:floorQuake .85s ease}
+
+@keyframes shelfShake{0%,100%{transform:translate(0)}20%,60%{transform:translate(-14px,3px) rotate(-.7deg)}40%,80%{transform:translate(14px,-3px) rotate(.7deg)}}
+@keyframes floorQuake{0%,100%{transform:translate(0)}25%{transform:translate(-8px,5px)}55%{transform:translate(8px,-5px)}}
+@keyframes bookFall{to{transform:translateY(170px) rotate(26deg);opacity:0}}
+
+#bookTarget{color:#d4c786;line-height:1.6}
+
 
 /* =========================================================
    UNLOCK
@@ -1360,6 +1353,36 @@ KHÔNG THỬ LẠI
 
 </div>
 
+</div>
+</div>
+
+
+<!-- =======================================================
+     CHALLENGE 02
+======================================================= -->
+
+<div id="challenge2Fail" class="overlay">
+<div class="panel" style="max-width:620px;text-align:center">
+<div class="eyebrow">ROOM 02 / CHALLENGE 02</div>
+<h2>Đã xảy ra lỗi. Bạn muốn thử lại?</h2>
+<p id="bookFailReason" style="font-size:18px"></p>
+<div class="note">Kệ sách vừa rung chuyển và sách đã rơi xuống. Lượt chơi lại sẽ không còn động đất.</div>
+<div class="failChoices">
+<button class="btn" id="retryBooks" type="button">CÓ</button>
+<button class="btn" id="quitBooks" type="button" style="background:#ddd7c7">KHÔNG</button>
+</div>
+</div>
+</div>
+
+<div id="bookChallenge">
+<div class="bookShell">
+<div class="eyebrow" style="color:#d4c786">ROOM 02 / CHALLENGE 02</div>
+<h2 style="color:#f4efdc">SẮP XẾP SÁCH THEO MÀU</h2>
+<div id="bookTarget"></div>
+<div id="bookStatus">Chọn sách theo thứ tự yêu cầu để xếp lên kệ.</div>
+<div id="bookShelf" class="bookShelf"></div>
+<div class="memorySub">SÁCH BÊN DƯỚI</div>
+<div id="bookPile" class="bookPile"></div>
 </div>
 </div>
 
@@ -1932,6 +1955,8 @@ let memoryActive=false;
 
 let room2Challenge1Done=false;
 
+let room2Challenge2Done=false;
+
 let hiddenKeyButton=-1;
 
 let insideCircleSince=null;
@@ -1941,6 +1966,15 @@ let challenge1Started=false;
 let numberAttempt=0;
 
 let room2Circle=null;
+
+let room2Challenge2Circle=null;
+
+let challenge2Started=false;
+let challenge2Track=null;
+let challenge2TrackStarted=false;
+let challenge2EarthquakeUsed=false;
+let bookOrder=[];
+let bookIndex=0;
 
 
 /* =========================================================
@@ -4348,10 +4382,25 @@ core.position.set(
 scene.add(core);
 
 
+/* CHALLENGE 02 RUNWAY — START → END along the back wall */
+
+box("ch2Runway",0,.012,-6.35,14.2,.025,1.15,mat(0x50616f,.28));
+
+const startLabel=textSprite("START",.48,"#a8d1a7");
+startLabel.position.set(-6.1,.12,-6.35);
+scene.add(startLabel);
+
+const endLabel=textSprite("END",.48,"#e6c885");
+endLabel.position.set(6.1,.12,-6.35);
+scene.add(endLabel);
+
+
 room2Circle={
 x:6.8,
 z:-6.7
 };
+
+challenge2Track={startX:-6.1,endX:6.1,z:-6.35,halfWidth:.58};
 
 
 /*
@@ -4365,9 +4414,13 @@ Math.random()*20
 
 room2Challenge1Done=false;
 
+room2Challenge2Done=false;
+
 challenge1Started=false;
 
-insideCircleSince=null;
+challenge2Started=false;
+challenge2TrackStarted=false;
+challenge2EarthquakeUsed=false;
 
 numberAttempt=0;
 
@@ -5848,95 +5901,202 @@ room2Circle.z
 
 function updateCircleTrigger(dt){
 
-const bar=
-document.getElementById(
-"circleProgress"
-);
+const bar=document.getElementById("circleProgress");
 
-
-if(
-currentRoom!=="ROOM_02"||
-challenge1Started||
-room2Challenge1Done||
-modalOpen
-){
-
+if(currentRoom!=="ROOM_02"||challenge1Started||room2Challenge1Done||modalOpen){
 bar.style.display="none";
-
 insideCircleSince=null;
-
 return
-
 }
 
-
-if(
-pointInsideChallengeCircle()
-){
-
-if(
-insideCircleSince===null
-){
-
-insideCircleSince=
-Date.now();
-
+if(pointInsideChallengeCircle()){
+if(insideCircleSince===null){
+insideCircleSince=Date.now();
 bar.style.display="block";
-
-logEvent(
-"CH1_CIRCLE_ENTER"
-)
-
+logEvent("CH1_CIRCLE_ENTER")
 }
-
-
-const p=
-Math.min(
-1,
-(Date.now()-
-insideCircleSince)/16000
-);
-
-
-bar.querySelector("i")
-.style.width=
-(p*100)+"%";
-
-
+const p=Math.min(1,(Date.now()-insideCircleSince)/16000);
+bar.querySelector("i").style.width=(p*100)+"%";
 if(p>=1){
-
 insideCircleSince=null;
-
 bar.style.display="none";
-
 challenge1Started=true;
-
-
-logEvent(
-"CH1_TRIGGER_AFTER_16S"
-);
-
-
-document.getElementById(
-"challengeIntro"
-).style.display="grid";
-
-
+logEvent("CH1_TRIGGER_AFTER_16S");
+document.getElementById("challengeIntro").style.display="grid";
 modalOpen=true;
-
-document.exitPointerLock?.();
-
+document.exitPointerLock?.()
 }
-
 }else{
-
 insideCircleSince=null;
+bar.style.display="none"
+}
 
+}
+
+
+/* =========================================================
+   ROOM 02 / CHALLENGE 02 — BOOK SORTING
+========================================================= */
+
+const BOOK_COLORS={
+"XANH DƯƠNG":["#194f8e","#2876b9","#62a4df","#9bc9ee"],
+"ĐỎ":["#762d35","#aa4148","#d86962","#f1a09a"],
+"XANH LÁ":["#285f45","#43835b","#6ead79","#a5d69a"],
+"VÀNG":["#8c6820","#bf902b","#e1bd55","#f2dc91"]
+};
+
+function shuffle(list){
+for(let i=list.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[list[i],list[j]]=[list[j],list[i]]
+}
+return list
+}
+
+function updateChallenge2Trigger(){
+const bar=document.getElementById("circleProgress");
+if(currentRoom!=="ROOM_02"||!room2Challenge1Done||challenge2Started||room2Challenge2Done||modalOpen||!challenge2Track){
+challenge2TrackStarted=false;
+return
+}
+
+const q=challenge2Track;
+const onTrack=Math.abs(camera.position.z-q.z)<q.halfWidth&&camera.position.x>=q.startX-.75&&camera.position.x<=q.endX+.75;
+const running=keys.ShiftLeft||keys.ShiftRight;
+
+if(!challenge2TrackStarted){
+if(onTrack&&camera.position.x<=q.startX+.65&&running){
+challenge2TrackStarted=true;
+bar.style.display="block";
+bar.querySelector("i").style.width="0%";
+say("Đường chạy đã kích hoạt. Giữ Shift và chạy đến END.");
+logEvent("CH2_RUN_START")
+}
+return
+}
+
+if(!onTrack||!running){
+challenge2TrackStarted=false;
 bar.style.display="none";
-
+say("Bạn đã rời đường chạy. Hãy bắt đầu lại từ START.");
+return
 }
 
+const progress=Math.max(0,Math.min(1,(camera.position.x-q.startX)/(q.endX-q.startX)));
+bar.querySelector("i").style.width=(progress*100)+"%";
+
+if(progress>=.96){
+bar.style.display="none";
+challenge2Started=true;
+modalOpen=true;
+playing=false;
+document.exitPointerLock?.();
+logEvent("CH2_RUN_COMPLETE");
+startBookChallenge()
 }
+}
+
+function buildBookRound(){
+bookOrder=shuffle(Object.keys(BOOK_COLORS).flatMap(color=>Array(4).fill(color)));
+bookIndex=0;
+const shelf=document.getElementById("bookShelf");
+const pile=document.getElementById("bookPile");
+shelf.innerHTML=Array.from({length:16},()=>'<div class="shelfSlot"></div>').join("");
+pile.innerHTML="";
+shuffle(bookOrder.map((color,index)=>({color,index}))).forEach(book=>{
+const button=document.createElement("button");
+button.className="book";
+button.type="button";
+button.dataset.color=book.color;
+button.style.background=BOOK_COLORS[book.color][book.index%4];
+button.title=book.color;
+button.setAttribute("aria-label",book.color+" — sắc độ "+(book.index%4+1));
+button.onclick=()=>placeBook(button);
+pile.appendChild(button)
+});
+document.getElementById("bookTarget").innerHTML="<b>THỨ TỰ HỆ THỐNG:</b><br>"+bookOrder.map((color,i)=>`${i+1}. ${color}`).join(" &nbsp;·&nbsp; ");
+document.getElementById("bookStatus").textContent="Chọn cuốn sách số 1: "+bookOrder[0]+"."
+}
+
+function startBookChallenge(){
+document.getElementById("challenge2Fail").style.display="none";
+document.getElementById("bookChallenge").style.display="flex";
+modalOpen=true;
+buildBookRound();
+logEvent("CH2_START",{earthquake_expected:!challenge2EarthquakeUsed})
+}
+
+function placeBook(book){
+if(book.disabled)return;
+const expected=bookOrder[bookIndex];
+if(book.dataset.color!==expected){
+document.getElementById("bookStatus").textContent="Sai màu. Hệ thống cần: "+expected+".";
+book.animate([{transform:"translateX(0)"},{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],{duration:260});
+return
+}
+
+if(bookIndex===15&&!challenge2EarthquakeUsed){
+triggerBookEarthquake();
+return
+}
+
+const slot=document.querySelectorAll(".shelfSlot")[bookIndex];
+book.disabled=true;
+slot.appendChild(book);
+bookIndex++;
+if(bookIndex===16){bookChallengeSuccess();return}
+document.getElementById("bookStatus").textContent="Đúng. Chọn cuốn sách số "+(bookIndex+1)+": "+bookOrder[bookIndex]+"."
+}
+
+function triggerBookEarthquake(){
+challenge2EarthquakeUsed=true;
+const shell=document.querySelector(".bookShell");
+const shelf=document.getElementById("bookShelf");
+shell.classList.add("floorQuake");
+shelf.classList.add("shelfShaking");
+document.getElementById("bookStatus").textContent="RUNG CHẤN PHÁT HIỆN — KỆ SÁCH MẤT ỔN ĐỊNH";
+document.querySelectorAll(".book").forEach((book,i)=>{
+book.disabled=true;
+setTimeout(()=>book.classList.add("falling"),i*35)
+});
+logEvent("CH2_EARTHQUAKE",{at_book:16});
+setTimeout(()=>{
+document.getElementById("bookChallenge").style.display="none";
+document.getElementById("bookFailReason").textContent="Tất cả sách đã rơi khỏi kệ.";
+document.getElementById("challenge2Fail").style.display="grid";
+shell.classList.remove("floorQuake");
+shelf.classList.remove("shelfShaking")
+},1300)
+}
+
+function bookChallengeSuccess(){
+document.getElementById("bookChallenge").style.display="none";
+room2Challenge2Done=true;
+modalOpen=false;
+playing=true;
+addItem("ROOM2 KEY 02");
+document.getElementById("objective").innerHTML='Mục tiêu: <b>Bạn đã nhận chìa khóa 2.</b><br><span style="opacity:.65">Tiếp tục khám phá Room 02 để tìm các chìa khóa còn lại.</span>';
+const banner=document.getElementById("unlockBanner");
+banner.querySelector("h2").textContent="Challenge 02 hoàn thành.";
+banner.querySelector("p").innerHTML="Bạn đã sắp xếp đúng kệ sách.<br>Bạn nhận được <b>chìa khóa 2</b>.";
+banner.style.display="block";
+setTimeout(()=>{banner.style.display="none";renderer.domElement.requestPointerLock?.()},3500);
+logEvent("CH2_COMPLETE",{key:"ROOM2 KEY 02"});
+say("Challenge 02 hoàn thành. Bạn nhận được chìa khóa 2.")
+}
+
+document.getElementById("retryBooks").onclick=()=>startBookChallenge();
+document.getElementById("quitBooks").onclick=()=>{
+document.getElementById("challenge2Fail").style.display="none";
+challenge2Started=false;
+challenge2TrackStarted=false;
+challenge2EarthquakeUsed=false;
+modalOpen=false;
+playing=true;
+renderer.domElement.requestPointerLock?.();
+say("Bạn đã thoát Challenge 02. Lượt chơi mới sẽ lại có động đất ở cuốn sách cuối.");
+logEvent("CH2_GIVE_UP")
+};
 
 
 /* =========================================================
@@ -6490,9 +6650,9 @@ HUD UPDATE
 document.getElementById(
 "objective"
 ).innerHTML=
-'Mục tiêu: <b>Tìm nút ẩn chứa chìa khóa.</b><br>'+
+'Mục tiêu: <b>Tìm nút ẩn chứa chìa khóa.</b><br>'+ 
 '<span style="opacity:.65">'+
-'Có 20 nút được đánh số từ 1 đến 20. Hãy tìm nút đã được kích hoạt.'+
+'Có 20 nút được đánh số từ 1 đến 20. Hãy tìm nút đã được kích hoạt. Sát tường phía sau có đường START → END để mở Challenge 02.'+
 '</span>';
 
 
@@ -7024,6 +7184,8 @@ move(dt);
 
 updateCircleTrigger(dt);
 
+updateChallenge2Trigger();
+
 updatePrompt();
 
 
@@ -7127,3 +7289,4 @@ innerHeight
 
 </body>
 </html>
+
