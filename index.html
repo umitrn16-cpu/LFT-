@@ -1207,7 +1207,7 @@ Hãy lần lượt chọn các số từ
 <br><br>
 
 Thời gian của thử thách:
-<b>20 giây</b>.<br><br>
+<b>36 giây</b>.<br><br>
 Khi chạm <b>số 10</b>, các vật thể chuyển động sẽ xuất hiện để làm bạn mất tập trung.
 
 </div>
@@ -4069,7 +4069,7 @@ const hints=[
 
 "Vùng tròn là điểm kích hoạt thử thách.",
 
-"Thử thách 01 giới hạn 20 giây.",
+"Thử thách 01 giới hạn 36 giây.",
 
 "Có những căn phòng chỉ là mồi nhử.",
 
@@ -5912,7 +5912,7 @@ document.getElementById(
 document.getElementById(
 "numberTime"
 ).textContent=
-"20";
+"36";
 
 document.getElementById(
 "numberTime"
@@ -5996,7 +5996,7 @@ numberCards.push(b)
 
 
 numberDeadline=
-Date.now()+20000;
+Date.now()+36000;
 
 
 clearInterval(
@@ -6015,8 +6015,8 @@ logEvent(
 "CH1_START",
 {
 attempt:numberAttempt,
-timeout_seconds:20,
-distraction_at_10:true
+timeout_seconds:36,
+distraction_at_5:true
 }
 );
 
@@ -6126,7 +6126,7 @@ logEvent(
 attempt:numberAttempt,
 number:n,
 elapsed_ms:
-20000-
+36000-
 Math.max(
 0,
 numberDeadline-Date.now()
@@ -6136,20 +6136,20 @@ numberDeadline-Date.now()
 
 
 /* =========================================================
-   DISTRACTION EVENT AT 10
+   DISTRACTION EVENT AT 5
    Không xáo trộn số và không làm thử thách thất bại.
-   Các phần tử bay vòng quanh sẽ xuất hiện để gây nhiễu.
+   Khi người chơi ấn đến số 5, các phần tử bay vòng quanh sẽ xuất hiện để gây nhiễu.
 ========================================================= */
 
 if(
-n===10&&
+n===5&&
 !distractorsActive
 ){
 
 startNumberDistractors();
 
 logEvent(
-"CH1_DISTRACTION_AT_10",
+"CH1_DISTRACTION_AT_5",
 {
 attempt:numberAttempt,
 next_number:nextNumber
