@@ -888,6 +888,7 @@ background:#d4c786
 }
 
 
+
 /* =========================================================
    RESPONSIVE
 ========================================================= */
@@ -1420,6 +1421,7 @@ Cần sưu tập đủ 4 chiếc chìa khóa để mở.
 <i></i>
 
 </div>
+
 
 
 <!-- =======================================================
@@ -5962,20 +5964,27 @@ return
 
 const q=challenge2Track;
 const onTrack=Math.abs(camera.position.x-q.x)<q.halfWidth&&camera.position.z<=q.startZ+.75&&camera.position.z>=q.endZ-.75;
-const running=keys.ShiftLeft||keys.ShiftRight;
 
 if(!challenge2TrackStarted){
-if(onTrack&&camera.position.z>=q.startZ-.65&&running){
+if(!onTrack){
+bar.style.display="none";
+return
+}
+if(onTrack){
+bar.style.display="block";
+bar.querySelector("i").style.width="0%";
+}
+if(onTrack&&camera.position.z>=q.startZ-1.05){
 challenge2TrackStarted=true;
 bar.style.display="block";
 bar.querySelector("i").style.width="0%";
-say("Đường chạy đã kích hoạt. Giữ Shift và chạy đến END.");
+say("Đường chạy đã kích hoạt. Đi thẳng đến END.");
 logEvent("CH2_RUN_START")
 }
 return
 }
 
-if(!onTrack||!running){
+if(!onTrack){
 challenge2TrackStarted=false;
 bar.style.display="none";
 say("Bạn đã rời đường chạy. Hãy bắt đầu lại từ START.");
