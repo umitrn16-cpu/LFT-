@@ -866,6 +866,7 @@ cursor:pointer
 @keyframes c3Noise{50%{transform:translate(5px,-3px);filter:contrast(1.7)}}
 #c3Fail{z-index:96}
 #c3Hud{display:none;position:fixed;right:20px;top:72px;z-index:12;padding:10px 13px;background:rgba(10,16,17,.86);border:1px solid #d4c78677;color:#f4efdc;font-size:12px;line-height:1.55;text-align:right}
+#c3Health{margin-top:6px;color:#e85e67;font-size:17px;letter-spacing:.08em}
 #flashlightButton{display:none;position:fixed;left:20px;bottom:70px;z-index:12;padding:10px 14px;border:1px solid #d4c78699;background:#222c2c;color:#f4efdc;font-weight:700;cursor:pointer}
 
 
@@ -1432,7 +1433,7 @@ KHÔNG THỬ LẠI
 
 <!-- CHALLENGE 03 -->
 <button id="flashlightButton" type="button">BẬT ĐÈN PIN</button>
-<div id="c3Hud">CHALLENGE 03<br><span id="c3HudText">Tìm nguồn sáng.</span></div>
+<div id="c3Hud">CHALLENGE 03<br><span id="c3HudText">Tìm nguồn sáng.</span><div id="c3Health"></div></div>
 
 <div id="c3SymbolGame">
 <div class="c3Shell">
@@ -2058,6 +2059,10 @@ let c3Sequence=[];
 let c3SequenceIndex=0;
 let c3Npc=null;
 let c3NpcFake=false;
+let c3FinalNpcs=[];
+let c3Health=10;
+let c3TrueHits=0;
+let c3FinalGlowUntil=0;
 let c3Deadline=0;
 let c3Cabinet1=null;
 let c3Cabinet2=null;
@@ -4518,6 +4523,9 @@ c3LightOn=false;
 c3SymbolDone=false;
 c3Stage="idle";
 c3Npc=null;
+c3FinalNpcs=[];
+c3Health=10;
+c3TrueHits=0;
 
 numberAttempt=0;
 
@@ -6374,7 +6382,31 @@ function c3StartFinal(){
 c3Stage="countdown";if(c3Npc)scene.remove(c3Npc);c3Npc=null;setC3RoomLight(.01);
 const panel=document.getElementById("c3Countdown");const text=document.getElementById("c3CountdownText");panel.style.display="grid";
 let n=3;text.textContent=n;beep(220,.14,"square");
-const timer=setInterval(()=>{n--;if(n<=0){clearInterval(timer);panel.style.display="none";setC3RoomLight(1);spawnC3Npc(false);c3Stage="final";c3Deadline=Date.now()+30000;document.getElementById("c3HudText").textContent="BẮT NPC THẬT · 30 GIÂY";return}text.textContent=n;beep(220,.14,"square")},1000)
+const timer=setInterval(()=>{n--;if(n<=0){clearInterval(timer);panel.style.display="none";setC3RoomLight(1);spawnC3FinalNpcs();c3Stage="final";c3Deadline=Date.now()+30000;document.getElementById("c3HudText").textContent="TÌM VÀ BẮT NPC THẬT · 30 GIÂY";return}text.textContent=n;beep(220,.14,"square")},1000)
+}
+
+function spawnC3FinalNpcs(){
+c3FinalNpcs.forEach(n=>scene.remove(n));
+c3FinalNpcs=[];c3Health=10;c3TrueHits=0;c3FinalGlowUntil=Date.now()+5000;updateC3Health();
+for(let i=0;i<6;i++){
+const isTrue=i===0;
+const g=new THREE.Group();
+const material=mat(isTrue?0x7caab8:0x506b74,.5,.1,isTrue?0x6cc8e0:0x0b1a20,isTrue?1.75:.28);
+const body=new THREE.Mesh(new THREE.CapsuleGeometry(.28,.78,5,12),material);
+body.position.y=1.05;g.add(body);
+g.position.set(-5.6+(i%3)*5.4,0,-3.9+Math.floor(i/3)*6.2);
+g.userData={isTrue,body,vx:(Math.random()>.5?1:-1)*(1.4+Math.random()*1.3),vz:(Math.random()>.5?1:-1)*(1.4+Math.random()*1.3),nextHit:0,nextTeleport:Date.now()+2200+Math.random()*1700};
+scene.add(g);c3FinalNpcs.push(g)
+}
+}
+
+function updateC3Health(){
+document.getElementById("c3Health").textContent="MÁU: "+"♥".repeat(c3Health)+"♡".repeat(10-c3Health)
+}
+
+function teleportC3FinalNpc(npc){
+npc.position.set((Math.random()-.5)*12,0,(Math.random()-.5)*10);
+npc.userData.nextTeleport=Date.now()+1800+Math.random()*2400
 }
 
 function c3CatchFake(){
@@ -6382,21 +6414,56 @@ c3Stage="glitch";if(c3Npc)scene.remove(c3Npc);c3Npc=null;document.getElementById
 setTimeout(()=>{document.getElementById("c3Glitch").style.display="none";c3StartFinal()},1300)
 }
 
+function clearC3FinalNpcs(){c3FinalNpcs.forEach(n=>scene.remove(n));c3FinalNpcs=[]}
+
 function c3Win(){
-c3Stage="complete";if(c3Npc)scene.remove(c3Npc);c3Npc=null;document.getElementById("c3Hud").style.display="none";
+c3Stage="complete";if(c3Npc)scene.remove(c3Npc);c3Npc=null;clearC3FinalNpcs();document.getElementById("c3Hud").style.display="none";
 addItem("ROOM2 KEY 03");
 const banner=document.getElementById("unlockBanner");banner.querySelector("h2").textContent="Challenge 03 hoàn thành.";banner.querySelector("p").innerHTML="Bạn đã bắt được NPC thật.<br>Bạn nhận được <b>chìa khóa 3</b>.";banner.style.display="block";setTimeout(()=>banner.style.display="none",3800);
 logEvent("CH3_COMPLETE",{key:"ROOM2 KEY 03"});say("Challenge 03 hoàn thành. Bạn nhận được chìa khóa 3.")
 }
 
 function c3Fail(){
-c3Stage="failed";if(c3Npc)scene.remove(c3Npc);c3Npc=null;document.getElementById("c3Hud").style.display="none";document.getElementById("c3Fail").style.display="grid";modalOpen=true;logEvent("CH3_FAIL")
+c3Stage="failed";if(c3Npc)scene.remove(c3Npc);c3Npc=null;clearC3FinalNpcs();document.getElementById("c3Hud").style.display="none";document.getElementById("c3Fail").style.display="grid";modalOpen=true;logEvent("CH3_FAIL")
 }
 
-document.getElementById("retryC3").onclick=()=>{document.getElementById("c3Fail").style.display="none";modalOpen=false;setC3RoomLight(1);spawnC3Npc(false);c3Stage="final";c3Deadline=Date.now()+30000;document.getElementById("c3Hud").style.display="block";document.getElementById("c3HudText").textContent="BẮT NPC THẬT · 30 GIÂY"};
+document.getElementById("retryC3").onclick=()=>{document.getElementById("c3Fail").style.display="none";modalOpen=false;setC3RoomLight(1);spawnC3FinalNpcs();c3Stage="final";c3Deadline=Date.now()+30000;document.getElementById("c3Hud").style.display="block";document.getElementById("c3HudText").textContent="TÌM VÀ BẮT NPC THẬT · 30 GIÂY"};
 document.getElementById("quitC3").onclick=()=>{document.getElementById("c3Fail").style.display="none";modalOpen=false;c3Stage="idle";setC3RoomLight(1);say("Bạn đã rời khỏi phần đuổi bắt.")};
 
 function updateChallenge3(){
+if(c3Stage==="final"){
+const left=Math.max(0,c3Deadline-Date.now());
+document.getElementById("c3HudText").textContent="NPC THẬT: "+c3TrueHits+"/4 · "+Math.ceil(left/1000)+" GIÂY";
+const glowing=Date.now()<c3FinalGlowUntil;
+c3FinalNpcs.forEach(npc=>{
+const dta=npc.userData;
+const speed=2.35;
+npc.position.x+=Math.sin(t*1.7+npc.position.z+dta.vx)*speed*.015;
+npc.position.z+=Math.cos(t*1.35+npc.position.x+dta.vz)*speed*.015;
+if(Math.abs(npc.position.x)>6.8)dta.vx*=-1;
+if(Math.abs(npc.position.z)>6.15)dta.vz*=-1;
+dta.body.material.color.setHex(glowing&&dta.isTrue?0x90d8ef:0x506b74);
+dta.body.material.emissive.setHex(glowing&&dta.isTrue?0x55bedc:0x08141a);
+dta.body.material.emissiveIntensity=glowing&&dta.isTrue?2.2:.3;
+if(Date.now()>dta.nextTeleport){teleportC3FinalNpc(npc);beep(180,.06,"sine")}
+const d=Math.hypot(camera.position.x-npc.position.x,camera.position.z-npc.position.z);
+if(d<1.15&&Date.now()>dta.nextHit){
+dta.nextHit=Date.now()+1200;
+if(dta.isTrue){
+c3TrueHits++;beep(610,.16,"sine");
+if(c3TrueHits>=4){c3Win();return}
+teleportC3FinalNpc(npc);say("NPC thật dịch chuyển. Còn "+(4-c3TrueHits)+" lần bắt.");logEvent("CH3_TRUE_NPC_HIT",{hits:c3TrueHits})
+}else{
+c3Health--;updateC3Health();beep(95,.16,"sawtooth");say("NPC giả. Bạn mất một máu.");logEvent("CH3_FAKE_NPC_HIT",{health:c3Health});
+teleportC3FinalNpc(npc);if(c3Health<=0){c3Fail();return}
+}
+}
+});
+if(Date.now()-c3LastSound>1900){c3LastSound=Date.now();beep(145,.05,"square")}
+if(left<=0)c3Fail();
+return
+}
+
 if(!c3Npc)return;
 const npc=c3Npc;const speed=c3Stage==="final"?3.25:1.85;
 npc.position.x+=Math.sin(t*1.7+npc.position.z)*speed*.011;
@@ -6406,13 +6473,6 @@ if(Math.abs(npc.position.z)>6.2)npc.position.z*=-.92;
 const d=Math.hypot(camera.position.x-npc.position.x,camera.position.z-npc.position.z);
 if(c3Stage==="huntOne"&&d<1.35)c3BlackoutForFake();
 else if(c3Stage==="huntFake"&&d<1.25)c3CatchFake();
-else if(c3Stage==="final"){
-const left=Math.max(0,c3Deadline-Date.now());
-document.getElementById("c3HudText").textContent="BẮT NPC THẬT · "+Math.ceil(left/1000)+" GIÂY";
-if(Date.now()>npc.userData.teleportAt){npc.position.set((Math.random()-.5)*11,0,(Math.random()-.5)*10);npc.userData.teleportAt=Date.now()+3600;beep(180,.08,"sine")}
-if(Date.now()-c3LastSound>2200){c3LastSound=Date.now();beep(150,.05,"square")}
-if(left<=0)c3Fail();else if(d<1.15)c3Win()
-}
 }
 
 
