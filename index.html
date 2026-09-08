@@ -2062,7 +2062,6 @@ let c3NpcFake=false;
 let c3FinalNpcs=[];
 let c3Health=10;
 let c3TrueHits=0;
-let c3FinalGlowUntil=0;
 let c3Deadline=0;
 let c3Cabinet1=null;
 let c3Cabinet2=null;
@@ -6365,7 +6364,7 @@ logEvent("CH3_SYMBOLS_COMPLETE")
 function spawnC3Npc(fake){
 if(c3Npc)scene.remove(c3Npc);
 const g=new THREE.Group();
-const body=new THREE.Mesh(new THREE.CapsuleGeometry(.28,.78,5,12),mat(fake?0x8c556b:0x5f7d8b,.5,.1,fake?0x3f0818:0x072c38,.65));
+const body=new THREE.Mesh(new THREE.CapsuleGeometry(.28,.78,5,12),mat(fake?0x506b74:0x7caab8,.5,.1,fake?0x0b1a20:0x6cc8e0,fake?.28:1.75));
 body.position.y=1.05;g.add(body);g.position.set(fake?3.8:-3.5,0,fake?-2.8:-3.8);
 g.userData={vx:fake?1.45:1.15,vz:fake?1.1:1.3,teleportAt:Date.now()+3600};
 scene.add(g);c3Npc=g;c3NpcFake=fake
@@ -6387,7 +6386,7 @@ const timer=setInterval(()=>{n--;if(n<=0){clearInterval(timer);panel.style.displ
 
 function spawnC3FinalNpcs(){
 c3FinalNpcs.forEach(n=>scene.remove(n));
-c3FinalNpcs=[];c3Health=10;c3TrueHits=0;c3FinalGlowUntil=Date.now()+5000;updateC3Health();
+c3FinalNpcs=[];c3Health=10;c3TrueHits=0;updateC3Health();
 for(let i=0;i<6;i++){
 const isTrue=i===0;
 const g=new THREE.Group();
@@ -6434,7 +6433,6 @@ function updateChallenge3(){
 if(c3Stage==="final"){
 const left=Math.max(0,c3Deadline-Date.now());
 document.getElementById("c3HudText").textContent="NPC THẬT: "+c3TrueHits+"/4 · "+Math.ceil(left/1000)+" GIÂY";
-const glowing=Date.now()<c3FinalGlowUntil;
 c3FinalNpcs.forEach(npc=>{
 const dta=npc.userData;
 const speed=2.35;
@@ -6442,9 +6440,9 @@ npc.position.x+=Math.sin(t*1.7+npc.position.z+dta.vx)*speed*.015;
 npc.position.z+=Math.cos(t*1.35+npc.position.x+dta.vz)*speed*.015;
 if(Math.abs(npc.position.x)>6.8)dta.vx*=-1;
 if(Math.abs(npc.position.z)>6.15)dta.vz*=-1;
-dta.body.material.color.setHex(glowing&&dta.isTrue?0x90d8ef:0x506b74);
-dta.body.material.emissive.setHex(glowing&&dta.isTrue?0x55bedc:0x08141a);
-dta.body.material.emissiveIntensity=glowing&&dta.isTrue?2.2:.3;
+dta.body.material.color.setHex(dta.isTrue?0x90d8ef:0x506b74);
+dta.body.material.emissive.setHex(dta.isTrue?0x55bedc:0x08141a);
+dta.body.material.emissiveIntensity=dta.isTrue?2.2:.3;
 if(Date.now()>dta.nextTeleport){teleportC3FinalNpc(npc);beep(180,.06,"sine")}
 const d=Math.hypot(camera.position.x-npc.position.x,camera.position.z-npc.position.z);
 if(d<1.15&&Date.now()>dta.nextHit){
@@ -7668,5 +7666,4 @@ innerHeight
 
 </body>
 </html>
-
 
