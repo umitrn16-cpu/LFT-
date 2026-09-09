@@ -3748,7 +3748,14 @@ false
 }
 
 
-/* LOCKERS */
+/*
+LOCKERS
+
+Chừa khoảng trống trước mỗi cánh cửa lớp học. Các tủ chỉ còn
+ở đoạn tường giữa các cửa, không che lối nhìn hoặc lối tương tác.
+*/
+
+const hallwayDoorZones=[-15,-7,1,9,17];
 
 for(
 const side of[-1,1]
@@ -3759,6 +3766,9 @@ let z=-18;
 z<=18;
 z+=2
 ){
+
+if(hallwayDoorZones.some(doorZ=>Math.abs(z-doorZ)<2))
+continue;
 
 box(
 "locker",
