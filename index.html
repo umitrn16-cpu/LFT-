@@ -3372,7 +3372,7 @@ item:"KEY 01"
 );
 
 say(
-"Bạn mở tủ. Một tiếng kim loại vang lên — bạn lấy được chìa khóa."
+"Đã lấy được chìa khóa. Hãy mở cửa Room 1."
 )
 
 }else{
@@ -4209,9 +4209,46 @@ r2Door,
 "Cửa ROOM 02",
 ()=>{
 
+const requiredKeys=[
+"KEY 01",
+"KEY 02",
+"KEY 03",
+"KEY 04"
+];
+
+const collected=requiredKeys.filter(
+key=>inventory.includes(key)
+).length;
+
+if(collected>=4){
+
+logEvent(
+"ROOM2_EXIT_ATTEMPT",
+{
+keys_collected:collected,
+keys_required:4,
+unlocked:true
+}
+);
+
+enterHallway();
+
+}else{
+
+logEvent(
+"ROOM2_EXIT_ATTEMPT",
+{
+keys_collected:collected,
+keys_required:4,
+unlocked:false
+}
+);
+
 say(
-"Cửa đã bị khóa. Cần sưu tập đủ 4 chiếc chìa khóa để mở."
-)
+"Cửa đã bị khóa, vui lòng tìm 4 chìa khóa để mở."
+);
+
+}
 
 }
 );
@@ -4612,18 +4649,18 @@ room2Challenge1Done
 
 if(
 !inventory.includes(
-"ROOM2 KEY 01"
+"KEY 01"
 )
 ){
 
 addItem(
-"ROOM2 KEY 01"
+"KEY 01"
 );
 
 logEvent(
 "ROOM2_KEY_OBTAINED",
 {
-key:"ROOM2 KEY 01",
+key:"KEY 01",
 button:num
 }
 );
@@ -6083,7 +6120,7 @@ if(onTrack&&camera.position.z>=q.startZ-1.05){
 challenge2TrackStarted=true;
 bar.style.display="block";
 bar.querySelector("i").style.width="0%";
-say("Đường chạy đã kích hoạt. Đi thẳng đến END.");
+say("Mở khóa thử thách 2 bắt đầu.");
 logEvent("CH2_RUN_START")
 }
 return
@@ -6189,14 +6226,14 @@ document.getElementById("bookChallenge").style.display="none";
 room2Challenge2Done=true;
 modalOpen=false;
 playing=true;
-addItem("ROOM2 KEY 02");
+addItem("KEY 02");
 document.getElementById("objective").innerHTML='Mục tiêu: <b>Bạn đã nhận chìa khóa 2.</b><br><span style="opacity:.65">Tiếp tục khám phá Room 02 để tìm các chìa khóa còn lại.</span>';
 const banner=document.getElementById("unlockBanner");
 banner.querySelector("h2").textContent="Challenge 02 hoàn thành.";
 banner.querySelector("p").innerHTML="Bạn đã sắp xếp đúng kệ sách.<br>Bạn nhận được <b>chìa khóa 2</b>.";
 banner.style.display="block";
 setTimeout(()=>{banner.style.display="none";renderer.domElement.requestPointerLock?.()},3500);
-logEvent("CH2_COMPLETE",{key:"ROOM2 KEY 02"});
+logEvent("CH2_COMPLETE",{key:"KEY 02"});
 say("Challenge 02 hoàn thành. Bạn nhận được chìa khóa 2.");
 setTimeout(activateChallenge3,3800)
 }
@@ -6420,9 +6457,9 @@ function clearC3FinalNpcs(){c3FinalNpcs.forEach(n=>scene.remove(n));c3FinalNpcs=
 
 function c3Win(){
 c3Stage="complete";if(c3Npc)scene.remove(c3Npc);c3Npc=null;clearC3FinalNpcs();document.getElementById("c3Hud").style.display="none";
-addItem("ROOM2 KEY 03");
+addItem("KEY 03");
 const banner=document.getElementById("unlockBanner");banner.querySelector("h2").textContent="Challenge 03 hoàn thành.";banner.querySelector("p").innerHTML="Bạn đã bắt được NPC thật.<br>Bạn nhận được <b>chìa khóa 3</b>.";banner.style.display="block";setTimeout(()=>banner.style.display="none",3800);
-logEvent("CH3_COMPLETE",{key:"ROOM2 KEY 03"});say("Challenge 03 hoàn thành. Bạn nhận được chìa khóa 3.")
+logEvent("CH3_COMPLETE",{key:"KEY 03"});say("Challenge 03 hoàn thành. Bạn nhận được chìa khóa 3.")
 }
 
 function c3Fail(){
@@ -7670,4 +7707,3 @@ innerHeight
 
 </body>
 </html>
-
