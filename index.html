@@ -922,6 +922,23 @@ height:100%;
 background:#d4c786
 }
 
+#circleLoading{
+position:fixed;
+left:50%;
+bottom:86px;
+transform:translateX(-50%);
+z-index:10;
+display:none;
+padding:8px 12px;
+background:rgba(24,31,31,.92);
+border:1px solid #d4c786aa;
+border-radius:6px;
+color:#f4efdc;
+font-size:12px;
+letter-spacing:.04em;
+white-space:nowrap
+}
+
 
 
 /* =========================================================
@@ -1493,6 +1510,10 @@ Cần sưu tập đủ 4 chiếc chìa khóa để mở.
 
 <i></i>
 
+</div>
+
+<div id="circleLoading" role="status" aria-live="polite">
+Đang tải thử thách... 0 / 16 giây
 </div>
 
 
@@ -6046,9 +6067,11 @@ room2Circle.z
 function updateCircleTrigger(dt){
 
 const bar=document.getElementById("circleProgress");
+const loading=document.getElementById("circleLoading");
 
 if(currentRoom!=="ROOM_02"||challenge1Started||room2Challenge1Done||modalOpen){
 bar.style.display="none";
+loading.style.display="none";
 insideCircleSince=null;
 return
 }
@@ -6057,13 +6080,16 @@ if(pointInsideChallengeCircle()){
 if(insideCircleSince===null){
 insideCircleSince=Date.now();
 bar.style.display="block";
+loading.style.display="block";
 logEvent("CH1_CIRCLE_ENTER")
 }
 const p=Math.min(1,(Date.now()-insideCircleSince)/16000);
 bar.querySelector("i").style.width=(p*100)+"%";
+loading.textContent="Đang tải thử thách... "+Math.min(16,Math.ceil(p*16))+" / 16 giây";
 if(p>=1){
 insideCircleSince=null;
 bar.style.display="none";
+loading.style.display="none";
 challenge1Started=true;
 logEvent("CH1_TRIGGER_AFTER_16S");
 document.getElementById("challengeIntro").style.display="grid";
@@ -6072,7 +6098,8 @@ document.exitPointerLock?.()
 }
 }else{
 insideCircleSince=null;
-bar.style.display="none"
+bar.style.display="none";
+loading.style.display="none"
 }
 
 }
@@ -6229,12 +6256,12 @@ playing=true;
 addItem("KEY 02");
 document.getElementById("objective").innerHTML='Mục tiêu: <b>Bạn đã nhận chìa khóa 2.</b><br><span style="opacity:.65">Tiếp tục khám phá Room 02 để tìm các chìa khóa còn lại.</span>';
 const banner=document.getElementById("unlockBanner");
-banner.querySelector("h2").textContent="Challenge 02 hoàn thành.";
-banner.querySelector("p").innerHTML="Bạn đã sắp xếp đúng kệ sách.<br>Bạn nhận được <b>chìa khóa 2</b>.";
+banner.querySelector("h2").textContent="Challenge 2 hoàn thành.";
+banner.querySelector("p").innerHTML="Bạn đã sắp xếp đúng kệ sách.<br>Bạn nhận được <b>KEY 02</b>.";
 banner.style.display="block";
 setTimeout(()=>{banner.style.display="none";renderer.domElement.requestPointerLock?.()},3500);
 logEvent("CH2_COMPLETE",{key:"KEY 02"});
-say("Challenge 02 hoàn thành. Bạn nhận được chìa khóa 2.");
+say("Challenge 2 hoàn thành. Bạn nhận được KEY 02.");
 setTimeout(activateChallenge3,3800)
 }
 
@@ -6458,8 +6485,8 @@ function clearC3FinalNpcs(){c3FinalNpcs.forEach(n=>scene.remove(n));c3FinalNpcs=
 function c3Win(){
 c3Stage="complete";if(c3Npc)scene.remove(c3Npc);c3Npc=null;clearC3FinalNpcs();document.getElementById("c3Hud").style.display="none";
 addItem("KEY 03");
-const banner=document.getElementById("unlockBanner");banner.querySelector("h2").textContent="Challenge 03 hoàn thành.";banner.querySelector("p").innerHTML="Bạn đã bắt được NPC thật.<br>Bạn nhận được <b>chìa khóa 3</b>.";banner.style.display="block";setTimeout(()=>banner.style.display="none",3800);
-logEvent("CH3_COMPLETE",{key:"KEY 03"});say("Challenge 03 hoàn thành. Bạn nhận được chìa khóa 3.")
+const banner=document.getElementById("unlockBanner");banner.querySelector("h2").textContent="Challenge 3 hoàn thành.";banner.querySelector("p").innerHTML="Bạn đã bắt được NPC thật.<br>Bạn nhận được <b>KEY 03</b>.";banner.style.display="block";setTimeout(()=>banner.style.display="none",3800);
+logEvent("CH3_COMPLETE",{key:"KEY 03"});say("Challenge 3 hoàn thành. Bạn nhận được KEY 03.")
 }
 
 function c3Fail(){
