@@ -4217,6 +4217,38 @@ object.material=Array.isArray(object.material)
 });
 }
 
+/* Các điểm tương tác cần giữ màu để nổi bật trên Room 02 trắng. */
+function colorizeRoom2Interactions(){
+const setColor=(name,color,emissive=null,intensity=0)=>{
+const object=scene.getObjectByName(name);
+if(!object||!object.material)return;
+const materials=Array.isArray(object.material)?object.material:[object.material];
+materials.forEach(material=>{
+if(material.color)material.color.setHex(color);
+if(material.emissive&&emissive!==null){
+material.emissive.setHex(emissive);
+material.emissiveIntensity=intensity;
+}
+material.needsUpdate=true;
+});
+};
+
+/* Nút hint: xanh lam; viền và vít: vàng đồng. */
+for(let i=1;i<=20;i++){
+setColor("hiddenButton_"+i,0x2d6f96,0x16394f,.28);
+setColor("buttonBezel_"+i,0xd8a84c,0x6d4711,.16);
+setColor("buttonScrew_"+i,0xf0c75e,0x81560d,.2);
+}
+
+/* Hai thử thách trong Room 2: vòng kích hoạt vàng và lối chạy xanh ngọc. */
+setColor("r2ChallengeRing",0xf0b83f);
+setColor("r2ChallengeCore",0x43a7a0);
+setColor("ch2Runway",0x2d8e9d,0x16444c,.18);
+
+/* Tay nắm cửa vẫn là dấu hiệu chức năng, không bị lẫn vào nền trắng. */
+setColor("r2Handle",0xe0ad42,0x704c10,.18);
+}
+
 function buildRoom2(){
 
 currentRoom="ROOM_02";
@@ -4735,6 +4767,8 @@ side:THREE.DoubleSide
 })
 );
 
+ring.name="r2ChallengeRing";
+
 ring.rotation.x=
 -Math.PI/2;
 
@@ -4763,6 +4797,8 @@ opacity:.12
 
 })
 );
+
+core.name="r2ChallengeCore";
 
 core.rotation.x=
 -Math.PI/2;
@@ -4798,6 +4834,7 @@ challenge2Track={x:-7.55,startZ:6.1,endZ:-6.1,halfWidth:.72};
 
 /* Áp dụng sau khi mọi chi tiết Room 02 đã được tạo. */
 makeRoom2AllWhite();
+colorizeRoom2Interactions();
 
 
 /*
