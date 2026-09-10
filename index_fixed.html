@@ -4188,6 +4188,35 @@ const pipe=cyl("r2Conduit",-8.7,2.35,-2.25,.055,4.15,pipeMat);
 box("r2JunctionBox",-8.72,.74,-2.25,.12,.42,.42,agedMetal,false);
 }
 
+/* ROOM 02 — WHITEOUT
+   Giữ nguyên bố cục và tương tác, nhưng đưa toàn bộ không gian về trắng tinh. */
+function makeRoom2AllWhite(){
+scene.background=new THREE.Color(0xffffff);
+scene.fog=new THREE.FogExp2(0xffffff,.035);
+
+scene.traverse(object=>{
+if(!object.isMesh)return;
+
+const whiten=material=>{
+const white=material.clone();
+if(white.color)white.color.setHex(0xffffff);
+if(white.emissive){
+white.emissive.setHex(0xffffff);
+white.emissiveIntensity=0;
+}
+white.map=null;
+white.roughness=.96;
+white.metalness=0;
+white.needsUpdate=true;
+return white
+};
+
+object.material=Array.isArray(object.material)
+?object.material.map(whiten)
+:whiten(object.material);
+});
+}
+
 function buildRoom2(){
 
 currentRoom="ROOM_02";
@@ -4766,6 +4795,9 @@ z:-6.7
 };
 
 challenge2Track={x:-7.55,startZ:6.1,endZ:-6.1,halfWidth:.72};
+
+/* Áp dụng sau khi mọi chi tiết Room 02 đã được tạo. */
+makeRoom2AllWhite();
 
 
 /*
