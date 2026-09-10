@@ -1916,6 +1916,69 @@ white:mat(C.white,.95)
 
 
 /* =========================================================
+   ROOM 02 — PROCEDURAL SURFACES
+   Các texture được tạo trong trình duyệt để giữ nguyên file HTML độc lập.
+========================================================= */
+
+function room2Texture(kind){
+const size=512;
+const canvas=document.createElement("canvas");
+canvas.width=canvas.height=size;
+const ctx=canvas.getContext("2d");
+
+if(kind==="floor"){
+ctx.fillStyle="#b7b6b0";
+ctx.fillRect(0,0,size,size);
+for(let y=0;y<size;y+=64){
+for(let x=0;x<size;x+=64){
+ctx.fillStyle=(x/64+y/64)%2?"#aaa9a3":"#c4c3bd";
+ctx.fillRect(x+2,y+2,60,60);
+}
+}
+ctx.strokeStyle="rgba(53,58,55,.34)";
+ctx.lineWidth=2;
+for(let i=0;i<=size;i+=64){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,size);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(size,i);ctx.stroke()}
+for(let i=0;i<950;i++){
+const a=Math.random()*.13;
+ctx.fillStyle="rgba(35,40,37,"+a+")";
+ctx.fillRect(Math.random()*size,Math.random()*size,1+Math.random()*3,1+Math.random()*3);
+}
+}else if(kind==="ceiling"){
+ctx.fillStyle="#dadbd6";ctx.fillRect(0,0,size,size);
+ctx.strokeStyle="rgba(84,91,88,.25)";ctx.lineWidth=3;
+for(let x=0;x<=size;x+=128){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,size);ctx.stroke()}
+for(let y=0;y<=size;y+=128){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(size,y);ctx.stroke()}
+for(let i=0;i<430;i++){ctx.fillStyle="rgba(58,67,63,"+(Math.random()*.08)+")";ctx.fillRect(Math.random()*size,Math.random()*size,2,2)}
+}else{
+ctx.fillStyle="#d6d8d3";ctx.fillRect(0,0,size,size);
+const wash=ctx.createLinearGradient(0,0,0,size);
+wash.addColorStop(0,"rgba(255,255,255,.16)");wash.addColorStop(.58,"rgba(80,93,87,.04)");wash.addColorStop(1,"rgba(48,58,53,.16)");
+ctx.fillStyle=wash;ctx.fillRect(0,0,size,size);
+for(let i=0;i<1200;i++){ctx.fillStyle="rgba(46,57,53,"+(Math.random()*.065)+")";ctx.fillRect(Math.random()*size,Math.random()*size,1+Math.random()*2,1+Math.random()*2)}
+ctx.strokeStyle="rgba(66,72,66,.22)";ctx.lineWidth=1;
+for(let i=0;i<15;i++){
+const x=Math.random()*size,y=Math.random()*size;
+ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.random()*28-14,y+20+Math.random()*55);ctx.stroke();
+}
+}
+
+const texture=new THREE.CanvasTexture(canvas);
+texture.colorSpace=THREE.SRGBColorSpace;
+texture.wrapS=texture.wrapT=THREE.RepeatWrapping;
+texture.repeat.set(kind==="wall"?3:4,kind==="wall"?1:4);
+texture.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),4);
+return texture
+}
+
+function room2Surface(color,roughness,kind){
+const material=mat(color,roughness);
+material.map=room2Texture(kind);
+material.needsUpdate=true;
+return material
+}
+
+
+/* =========================================================
    OBJECT HELPERS
 ========================================================= */
 
@@ -4081,6 +4144,45 @@ return false
    ROOM 02
 ========================================================= */
 
+function addRoom2Details(){
+const base=mat(0x46504b,.9);
+const trim=mat(0x69716b,.72,.12);
+const agedMetal=mat(0x596360,.55,.62,0x0b1110,.08);
+const stain=mat(0x52615b,1,0);
+stain.transparent=true;
+stain.opacity=.16;
+stain.depthWrite=false;
+
+/* Viền chân tường, các thanh trần và khe thoáng tạo chiều sâu cho căn phòng. */
+box("r2BaseBack",0,.18,-7.84,17.8,.26,.12,base,false);
+box("r2BaseLeft",-8.84,.18,0,.12,.26,15.8,base,false);
+box("r2BaseRight",8.84,.18,0,.12,.26,15.8,base,false);
+for(const x of[-6,-2,2,6]){
+box("r2CeilingBeam",x,4.75,0,.14,.13,15.75,trim,false);
+}
+
+const vent=box("r2Vent",0,3.72,-7.86,2.05,.54,.04,agedMetal,false);
+for(let x=-.75;x<=.75;x+=.3){
+const slat=box("r2VentSlat",x,3.72,-7.9,.18,.04,.025,base,false);
+slat.rotation.z=-.18;
+}
+
+/* Vệt ẩm, sơn bong và các tấm ố tường nhẹ, không ảnh hưởng vùng tương tác. */
+const makeStain=(x,y,z,w,h,rot=0)=>{
+const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),stain.clone());
+mesh.position.set(x,y,z);mesh.rotation.y=rot;mesh.name="r2WallStain";scene.add(mesh);
+};
+makeStain(-5.8,1.28,-7.885,1.55,2.2,0);
+makeStain(5.1,2.0,-7.885,1.1,1.5,0);
+makeStain(8.885,1.1,-3.4,1.25,1.75,-Math.PI/2);
+makeStain(-8.885,2.35,2.2,1.45,1.1,Math.PI/2);
+
+/* Ống điện lộ thiên và hộp nối bên tường. */
+const pipeMat=mat(0x4c5956,.46,.65);
+const pipe=cyl("r2Conduit",-8.7,2.35,-2.25,.055,4.15,pipeMat);
+box("r2JunctionBox",-8.72,.74,-2.25,.12,.42,.42,agedMetal,false);
+}
+
 function buildRoom2(){
 
 currentRoom="ROOM_02";
@@ -4160,6 +4262,10 @@ scene.add(ceilingLight);
 
 /* ROOM STRUCTURE */
 
+const r2Floor=room2Surface(0xb9bab3,.88,"floor");
+const r2Wall=room2Surface(0xd3d6d0,.97,"wall");
+const r2Ceiling=room2Surface(0xd9dad5,.93,"ceiling");
+
 box(
 "r2floor",
 0,
@@ -4168,10 +4274,7 @@ box(
 18,
 .16,
 16,
-mat(
-0xf2f1ed,
-.78
-)
+r2Floor
 );
 
 box(
@@ -4182,10 +4285,7 @@ box(
 18,
 .18,
 16,
-mat(
-0xffffff,
-.9
-)
+r2Ceiling
 );
 
 box(
@@ -4196,7 +4296,7 @@ box(
 18,
 4.9,
 .18,
-M.white
+r2Wall
 );
 
 box(
@@ -4207,7 +4307,7 @@ box(
 .18,
 4.9,
 16,
-M.white
+r2Wall
 );
 
 box(
@@ -4218,8 +4318,10 @@ box(
 .18,
 4.9,
 16,
-M.white
+r2Wall
 );
+
+addRoom2Details();
 
 
 /* DOOR BEHIND PLAYER */
@@ -4257,6 +4359,13 @@ box(
 2.1,
 M.dark
 );
+
+/* Các ô gỗ chìm khiến cánh cửa không còn là một mặt phẳng đơn. */
+const doorPanel=mat(0x252d2c,.8,.08);
+for(const y of[1.18,3.02]){
+box("r2DoorPanel",0,y,7.745,1.48,1.35,.035,doorPanel,false);
+box("r2DoorPanelTrim",0,y,7.72,1.62,1.49,.025,M.ink,false);
+}
 
 box(
 "r2Handle",
@@ -4338,6 +4447,18 @@ x,
 .08,
 .65,
 M.dark,
+false
+);
+
+box(
+"r2lightDiffuser",
+x,
+4.59,
+-.5,
+1.84,
+.035,
+.34,
+mat(0xe8eadf,.36,.05,0xb9c4b6,.35),
 false
 );
 
@@ -4479,6 +4600,34 @@ true
 );
 
 plate.rotation.y=p.rot;
+
+/* Khung kim loại, vít và độ nhô giúp các nút có cảm giác là vật thể thật. */
+const bezel=box(
+"buttonBezel_"+(i+1),
+p.rot?p.x+.07:p.x,
+1.35,
+p.rot?p.z:p.z-.07,
+.76,
+.76,
+.055,
+mat(0x58615d,.5,.42),
+false
+);
+bezel.rotation.y=p.rot;
+for(const sy of[-.22,.22]){
+for(const sx of[-.22,.22]){
+const screw=box(
+"buttonScrew_"+(i+1),
+p.rot?p.x+.095:p.x+sx,
+1.35+sy,
+p.rot?p.z+sx:p.z-.096,
+.07,.07,.02,
+M.gold,
+false
+);
+screw.rotation.y=p.rot;
+}
+}
 
 
 const n=
