@@ -896,6 +896,21 @@ color:#d4c786;
 margin-bottom:8px
 }
 
+/* ROOM 02 — KHAY MỞ CỬA 3 CHÌA KHÓA */
+#room2KeyTray{display:none;z-index:85}
+.keyTrayPanel{max-width:760px;text-align:center}
+.keyTrayIntro{margin:0 0 18px;color:#555;font-size:16px}
+.keyTray{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0}
+.keySlot{min-height:132px;padding:12px;border:2px dashed #a89c6d;background:#e9e4d9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;transition:.18s}
+.keySlot.dragOver{border-color:#68756a;background:#dce8dd}
+.keySlot.filled{border-style:solid;border-color:#68756a;background:#dce8dd}
+.keySlotLabel{font-size:11px;font-weight:700;letter-spacing:.12em;color:#555}
+.room2Key{width:142px;min-height:48px;border:1px solid #887b49;background:linear-gradient(135deg,#f4e9a8,#b49a3e);color:#25251d;font:700 18px "Times New Roman",Times,serif;letter-spacing:.08em;cursor:grab;box-shadow:0 4px 10px #0003}
+.room2Key:active{cursor:grabbing}
+.room2Key.placed{cursor:default;opacity:.92}
+.keyTrayHint{font-size:12px;color:#68756a;min-height:18px}
+@media(max-width:600px){.keyTray{grid-template-columns:1fr}.keySlot{min-height:92px}.room2Key{width:128px}}
+
 
 /* =========================================================
    CIRCLE PROGRESS
@@ -1567,6 +1582,24 @@ Một trong các nút ẩn đã được mở khóa.
 Hãy tìm chúng và lấy <b>chìa khóa 1</b>.
 </p>
 
+</div>
+
+
+<!-- ROOM 02 — KHAY GHÉP 3 CHÌA KHÓA -->
+<div id="room2KeyTray" class="overlay">
+<div class="panel keyTrayPanel">
+<div class="eyebrow">ROOM 02 / KHÓA CỬA</div>
+<h2>Đặt đúng ba chìa khóa</h2>
+<p class="keyTrayIntro">Kéo từng chìa khóa vào ô có số tương ứng để mở cửa Room 2.</p>
+<div id="room2KeyPool" class="keyTray" aria-label="Ba chìa khóa"></div>
+<div class="keyTray" aria-label="Ba ổ khóa">
+<div class="keySlot" data-key="KEY 01"><span class="keySlotLabel">Ổ KHÓA 01</span></div>
+<div class="keySlot" data-key="KEY 02"><span class="keySlotLabel">Ổ KHÓA 02</span></div>
+<div class="keySlot" data-key="KEY 03"><span class="keySlotLabel">Ổ KHÓA 03</span></div>
+</div>
+<div id="keyTrayHint" class="keyTrayHint">Kéo chìa khóa phù hợp vào từng ổ khóa.</div>
+<button class="btn" id="closeKeyTray" type="button" style="background:#ddd7c7">ĐÓNG</button>
+</div>
 </div>
 
 
@@ -4238,32 +4271,31 @@ M.gold
 
 addInteract(
 r2Door,
-"Cửa ROOM 02",
+"Mở cửa ROOM 02",
 ()=>{
 
 const requiredKeys=[
 "KEY 01",
 "KEY 02",
-"KEY 03",
-"KEY 04"
+"KEY 03"
 ];
 
 const collected=requiredKeys.filter(
 key=>inventory.includes(key)
 ).length;
 
-if(collected>=4){
+if(collected>=3){
 
 logEvent(
 "ROOM2_EXIT_ATTEMPT",
 {
 keys_collected:collected,
-keys_required:4,
+keys_required:3,
 unlocked:true
 }
 );
 
-enterHallway();
+openRoom2KeyTray();
 
 }else{
 
@@ -4271,13 +4303,13 @@ logEvent(
 "ROOM2_EXIT_ATTEMPT",
 {
 keys_collected:collected,
-keys_required:4,
+keys_required:3,
 unlocked:false
 }
 );
 
 say(
-"Cửa đã bị khóa, vui lòng tìm 4 chìa khóa để mở."
+"Cửa đã bị khóa. Hãy hoàn thành 3 thử thách để nhận KEY 01, KEY 02 và KEY 03."
 );
 
 }
@@ -4734,6 +4766,102 @@ hint+
 );
 
 }
+
+
+/* =========================================================
+   ROOM 02 — THREE-KEY DOOR TRAY
+========================================================= */
+
+const room2DoorKeys=["KEY 01","KEY 02","KEY 03"];
+let room2PlacedKeys=[];
+
+function openRoom2KeyTray(){
+if(room2DoorKeys.some(key=>!inventory.includes(key))){
+say("Bạn vẫn thiếu chìa khóa để mở cửa Room 2.");
+return
+}
+
+room2PlacedKeys=[];
+const tray=document.getElementById("room2KeyTray");
+const pool=document.getElementById("room2KeyPool");
+pool.innerHTML="";
+document.querySelectorAll(".keySlot").forEach(slot=>{
+slot.classList.remove("filled","dragOver");
+slot.innerHTML='<span class="keySlotLabel">Ổ KHÓA '+slot.dataset.key.replace("KEY ","")+'</span>';
+});
+
+room2DoorKeys.forEach(key=>pool.appendChild(createRoom2Key(key)));
+document.getElementById("keyTrayHint").textContent="Kéo chìa khóa phù hợp vào từng ổ khóa.";
+tray.style.display="grid";
+playing=false;
+modalOpen=true;
+document.exitPointerLock?.();
+}
+
+function createRoom2Key(key){
+const el=document.createElement("div");
+el.className="room2Key";
+el.draggable=true;
+el.dataset.key=key;
+el.textContent=key;
+el.setAttribute("aria-label","Chìa khóa "+key.replace("KEY ",""));
+el.addEventListener("dragstart",event=>{
+event.dataTransfer.setData("text/plain",key);
+event.dataTransfer.effectAllowed="move";
+});
+return el
+}
+
+document.querySelectorAll(".keySlot").forEach(slot=>{
+slot.addEventListener("dragover",event=>{
+event.preventDefault();
+slot.classList.add("dragOver");
+event.dataTransfer.dropEffect="move";
+});
+slot.addEventListener("dragleave",()=>slot.classList.remove("dragOver"));
+slot.addEventListener("drop",event=>{
+event.preventDefault();
+slot.classList.remove("dragOver");
+const key=event.dataTransfer.getData("text/plain");
+if(!key||room2PlacedKeys.includes(key))return;
+if(key!==slot.dataset.key){
+document.getElementById("keyTrayHint").textContent="Chìa khóa không khớp với ổ khóa này.";
+say("Chìa khóa không phù hợp.");
+return
+}
+const keyEl=document.querySelector('.room2Key[data-key="'+key+'"]');
+if(keyEl){keyEl.draggable=false;keyEl.classList.add("placed");slot.appendChild(keyEl)}
+slot.classList.add("filled");
+room2PlacedKeys.push(key);
+document.getElementById("keyTrayHint").textContent="Đã đặt "+room2PlacedKeys.length+" / 3 chìa khóa.";
+if(room2PlacedKeys.length===3)unlockRoom2Door();
+});
+});
+
+function unlockRoom2Door(){
+logEvent("ROOM2_DOOR_UNLOCKED",{keys:room2PlacedKeys});
+document.getElementById("keyTrayHint").textContent="Ba ổ khóa đã mở. Cửa Room 2 đang mở...";
+setTimeout(()=>{
+document.getElementById("room2KeyTray").style.display="none";
+modalOpen=false;
+const banner=document.getElementById("unlockBanner");
+banner.querySelector("h2").textContent="Cửa Room 2 đã mở.";
+banner.querySelector("p").innerHTML="KEY 01, KEY 02 và KEY 03 đã khớp với ba ổ khóa.<br>Bạn sẽ trở lại hành lang ban đầu.";
+banner.style.display="block";
+setTimeout(()=>{
+banner.style.display="none";
+say("Cửa Room 2 mở ra. Bạn trở lại hành lang ban đầu.");
+enterHallway();
+},1400);
+},500);
+}
+
+document.getElementById("closeKeyTray").onclick=()=>{
+document.getElementById("room2KeyTray").style.display="none";
+modalOpen=false;
+playing=true;
+renderer.domElement.requestPointerLock?.();
+};
 
 
 /* =========================================================
@@ -7077,6 +7205,9 @@ playing=true;
 
 room2Challenge1Done=true;
 
+/* Challenge 01 trao KEY 01 ngay khi hoàn thành. */
+addItem("KEY 01");
+
 
 /*
 Đảm bảo key button luôn tồn tại.
@@ -7102,9 +7233,9 @@ HUD UPDATE
 document.getElementById(
 "objective"
 ).innerHTML=
-'Mục tiêu: <b>Tìm nút ẩn chứa chìa khóa.</b><br>'+ 
+'Mục tiêu: <b>Bạn đã nhận được KEY 01.</b><br>'+ 
 '<span style="opacity:.65">'+
-'Có 20 nút được đánh số từ 1 đến 20. Hãy tìm nút đã được kích hoạt. Sát tường phía sau có đường START → END để mở Challenge 02.'+
+'Sát tường phía sau có đường START → END để mở Challenge 02.'+
 '</span>';
 
 
@@ -7123,7 +7254,7 @@ document.getElementById(
 );
 
 banner.querySelector("h2").textContent="Chúc mừng bạn!";
-banner.querySelector("p").innerHTML="Bạn đã hoàn thành Challenge 01.<br><b>Bạn đã có chìa khóa 1.</b>";
+banner.querySelector("p").innerHTML="Bạn đã hoàn thành Challenge 01.<br><b>Bạn nhận được KEY 01.</b>";
 banner.style.display="block";
 
 
@@ -7142,7 +7273,7 @@ renderer.domElement
 
 
 say(
-"Chúc mừng bạn. Bạn đã có chìa khóa 1."
+"Challenge 1 hoàn thành. Bạn nhận được KEY 01."
 );
 
 }
