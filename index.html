@@ -2193,7 +2193,6 @@ let c3LastSound=0;
 let r2DoorPivot=null;
 let r2DoorCloseStart=0;
 let r2DoorClosing=false;
-let r2DoorCinematic=false;
 
 
 /* =========================================================
@@ -4397,7 +4396,6 @@ r2DoorParts.forEach(part=>r2DoorPivot.attach(part));
 r2DoorPivot.rotation.y=-Math.PI*.48;
 r2DoorCloseStart=performance.now()+800;
 r2DoorClosing=true;
-r2DoorCinematic=true;
 
 addInteract(
 r2Door,
@@ -5120,11 +5118,8 @@ document.getElementById(
 "room2Notice"
 );
 
-/* Đợi cánh cửa khép xong để người chơi thật sự nhìn thấy hiệu ứng. */
-setTimeout(
-()=>{
-
 n.style.display="grid";
+
 
 clearTimeout(
 enterRoom2.noticeTimer
@@ -5138,10 +5133,6 @@ n.style.display="none";
 
 },
 10000
-);
-
-},
-2200
 );
 
 
@@ -7916,8 +7907,6 @@ new THREE.Clock();
 
 function updateRoom2Door(){
 if(!r2DoorClosing||!r2DoorPivot||currentRoom!=="ROOM_02")return;
-/* Giữ góc nhìn trên cánh cửa trong lúc nó khép lại. */
-if(r2DoorCinematic){yaw=Math.PI;pitch=0}
 const elapsed=performance.now()-r2DoorCloseStart;
 if(elapsed<=0)return;
 const progress=Math.min(1,elapsed/1650);
@@ -7927,9 +7916,6 @@ r2DoorPivot.rotation.y=-Math.PI*.48*(1-eased);
 if(progress===1){
 r2DoorPivot.rotation.y=0;
 r2DoorClosing=false;
-r2DoorCinematic=false;
-/* Cửa đã khóa: trả góc nhìn về phía bên trong Room 2. */
-yaw=0;
 }
 }
 
