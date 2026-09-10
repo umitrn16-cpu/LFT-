@@ -2189,6 +2189,12 @@ let c3Cabinet2=null;
 let c3Switch=null;
 let c3LastSound=0;
 
+/* ROOM 02 — cửa bắt đầu mở và khép lại sau khi người chơi bước vào. */
+let r2DoorPivot=null;
+let r2DoorCloseStart=0;
+let r2DoorClosing=false;
+let r2DoorCinematic=false;
+
 
 /* =========================================================
    WORLD MANAGEMENT
@@ -4360,14 +4366,17 @@ box(
 M.dark
 );
 
+const r2DoorParts=[r2Door];
+
 /* Các ô gỗ chìm khiến cánh cửa không còn là một mặt phẳng đơn. */
 const doorPanel=mat(0x252d2c,.8,.08);
 for(const y of[1.18,3.02]){
-box("r2DoorPanel",0,y,7.745,1.48,1.35,.035,doorPanel,false);
-box("r2DoorPanelTrim",0,y,7.72,1.62,1.49,.025,M.ink,false);
+const panel=box("r2DoorPanel",0,y,7.745,1.48,1.35,.035,doorPanel,false);
+const trim=box("r2DoorPanelTrim",0,y,7.72,1.62,1.49,.025,M.ink,false);
+r2DoorParts.push(panel,trim);
 }
 
-box(
+const r2Handle=box(
 "r2Handle",
 .72,
 2.1,
@@ -4377,6 +4386,18 @@ box(
 .12,
 M.gold
 );
+r2DoorParts.push(r2Handle);
+
+/* Bản lề ở cạnh phải: cánh cửa hiện mở rồi khép lại khi vào Room 2. */
+r2DoorPivot=new THREE.Group();
+r2DoorPivot.name="r2DoorPivot";
+r2DoorPivot.position.set(1.05,0,7.86);
+scene.add(r2DoorPivot);
+r2DoorParts.forEach(part=>r2DoorPivot.attach(part));
+r2DoorPivot.rotation.y=-Math.PI*.48;
+r2DoorCloseStart=performance.now()+800;
+r2DoorClosing=true;
+r2DoorCinematic=true;
 
 addInteract(
 r2Door,
@@ -5099,8 +5120,11 @@ document.getElementById(
 "room2Notice"
 );
 
-n.style.display="grid";
+/* Đợi cánh cửa khép xong để người chơi thật sự nhìn thấy hiệu ứng. */
+setTimeout(
+()=>{
 
+n.style.display="grid";
 
 clearTimeout(
 enterRoom2.noticeTimer
@@ -5114,6 +5138,10 @@ n.style.display="none";
 
 },
 10000
+);
+
+},
+2200
 );
 
 
@@ -7886,6 +7914,26 @@ const clock=
 new THREE.Clock();
 
 
+function updateRoom2Door(){
+if(!r2DoorClosing||!r2DoorPivot||currentRoom!=="ROOM_02")return;
+/* Giữ góc nhìn trên cánh cửa trong lúc nó khép lại. */
+if(r2DoorCinematic){yaw=Math.PI;pitch=0}
+const elapsed=performance.now()-r2DoorCloseStart;
+if(elapsed<=0)return;
+const progress=Math.min(1,elapsed/1650);
+/* Ease-out: đóng nhanh lúc đầu, chậm lại khi gần sát khung. */
+const eased=1-Math.pow(1-progress,3);
+r2DoorPivot.rotation.y=-Math.PI*.48*(1-eased);
+if(progress===1){
+r2DoorPivot.rotation.y=0;
+r2DoorClosing=false;
+r2DoorCinematic=false;
+/* Cửa đã khóa: trả góc nhìn về phía bên trong Room 2. */
+yaw=0;
+}
+}
+
+
 function animate(){
 
 requestAnimationFrame(
@@ -7901,6 +7949,8 @@ clock.getDelta(),
 
 
 t+=dt;
+
+updateRoom2Door();
 
 animateNumberDistractors(
 performance.now()
