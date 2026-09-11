@@ -2164,6 +2164,11 @@ let unlocked=false;
 
 let room1RedBookDropped=false;
 
+let room2Exited=false;
+
+let archiveSymbolOrder=[];
+let archiveSymbolsTaken=new Set();
+
 let playing=false;
 
 let locked=false;
@@ -2556,6 +2561,8 @@ inventory=[];
 unlocked=false;
 
 room1RedBookDropped=false;
+
+room2Exited=false;
 
 document.getElementById(
 "items"
@@ -4193,6 +4200,39 @@ endSign.rotation.y=Math.PI;
 scene.add(endSign);
 
 
+/* Phòng tài liệu chỉ khả dụng sau khi người chơi đã ra khỏi Room 02. */
+const archiveDoor=box(
+"archiveRoomDoor",
+0,
+2.1,
+-22.76,
+3.0,
+4.0,
+.10,
+room2Exited?mat(0x4b5149,.82,.18):M.dark
+);
+
+box("archiveDoorFrameL",-1.65,2.25,-22.7,.18,4.4,.18,M.ink);
+box("archiveDoorFrameR",1.65,2.25,-22.7,.18,4.4,.18,M.ink);
+box("archiveDoorFrameTop",0,4.35,-22.7,3.45,.22,.18,M.ink);
+
+const archiveSign=textSprite("PHÒNG TÀI LIỆU",.40,room2Exited?"#d4c786":"#7f8885");
+archiveSign.position.set(0,3.68,-22.61);
+scene.add(archiveSign);
+
+addInteract(
+archiveDoor,
+room2Exited?"Mở cửa phòng tài liệu":"Phòng tài liệu bị khóa",
+()=>{
+if(!room2Exited){
+say("Cửa Phòng tài liệu vẫn đang khóa.");
+return
+}
+enterArchiveRoom()
+}
+);
+
+
 /*
 TRACKING
 */
@@ -4205,6 +4245,90 @@ say(
 "Cánh cửa mở. Một hành lang tối xuất hiện phía trước."
 );
 
+}
+
+/* =========================================================
+   ROOM 03 — PHÒNG TÀI LIỆU
+========================================================= */
+
+function enterArchiveRoom(){
+playing=false;
+modalOpen=true;
+document.exitPointerLock?.();
+buildArchiveRoom();
+setTimeout(()=>{playing=true;modalOpen=false;renderer.domElement.requestPointerLock?.()},420)
+}
+
+function buildArchiveRoom(){
+currentRoom="ARCHIVE_ROOM";
+document.getElementById("room").textContent="ASTERIA SCHOOL · PHÒNG TÀI LIỆU";
+document.getElementById("objective").style.display="block";
+document.getElementById("objective").innerHTML='Mục tiêu: <b>Khảo sát Phòng tài liệu.</b><br><span style="opacity:.65">Hồ sơ bị bỏ quên có thể vẫn còn giữ câu trả lời.</span>';
+clearWorld();
+scene.background=new THREE.Color(0x79817b);
+scene.fog=new THREE.FogExp2(0x89908a,.034);
+camera.position.set(0,1.65,6.8);yaw=Math.PI;pitch=0;
+archiveSymbolOrder=[];
+archiveSymbolsTaken=new Set();
+
+/* Ánh sáng từ cửa sổ giữ căn phòng cũ kỹ nhưng không quá tối. */
+scene.add(new THREE.HemisphereLight(0xdfe7df,0x454b45,2.15));
+const archiveSun=new THREE.DirectionalLight(0xe9e5d6,1.15);archiveSun.position.set(-7,8,2);scene.add(archiveSun);
+const windowGlow=new THREE.PointLight(0xc8dde0,2.1,11);windowGlow.position.set(-7.3,3.1,-1.8);scene.add(windowGlow);
+const deskGlow=new THREE.PointLight(0xe4d7a6,.75,6);deskGlow.position.set(1.2,3.2,1.1);scene.add(deskGlow);
+
+const oldWall=mat(0x888a7e,.92,.16),oldFloor=mat(0x535149,.78,.26),oldCeiling=mat(0x9a9a8c,.88,.12),dustedPaper=mat(0xc7bea2,.72,.12),rust=mat(0x62453c,.78,.36,0x240d09,.06);
+box("archiveFloor",0,-.08,0,18,.16,16,oldFloor);box("archiveCeiling",0,4.9,0,18,.18,16,oldCeiling);box("archiveBack",0,2.45,-8,18,4.9,.18,oldWall);box("archiveLeft",-9,2.45,0,.18,4.9,16,oldWall);box("archiveRight",9,2.45,0,.18,4.9,16,oldWall);
+
+/* Cửa sổ bám bụi ở tường trái. */
+for(const z of[-3.4,.4,4.1]){box("archiveWindowFrame",-8.87,2.85,z,.08,2.15,1.9,M.ink,false);box("archiveWindow",-8.80,2.85,z,.025,1.78,1.54,mat(0x9fb4b4,.2,.04,0xc4d8d6,.18),false);box("archiveWindowV",-8.76,2.85,z,.03,1.84,.06,rust,false);box("archiveWindowH",-8.76,2.85,z,.03,.06,1.62,rust,false)}
+box("archiveEntryFrameL",-1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntryFrameR",1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntry",0,2.1,7.87,.14,4,2.1,mat(0x4c5049,.82,.18));
+
+const aisleColors=[0x873d3d,0xa3843d,0xc6c3b5,0x496f5d,0x666a68],aisleLetters=["S","F","G","H","I"],specialFiles={"0-0":"S01","1-1":"S07","2-2":"S12","3-3":"S18","4-4":"S23"};
+/* Năm dãy tủ, mỗi tủ có ba tầng sách và hồ sơ. */
+aisleLetters.forEach((letter,aisle)=>{const x=-6+aisle*3;box("archiveCabinet_"+letter,x,2.05,-5.9,2.35,3.85,.65,mat(aisleColors[aisle],.72,.2));for(let shelf=0;shelf<3;shelf++){const y=1.05+shelf*1.02;box("archiveShelf",x,y-.38,-5.48,2.15,.07,.08,rust,false);for(let file=0;file<6;file++){const fx=x-.78+file*.31,code=specialFiles[aisle+"-"+file],isS23=code==="S23";box("archiveFile_"+letter+shelf+file,fx,y,-5.45,.24,.62,.10,isS23?mat(0x7d2a2b,.75,.18,0x341012,.08):dustedPaper,false);if(code&&shelf===1){const tag=textSprite(code,.15,isS23?"#f7e8c4":"#4a4238");tag.position.set(fx,y,-5.37);scene.add(tag);if(isS23){const touchMark=box("archiveS23Touch",fx,y+.22,-5.34,.09,.18,.012,mat(0xd8bd82,.4,.05),false);touchMark.rotation.z=.16}}}}const aisleTag=textSprite(letter,.42,"#ece3ca");aisleTag.position.set(x,4.12,-5.32);scene.add(aisleTag)});
+
+/* Bàn làm việc, máy tính cũ, camera, thùng tài liệu và ảnh học sinh. */
+box("archiveDesk",1.25,1.0,1.05,3.1,.16,1.5,mat(0x5d5041,.84,.18));for(const p of[[-1.25,-.52],[1.25,-.52],[-1.25,.52],[1.25,.52]])box("archiveDeskLeg",1.25+p[0],.5,1.05+p[1],.10,1,.10,M.ink);box("archiveMonitor",1.9,1.62,.78,1.0,.82,.13,M.dark);box("archiveScreen",1.9,1.62,.70,.78,.57,.02,mat(0x465650,.22,.02,0x2a3e38,.22),false);box("archiveKeyboard",1.9,1.15,1.2,.92,.05,.30,dustedPaper);box("archiveCamera",.15,1.47,.65,.34,.22,.42,M.ink);box("archiveCameraLens",.15,1.47,.39,.15,.15,.03,mat(0x24353a,.25,.05,0x324f54,.35),false);for(let i=0;i<3;i++)box("archiveBox",5.75+i*.55,.42,2.25+i*.18,.5,.7,.68,rust);
+const photo=box("archiveStudentPhoto",3.95,2.08,-1.15,.55,.75,.03,dustedPaper,false);const photoMark=textSprite("10A",.16,"#5c5146");photoMark.position.set(3.95,2.08,-1.10);scene.add(photoMark);
+box("archiveClock",7.95,3.65,-1.65,.06,.72,.72,M.ink,false);const archiveClockText=textSprite("23:47",.38,"#e2c875");archiveClockText.position.set(7.86,3.65,-1.65);scene.add(archiveClockText);
+
+const survey=box("archiveSurvey",.65,1.16,1.08,.62,.018,.82,dustedPaper);addInteract(survey,"Nhấn để xem thông tin",()=>doc("TỜ GIẤY KHẢO SÁT",'<div class="note"><b>RESEARCH 23:47 — INVESTIGATION FORM</b><br><br>01. RESEARCH 23:47 là gì?<br>____________<br>02. Tại sao dự án bị dừng?<br>____________<br>03. Người phụ trách đã đi đâu?<br>____________<br>04. Những người tham gia nghiên cứu là ai?<br>____________<br>05. 23:47 có ý nghĩa gì?<br>____________<br>06. Tại sao hồ sơ của một số học sinh bị xóa?<br>____________<br>07. Bạn nghĩ mình đang làm gì ở đây?<br>____________<br><br><i>“Chỉ được điền câu trả lời khi đã tìm thấy bằng chứng.”</i></div>'));
+const hintPaper=box("archiveHintPaper",.08,1.16,1.44,.38,.018,.48,mat(0xd0b54e,.72,.1));addInteract(hintPaper,"Chọn để xem",()=>doc("GHI CHÚ",'<div class="note">Hồ sơ bạn cần không nằm ở ngăn dưới.</div>'));
+const recorder=box("archiveRecorder",-.55,.86,2.05,.78,.30,.48,M.ink);addInteract(recorder,"Nhấn để nghe",()=>doc("MÁY GHI ÂM",'<div class="note">Tần số: <b>23:47</b><br><br>Âm thanh rè lặp lại: “Bốn màu không phải nơi bạn cần tìm: đỏ, vàng, trắng và xám.”</div>'));
+const calendar=box("archiveCalendar",2.65,1.16,1.06,.45,.04,.52,dustedPaper);addInteract(calendar,"Nhấn để xem lịch",()=>doc("LỊCH BÀN · THÁNG 08 / 2018",'<div class="note"><b>02/08</b> — Nhập hồ sơ<br><b>05/08</b> — Rà soát hồ sơ ◯<br><br>Ghi chú dán: “Chú ý trễ deadline công việc.”</div>'));
+const looseNote=box("archiveLooseNote",-2.9,1.58,-5.23,.34,.018,.42,dustedPaper);addInteract(looseNote,"Chạm để xem mẫu giấy",()=>doc("MẨU GIẤY",'<div class="note">Có những thứ bị đánh dấu sai.<br>Đừng tin vào thứ được viết bên ngoài.</div>'));
+
+/* Ba hồ sơ mốc trong chuỗi manh mối. */
+const b02=box("archiveB02",-3.75,2.08,-5.25,.27,.66,.10,mat(0x5e6d65,.66,.12));addInteract(b02,"Mở hồ sơ B02",()=>doc("HỒ SƠ B02",'<div class="note">Nếu đã tìm thấy hồ sơ này, hãy tiếp tục đến nơi được đánh dấu.<br><br><b>◆</b></div>'));
+const b04=box("archiveB04",-3.13,2.08,-5.25,.27,.66,.10,mat(0x5e6d65,.66,.12));addInteract(b04,"Mở hồ sơ ◆B04",()=>doc("HỒ SƠ ◆B04",'<div class="note">Ba tầng giữ bí mật,<br>nhưng chỉ một tầng nhìn thấy bầu trời.<br>Sáu bước nằm trước mắt,<br>bốn bước đã đi qua.<br>Đừng đi thêm nữa.<br>Ở đó, câu chuyện khép lại.</div>'));
+const a05=box("archiveA05",.45,3.10,-5.25,.27,.66,.10,mat(0x8a3938,.7,.14));addInteract(a05,"Mở hồ sơ A05",()=>doc("HỒ SƠ A05",'<div class="note">HỒ SƠ CẦN LÀM ĐỂ HOÀN THÀNH TRÒ CHƠI</div>'));
+
+/* Thử thách 01: ghi nhận thứ tự người chơi nhặt bốn ký hiệu, không hiển thị ngay. */
+const recordArchiveSymbol=symbol=>{
+if(archiveSymbolsTaken.has(symbol)){say("Ký hiệu này đã được ghi nhận.");return}
+archiveSymbolsTaken.add(symbol);archiveSymbolOrder.push(symbol);beep(520,.08,"sine");
+if(archiveSymbolOrder.length<4){say("Bạn đã nhận được một ký hiệu.");return}
+const notice=document.getElementById("room2Notice");
+notice.querySelector("div").textContent="BẠN ĐÃ TÌM THẤY CHÚNG. NHƯNG THỨ TỰ THÌ SAO?";
+notice.style.display="grid";modalOpen=true;document.exitPointerLock?.();
+setTimeout(()=>{notice.style.display="none";showArchiveSymbolAnswer()},6000);
+};
+const showArchiveSymbolAnswer=()=>{
+let entered=[];
+const render=message=>{
+doc("THỨ TỰ KÝ HIỆU",'<div class="note" style="text-align:center"><b>▲ ■ ★ ♥</b><br><br>'+message+'<br><br><div id="archiveSymbolChoices"><button class="btn archiveSymbolChoice" data-symbol="▲">▲</button> <button class="btn archiveSymbolChoice" data-symbol="■">■</button> <button class="btn archiveSymbolChoice" data-symbol="★">★</button> <button class="btn archiveSymbolChoice" data-symbol="♥">♥</button></div></div>');
+document.querySelectorAll(".archiveSymbolChoice").forEach(button=>button.onclick=()=>{entered.push(button.dataset.symbol);if(entered.length<4)return;if(entered.join("")===archiveSymbolOrder.join("")){document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>MỞ KHÓA THỬ THÁCH MỚI</b><br><br>TÌM HỒ SƠ ẨN.</div>';beep(760,.24,"square");logEvent("ARCHIVE_SYMBOL_CHALLENGE_COMPLETE",{order:archiveSymbolOrder});return}document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center">Thứ tự không khớp.<br><br><button class="btn" id="archiveRetry">NHẬP LẠI</button> <button class="btn" id="archiveQuit">BỎ CUỘC</button></div>';document.getElementById("archiveRetry").onclick=()=>{entered=[];render("Nhập lại thứ tự bạn đã ghi nhận.")};document.getElementById("archiveQuit").onclick=()=>{document.getElementById("doc").style.display="none";modalOpen=false;renderer.domElement.requestPointerLock?.()}})};
+render("Nhập lại thứ tự bạn đã ghi nhận.");
+};
+const makeArchiveSymbol=(name,symbol,x,y,z)=>{const mark=box(name,x,y,z,.35,.35,.04,mat(0xd4c786,.55,.06),false);const markText=textSprite(symbol,.28,"#202329");markText.position.set(x,y,z+.05);scene.add(markText);addInteract(mark,"Nhấn để nhận",()=>recordArchiveSymbol(symbol))};
+makeArchiveSymbol("archiveTriangle","▲",.25,1.22,.28);
+makeArchiveSymbol("archiveSquare","■",-6.7,2.55,-5.28);
+makeArchiveSymbol("archiveStar","★",-1.5,3.1,-5.28);
+makeArchiveSymbol("archiveHeart","♥",8.82,2.55,3.1);
+
+logEvent("ARCHIVE_ROOM_ENTER");
+say("Phòng tài liệu vẫn có ánh sáng từ các khung cửa sổ phủ bụi.");
 }
 
 
@@ -5209,6 +5333,7 @@ banner.querySelector("p").innerHTML="KEY 01, KEY 02 và KEY 03 đã khớp với
 banner.style.display="block";
 setTimeout(()=>{
 banner.style.display="none";
+room2Exited=true;
 say("Cửa Room 2 mở ra. Bạn trở lại hành lang ban đầu.");
 enterHallway();
 },1400);
@@ -6126,6 +6251,18 @@ return collidesHall(x,z);
 
 if(
 currentRoom==="ROOM_02"
+){
+
+return x<-8.25||
+x>8.25||
+z<-7.25||
+z>7.25;
+
+}
+
+
+if(
+currentRoom==="ARCHIVE_ROOM"
 ){
 
 return x<-8.25||
