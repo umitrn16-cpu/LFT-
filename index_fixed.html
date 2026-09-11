@@ -827,6 +827,13 @@ transition:transform .16s,opacity .16s
 
 .book:hover:not(:disabled){transform:translateY(-7px)}
 .book:disabled{cursor:default;opacity:.48}
+.book.s23Book{
+background:#9f252d!important;
+color:#fff5e8;
+font:700 16px "Times New Roman",Times,serif;
+letter-spacing:.08em;
+text-shadow:0 1px 2px #000
+}
 .book.falling{animation:bookFall .85s cubic-bezier(.3,.7,.4,1) forwards}
 .bookPile{padding:14px;border:1px dashed #d4c78655;background:#081012}
 .shelfShaking{animation:shelfShake .85s ease}
@@ -1356,8 +1363,7 @@ Hãy lần lượt chọn các số từ
 <br><br>
 
 Thời gian của thử thách:
-<b>36 giây</b>.<br><br>
-Khi chạm <b>số 10</b>, các vật thể chuyển động sẽ xuất hiện để làm bạn mất tập trung.
+<b>36 giây</b>.
 
 </div>
 
@@ -2131,6 +2137,8 @@ let inventory=[];
 
 let unlocked=false;
 
+let room1RedBookDropped=false;
+
 let playing=false;
 
 let locked=false;
@@ -2521,6 +2529,8 @@ pitch=0;
 inventory=[];
 
 unlocked=false;
+
+room1RedBookDropped=false;
 
 document.getElementById(
 "items"
@@ -3132,7 +3142,7 @@ M.ink
 
 const lockerBadge=
 textSprite(
-"10A",
+"S23",
 .45
 );
 
@@ -3145,6 +3155,50 @@ lockerBadge.position.set(
 lockerBadge.rotation.y=Math.PI;
 
 scene.add(lockerBadge);
+
+
+/* Đồng hồ điện tử cạnh cửa ra Room 1. */
+box(
+"room1DigitalClock",
+17.72,
+3.72,
+3.9,
+.08,
+.52,
+1.18,
+M.ink
+);
+
+const room1DigitalClockText=textSprite("23:47",.42,"#e85e67");
+room1DigitalClockText.position.set(17.62,3.72,3.9);
+scene.add(room1DigitalClockText);
+
+
+function dropRoom1RedBook(){
+
+if(room1RedBookDropped)return;
+
+room1RedBookDropped=true;
+
+/* Cuốn sách chỉ là manh mối thị giác: không đăng ký addInteract. */
+box(
+"room1S23RedBook",
+15.15,
+.28,
+2.4,
+.52,
+.16,
+.76,
+M.red
+);
+
+const bookLabel=textSprite("S23",.34,"#fff5e8");
+bookLabel.position.set(15.15,.43,2.4);
+scene.add(bookLabel);
+
+say("Một cuốn sách đỏ ghi S23 rơi ra khỏi tủ.");
+
+}
 
 
 /* COMPUTER */
@@ -3487,6 +3541,8 @@ if(!inventory.includes("KEY 01")){
 
 addItem("KEY 01");
 
+dropRoom1RedBook();
+
 logEvent(
 "KEY_OBTAINED",
 {
@@ -3516,7 +3572,7 @@ unlocked:false
 );
 
 doc(
-"TỦ 10A",
+"TỦ S23",
 '<p>Khóa điện tử nhỏ đang sáng đỏ.</p>'+
 '<div class="note">'+
 'SECURITY LOCKED<br><br>'+
@@ -4388,6 +4444,24 @@ r2Wall
 );
 
 addRoom2Details();
+
+
+/* Đồng hồ điện tử treo trên tường Room 2. */
+box(
+"room2DigitalClock",
+0,
+4.05,
+-7.84,
+1.52,
+.58,
+.07,
+M.ink,
+false
+);
+
+const room2DigitalClockText=textSprite("23:47",.52,"#e85e67");
+room2DigitalClockText.position.set(0,4.05,-7.72);
+scene.add(room2DigitalClockText);
 
 
 /* DOOR BEHIND PLAYER */
@@ -5760,7 +5834,7 @@ document.getElementById(
 
 
 say(
-"TẠCH. Hệ thống báo: tủ 10A đã được mở khóa. Đến tủ để lấy chìa khóa."
+"TẠCH. Hệ thống báo: tủ S23 đã được mở khóa. Đến tủ để lấy chìa khóa."
 );
 
 
@@ -6560,6 +6634,12 @@ pile.innerHTML="";
 shuffle(bookOrder.map((color,index)=>({color,index}))).forEach(book=>{
 const button=document.createElement("button");
 button.className="book";
+
+if(book.color==="ĐỎ"&&book.index===0){
+button.classList.add("s23Book");
+button.textContent="S23";
+}
+
 button.type="button";
 button.dataset.color=book.color;
 button.style.background=BOOK_COLORS[book.color][book.index%4];
