@@ -2168,6 +2168,10 @@ let room2Exited=false;
 
 let archiveSymbolOrder=[];
 let archiveSymbolsTaken=new Set();
+let archiveHiddenUnlocked=false;
+let archiveB02Opened=false;
+let archiveB04Opened=false;
+let archiveOnTile5=false;
 
 let playing=false;
 
@@ -4270,6 +4274,10 @@ scene.fog=new THREE.FogExp2(0x89908a,.034);
 camera.position.set(0,1.65,6.8);yaw=Math.PI;pitch=0;
 archiveSymbolOrder=[];
 archiveSymbolsTaken=new Set();
+archiveHiddenUnlocked=false;
+archiveB02Opened=false;
+archiveB04Opened=false;
+archiveOnTile5=false;
 
 /* Ánh sáng từ cửa sổ giữ căn phòng cũ kỹ nhưng không quá tối. */
 scene.add(new THREE.HemisphereLight(0xdfe7df,0x454b45,2.15));
@@ -4284,7 +4292,7 @@ box("archiveFloor",0,-.08,0,18,.16,16,oldFloor);box("archiveCeiling",0,4.9,0,18,
 for(const z of[-3.4,.4,4.1]){box("archiveWindowFrame",-8.87,2.85,z,.08,2.15,1.9,M.ink,false);box("archiveWindow",-8.80,2.85,z,.025,1.78,1.54,mat(0x9fb4b4,.2,.04,0xc4d8d6,.18),false);box("archiveWindowV",-8.76,2.85,z,.03,1.84,.06,rust,false);box("archiveWindowH",-8.76,2.85,z,.03,.06,1.62,rust,false)}
 box("archiveEntryFrameL",-1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntryFrameR",1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntry",0,2.1,7.87,.14,4,2.1,mat(0x4c5049,.82,.18));
 
-const aisleColors=[0x873d3d,0xa3843d,0xc6c3b5,0x496f5d,0x666a68],aisleLetters=["S","F","G","H","I"],specialFiles={"0-0":"S01","1-1":"S07","2-2":"S12","3-3":"S18","4-4":"S23"};
+const aisleColors=[0x873d3d,0xa3843d,0xc6c3b5,0x666a68,0x496f5d],aisleLetters=["E","F","G","H","I"],specialFiles={"0-0":"S01","1-1":"S07","2-2":"S12","3-3":"S18","4-4":"S23"};
 /* Năm dãy tủ, mỗi tủ có ba tầng sách và hồ sơ. */
 aisleLetters.forEach((letter,aisle)=>{const x=-6+aisle*3;box("archiveCabinet_"+letter,x,2.05,-5.9,2.35,3.85,.65,mat(aisleColors[aisle],.72,.2));for(let shelf=0;shelf<3;shelf++){const y=1.05+shelf*1.02;box("archiveShelf",x,y-.38,-5.48,2.15,.07,.08,rust,false);for(let file=0;file<6;file++){const fx=x-.78+file*.31,code=specialFiles[aisle+"-"+file],isS23=code==="S23";box("archiveFile_"+letter+shelf+file,fx,y,-5.45,.24,.62,.10,isS23?mat(0x7d2a2b,.75,.18,0x341012,.08):dustedPaper,false);if(code&&shelf===1){const tag=textSprite(code,.15,isS23?"#f7e8c4":"#4a4238");tag.position.set(fx,y,-5.37);scene.add(tag);if(isS23){const touchMark=box("archiveS23Touch",fx,y+.22,-5.34,.09,.18,.012,mat(0xd8bd82,.4,.05),false);touchMark.rotation.z=.16}}}}const aisleTag=textSprite(letter,.42,"#ece3ca");aisleTag.position.set(x,4.12,-5.32);scene.add(aisleTag)});
 
@@ -4295,14 +4303,23 @@ box("archiveClock",7.95,3.65,-1.65,.06,.72,.72,M.ink,false);const archiveClockTe
 
 const survey=box("archiveSurvey",.65,1.16,1.08,.62,.018,.82,dustedPaper);addInteract(survey,"Nhấn để xem thông tin",()=>doc("TỜ GIẤY KHẢO SÁT",'<div class="note"><b>RESEARCH 23:47 — INVESTIGATION FORM</b><br><br>01. RESEARCH 23:47 là gì?<br>____________<br>02. Tại sao dự án bị dừng?<br>____________<br>03. Người phụ trách đã đi đâu?<br>____________<br>04. Những người tham gia nghiên cứu là ai?<br>____________<br>05. 23:47 có ý nghĩa gì?<br>____________<br>06. Tại sao hồ sơ của một số học sinh bị xóa?<br>____________<br>07. Bạn nghĩ mình đang làm gì ở đây?<br>____________<br><br><i>“Chỉ được điền câu trả lời khi đã tìm thấy bằng chứng.”</i></div>'));
 const hintPaper=box("archiveHintPaper",.08,1.16,1.44,.38,.018,.48,mat(0xd0b54e,.72,.1));addInteract(hintPaper,"Chọn để xem",()=>doc("GHI CHÚ",'<div class="note">Hồ sơ bạn cần không nằm ở ngăn dưới.</div>'));
-const recorder=box("archiveRecorder",-.55,.86,2.05,.78,.30,.48,M.ink);addInteract(recorder,"Nhấn để nghe",()=>doc("MÁY GHI ÂM",'<div class="note">Tần số: <b>23:47</b><br><br>Âm thanh rè lặp lại: “Bốn màu không phải nơi bạn cần tìm: đỏ, vàng, trắng và xám.”</div>'));
-const calendar=box("archiveCalendar",2.65,1.16,1.06,.45,.04,.52,dustedPaper);addInteract(calendar,"Nhấn để xem lịch",()=>doc("LỊCH BÀN · THÁNG 08 / 2018",'<div class="note"><b>02/08</b> — Nhập hồ sơ<br><b>05/08</b> — Rà soát hồ sơ ◯<br><br>Ghi chú dán: “Chú ý trễ deadline công việc.”</div>'));
-const looseNote=box("archiveLooseNote",-2.9,1.58,-5.23,.34,.018,.42,dustedPaper);addInteract(looseNote,"Chạm để xem mẫu giấy",()=>doc("MẨU GIẤY",'<div class="note">Có những thứ bị đánh dấu sai.<br>Đừng tin vào thứ được viết bên ngoài.</div>'));
+/* Tủ thấp cạnh bàn: đặt máy ghi âm đúng theo sơ đồ phòng. */
+box("archiveLowCabinet",4.35,.62,1.15,1.25,1.18,.72,rust);
+const recorder=box("archiveRecorder",4.35,1.33,1.15,.78,.30,.48,M.ink);
+addInteract(recorder,"Nhấn để nghe",()=>openArchiveRecorder());
+/* Lịch giấy dựng đứng trên bàn, không còn là một mặt phẳng nằm ngang. */
+const calendar=box("archiveCalendar",2.72,1.52,.58,.64,.88,.045,dustedPaper);
+const calendarTitle=textSprite("THÁNG 8 · 2018",.16,"#51483d");calendarTitle.position.set(2.72,1.74,.54);scene.add(calendarTitle);
+addInteract(calendar,"Nhấn để xem lịch",()=>openArchiveCalendar());
+const looseNote=box("archiveLooseNote",5.22,1.70,-5.18,.34,.018,.42,dustedPaper);addInteract(looseNote,"Nhấn để xem thông tin",()=>doc("MẨU GIẤY",'<div class="note">Có những thứ bị đánh dấu sai.<br>Đừng tin vào thứ được viết bên ngoài.</div>'));
 
-/* Ba hồ sơ mốc trong chuỗi manh mối. */
-const b02=box("archiveB02",-3.75,2.08,-5.25,.27,.66,.10,mat(0x5e6d65,.66,.12));addInteract(b02,"Mở hồ sơ B02",()=>doc("HỒ SƠ B02",'<div class="note">Nếu đã tìm thấy hồ sơ này, hãy tiếp tục đến nơi được đánh dấu.<br><br><b>◆</b></div>'));
-const b04=box("archiveB04",-3.13,2.08,-5.25,.27,.66,.10,mat(0x5e6d65,.66,.12));addInteract(b04,"Mở hồ sơ ◆B04",()=>doc("HỒ SƠ ◆B04",'<div class="note">Ba tầng giữ bí mật,<br>nhưng chỉ một tầng nhìn thấy bầu trời.<br>Sáu bước nằm trước mắt,<br>bốn bước đã đi qua.<br>Đừng đi thêm nữa.<br>Ở đó, câu chuyện khép lại.</div>'));
-const a05=box("archiveA05",.45,3.10,-5.25,.27,.66,.10,mat(0x8a3938,.7,.14));addInteract(a05,"Mở hồ sơ A05",()=>doc("HỒ SƠ A05",'<div class="note">HỒ SƠ CẦN LÀM ĐỂ HOÀN THÀNH TRÒ CHƠI</div>'));
+/* Hồ sơ mốc: tất cả ở dãy I. B02/B04 tại tầng B, A05 tại tầng trên cùng. */
+const b02=box("archiveB02",5.25,2.08,-5.25,.27,.66,.10,mat(0x5e6d65,.66,.12));addInteract(b02,"Nhấn để xem B02",()=>openArchiveB02());
+const b04=box("archiveB04",6.15,2.08,-5.25,.27,.66,.10,mat(0x5e6d65,.66,.12));addInteract(b04,"Nhấn để xem B04 ◆",()=>openArchiveB04());
+const a05=box("archiveA05",6.46,3.10,-5.25,.27,.66,.10,mat(0x8a3938,.7,.14));addInteract(a05,"Nhấn để mở A05",()=>openArchiveA05());
+[["B02",5.25,2.08],["B04 ◆",6.15,2.08],["A05",6.46,3.10]].forEach(data=>{const label=textSprite(data[0],.12,"#f1e5ca");label.position.set(data[1],data[2],-5.17);scene.add(label)});
+/* Sáu ô sàn chỉ dẫn hàng A01 → A06 trước dãy I; ô 5 kích hoạt A05. */
+for(let i=0;i<6;i++){const tile=box("archiveFloorTile_"+(i+1),4.7+i*.55,.012,-3.85,.46,.025,.55,mat(0xb8b39f,.42,.02),false);const tileLabel=textSprite(""+(i+1),.13,"#555047");tileLabel.position.set(4.7+i*.55,.05,-3.85);scene.add(tileLabel)}
 
 /* Thử thách 01: ghi nhận thứ tự người chơi nhặt bốn ký hiệu, không hiển thị ngay. */
 const recordArchiveSymbol=symbol=>{
@@ -4318,7 +4335,7 @@ const showArchiveSymbolAnswer=()=>{
 let entered=[];
 const render=message=>{
 doc("THỨ TỰ KÝ HIỆU",'<div class="note" style="text-align:center"><b>▲ ■ ★ ♥</b><br><br>'+message+'<br><br><div id="archiveSymbolChoices"><button class="btn archiveSymbolChoice" data-symbol="▲">▲</button> <button class="btn archiveSymbolChoice" data-symbol="■">■</button> <button class="btn archiveSymbolChoice" data-symbol="★">★</button> <button class="btn archiveSymbolChoice" data-symbol="♥">♥</button></div></div>');
-document.querySelectorAll(".archiveSymbolChoice").forEach(button=>button.onclick=()=>{entered.push(button.dataset.symbol);if(entered.length<4)return;if(entered.join("")===archiveSymbolOrder.join("")){document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>MỞ KHÓA THỬ THÁCH MỚI</b><br><br>TÌM HỒ SƠ ẨN.</div>';beep(760,.24,"square");logEvent("ARCHIVE_SYMBOL_CHALLENGE_COMPLETE",{order:archiveSymbolOrder});return}document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center">Thứ tự không khớp.<br><br><button class="btn" id="archiveRetry">NHẬP LẠI</button> <button class="btn" id="archiveQuit">BỎ CUỘC</button></div>';document.getElementById("archiveRetry").onclick=()=>{entered=[];render("Nhập lại thứ tự bạn đã ghi nhận.")};document.getElementById("archiveQuit").onclick=()=>{document.getElementById("doc").style.display="none";modalOpen=false;renderer.domElement.requestPointerLock?.()}})};
+document.querySelectorAll(".archiveSymbolChoice").forEach(button=>button.onclick=()=>{entered.push(button.dataset.symbol);if(entered.length<4)return;if(entered.join("")===archiveSymbolOrder.join("")){archiveHiddenUnlocked=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>MỞ KHÓA THỬ THÁCH MỚI</b><br><br>TÌM HỒ SƠ ẨN.</div>';beep(760,.24,"square");logEvent("ARCHIVE_SYMBOL_CHALLENGE_COMPLETE",{order:archiveSymbolOrder});return}document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center">Thứ tự không khớp.<br><br><button class="btn" id="archiveRetry">NHẬP LẠI</button> <button class="btn" id="archiveQuit">BỎ CUỘC</button></div>';document.getElementById("archiveRetry").onclick=()=>{entered=[];render("Nhập lại thứ tự bạn đã ghi nhận.")};document.getElementById("archiveQuit").onclick=()=>{document.getElementById("doc").style.display="none";modalOpen=false;renderer.domElement.requestPointerLock?.()}})};
 render("Nhập lại thứ tự bạn đã ghi nhận.");
 };
 const makeArchiveSymbol=(name,symbol,x,y,z)=>{const mark=box(name,x,y,z,.35,.35,.04,mat(0xd4c786,.55,.06),false);const markText=textSprite(symbol,.28,"#202329");markText.position.set(x,y,z+.05);scene.add(markText);addInteract(mark,"Nhấn để nhận",()=>recordArchiveSymbol(symbol))};
@@ -4329,6 +4346,46 @@ makeArchiveSymbol("archiveHeart","♥",8.82,2.55,3.1);
 
 logEvent("ARCHIVE_ROOM_ENTER");
 say("Phòng tài liệu vẫn có ánh sáng từ các khung cửa sổ phủ bụi.");
+}
+
+function speakArchiveRecording(clear){
+const text="Bốn màu không phải nơi bạn cần tìm: đỏ, vàng, trắng và xám.";
+window.speechSynthesis?.cancel();
+if(!window.SpeechSynthesisUtterance)return;
+const voice=new SpeechSynthesisUtterance(text);voice.lang="vi-VN";voice.rate=clear?.88:1.08;voice.pitch=.82;voice.volume=clear?.72:.34;window.speechSynthesis.speak(voice)
+}
+
+function openArchiveRecorder(){
+let digits=[1,1,1,1];
+const render=()=>{const frequency=digits.join("");const clear=frequency==="2347";doc("MÁY GHI ÂM",'<div class="note" style="text-align:center"><b>THIẾT BỊ GHI ÂM</b><br><small id="recorderNoise">'+(clear?"Tín hiệu rõ hơn, vẫn còn rè nhẹ.":"Nhiễu rè mạnh.")+'</small><br><br><b style="font-size:32px">'+digits[0]+digits[1]+":"+digits[2]+digits[3]+'</b><br><br><div id="recorderDials">'+digits.map((d,i)=>'<button class="btn recorderDial" data-index="'+i+'">'+d+' ▲</button>').join(" ")+'</div><p style="font-size:12px">Bấm từng nút để chuyển 1 → 9. Dò đúng tần số.</p></div>');document.querySelectorAll(".recorderDial").forEach(button=>button.onclick=()=>{const i=+button.dataset.index;digits[i]=digits[i]===9?1:digits[i]+1;render();speakArchiveRecording(digits.join("")==="2347")});speakArchiveRecording(clear)};
+render()
+}
+
+function openArchiveCalendar(){
+let cells="";for(let day=1;day<=31;day++){const note=day===2?"Nhập hồ sơ":day===5?"Rà soát hồ sơ":"";cells+='<div style="min-height:45px;border:1px solid #b9b09d;padding:3px;'+(day===5?"border:3px solid #9d5b42;border-radius:50%;":"")+'"><b>'+day+'</b><br><small>'+note+'</small></div>'}doc("LỊCH BÀN · THÁNG 8 NĂM 2018",'<div class="note"><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font-size:12px">'+cells+'</div><p style="margin:10px 0 0"><b>Ghi chú:</b> Chú ý trễ deadline công việc.</p></div>')
+}
+
+function openArchiveB02(){
+if(!archiveHiddenUnlocked){say("Hồ sơ này chỉ mở sau khi thử thách ký hiệu được mở khóa.");return}
+doc("HỒ SƠ B02",'<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:105px;background:#53635c;color:#f5efdc;font-size:28px"><b>B02</b></div><br><button class="btn" id="archiveB02Back">MẶT SAU</button></div>');document.getElementById("archiveB02Back").onclick=()=>{archiveB02Opened=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:72px;background:#59645e;color:#f5efdc;font-size:42px">◆<br><small style="font-size:13px">Nếu đã tìm thấy hồ sơ này, hãy tiếp tục đến nơi được đánh dấu.</small></div></div>';logEvent("ARCHIVE_B02_OPENED")}
+}
+
+function openArchiveB04(){
+if(!archiveB02Opened){say("Dường như bạn cần tìm một hồ sơ khác trước.");return}
+doc("HỒ SƠ B04 ◆",'<div class="note" style="text-align:center"><b>B04 ◆</b><br><br><button class="btn" id="archiveB04Open">MỞ</button></div>');document.getElementById("archiveB04Open").onclick=()=>{archiveB04Opened=true;document.getElementById("docBody").innerHTML='<div class="note">Ba tầng giữ bí mật,<br>Chỉ một tầng thấy bầu trời<br><br>Sáu bước nằm trước mắt,<br>Bốn bước đã đi qua<br><br>Đừng đi thêm bước nữa<br>Ở nơi đó, câu chuyện được khép lại</div>';logEvent("ARCHIVE_B04_OPENED")}
+}
+
+function openArchiveA05(){
+if(!archiveB04Opened){say("Bạn chưa giải được manh mối dẫn đến hồ sơ này.");return}
+if(!archiveOnTile5){say("Hãy đứng tại ô số 5 trên sàn rồi nhìn lên A05.");return}
+doc("THÀNH CÔNG",'<div class="note" style="text-align:center"><b>Thành công Thử thách Tìm hồ sơ ẩn.</b><br><br>Challenge 1 — Room 3 đã hoàn thành.</div>');logEvent("ARCHIVE_CHALLENGE_1_COMPLETE")
+}
+
+function updateArchiveFloorGrid(){
+if(currentRoom!=="ARCHIVE_ROOM")return;
+const wasOnTile5=archiveOnTile5;
+archiveOnTile5=Math.hypot(camera.position.x-6.9,camera.position.z+3.85)<.42;
+if(archiveOnTile5&&!wasOnTile5)say("Ô 5 — A05 ở ngay phía trên bạn.")
 }
 
 
@@ -8291,6 +8348,8 @@ updateCircleTrigger(dt);
 updateChallenge2Trigger();
 
 updateChallenge3();
+
+updateArchiveFloorGrid();
 
 updatePrompt();
 
