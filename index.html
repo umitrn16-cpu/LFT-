@@ -2166,6 +2166,7 @@ let archiveRecorderOn=false;
 let archiveRecorderNoise=null;
 let archiveRecorderVoiceTimer=null;
 let archiveRecorderVoiceToken=0;
+let archiveCollisionRects=[];
 
 let playing=false;
 
@@ -4272,6 +4273,7 @@ archiveHiddenUnlocked=false;
 archiveB02Opened=false;
 archiveB04Opened=false;
 archiveOnTile5=false;
+archiveCollisionRects=[];
 
 /* Ánh sáng từ cửa sổ giữ căn phòng cũ kỹ nhưng không quá tối. */
 scene.add(new THREE.HemisphereLight(0xdfe7df,0x454b45,2.15));
@@ -4287,11 +4289,13 @@ for(const z of[-3.4,.4,4.1]){box("archiveWindowFrame",-8.87,2.85,z,.08,2.15,1.9,
 box("archiveEntryFrameL",-1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntryFrameR",1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntry",0,2.1,7.87,.14,4,2.1,mat(0x4c5049,.82,.18));
 
 const aisleColors=[0x873d3d,0xa3843d,0xc6c3b5,0x666a68,0x496f5d],aisleLetters=["E","F","G","H","I"],specialFiles={"0-0":"S01","1-1":"S07","2-2":"S12","3-3":"S18","4-4":"S23"};
-/* Năm dãy tủ dựng dọc theo sơ đồ: các mặt tủ quay về bức tường sau, không quay ra cửa. */
-aisleLetters.forEach((letter,aisle)=>{const x=-6+aisle*3;const cabinetZ=-.75;box("archiveCabinet_"+letter,x,2.05,cabinetZ,.82,3.85,7.0,mat(aisleColors[aisle],.72,.2));for(let shelf=0;shelf<3;shelf++){const y=1.05+shelf*1.02;box("archiveShelf",x,y-.38,-3.92,.70,.07,.10,rust,false);for(let file=0;file<6;file++){const fz=-3.55+file*.54,code=specialFiles[aisle+"-"+file],isS23=code==="S23";box("archiveFile_"+letter+shelf+file,x,y,fz,.56,.62,.10,isS23?mat(0x7d2a2b,.75,.18,0x341012,.08):dustedPaper,false);if(code&&shelf===1){const tag=textSprite(code,.15,isS23?"#f7e8c4":"#4a4238");tag.position.set(x,y,fz-.07);tag.rotation.y=Math.PI;scene.add(tag);if(isS23){const touchMark=box("archiveS23Touch",x,y+.22,fz-.085,.18,.09,.012,mat(0xd8bd82,.4,.05),false);touchMark.rotation.z=.16}}}}const aisleTag=textSprite(letter,.42,"#ece3ca");aisleTag.position.set(x,4.12,-3.98);aisleTag.rotation.y=Math.PI;scene.add(aisleTag)});
+/* Năm kệ dọc kiểu thư viện: ba tầng mở, mặt gáy sách quay về tường sau. */
+const bookSpineColors=[0x6d3434,0x9a7741,0x4d6570,0x817d68,0x6d4d59,0x9b9b8b];
+aisleLetters.forEach((letter,aisle)=>{const x=-6+aisle*3;const shelfMat=mat(aisleColors[aisle],.72,.2);box("archiveCabinet_"+letter,x-.47,2.05,-.75,.08,3.85,7.0,shelfMat);box("archiveCabinetSide_"+letter,x+.47,2.05,-.75,.08,3.85,7.0,shelfMat);box("archiveCabinetTop_"+letter,x,3.92,-.75,1.02,.10,7.0,shelfMat);box("archiveCabinetBase_"+letter,x,.18,-.75,1.02,.12,7.0,shelfMat);for(let tier=0;tier<3;tier++){const boardY=.72+tier*1.05;box("archiveShelf_"+letter+tier,x,boardY,-.75,.94,.10,7.0,shelfMat);const spineY=boardY+.37;for(let book=0;book<4;book++){const bookHeight=.54+((book+aisle+tier)%3)*.08;const code=(tier===1&&book===3)?specialFiles[aisle+"-"+aisle]:null;const isS23=code==="S23";const spine=box("archiveBook_"+letter+tier+book,x-.27+book*.18,spineY,-4.19,.145,bookHeight,.075,isS23?mat(0x7d2a2b,.75,.18,0x341012,.08):mat(bookSpineColors[(book+tier+aisle)%bookSpineColors.length],.70,.16),false);if(code){const tag=textSprite(code,.11,isS23?"#f7e8c4":"#e7ddc6");tag.position.set(spine.position.x,spineY,-4.235);scene.add(tag)}}}const aisleTag=textSprite(letter,.42,"#ece3ca");aisleTag.position.set(x,4.12,-4.27);scene.add(aisleTag);archiveCollisionRects.push({x,z:-.75,w:1.02,d:7.0})});
 
 /* Bàn làm việc phía góc trên trái, tủ thấp phía trên phải theo sơ đồ. */
 box("archiveDesk",-3.35,1.0,-5.55,3.1,.16,1.5,mat(0x716454,.78,.16));for(const p of[[-1.25,-.52],[1.25,-.52],[-1.25,.52],[1.25,.52]])box("archiveDeskLeg",-3.35+p[0],.5,-5.55+p[1],.10,1,.10,M.ink);box("archiveMonitor",-2.7,1.62,-5.82,1.0,.82,.13,M.dark);box("archiveScreen",-2.7,1.62,-5.90,.78,.57,.02,mat(0x586b64,.22,.02,0x385048,.22),false);box("archiveKeyboard",-2.7,1.15,-5.4,.92,.05,.30,dustedPaper);box("archiveCamera",-4.45,1.47,-5.95,.34,.22,.42,M.ink);box("archiveCameraLens",-4.45,1.47,-6.20,.15,.15,.03,mat(0x24353a,.25,.05,0x324f54,.35),false);for(let i=0;i<3;i++)box("archiveBox",6.75+i*.34,.42,-6.55+i*.18,.42,.7,.58,rust);
+archiveCollisionRects.push({x:-3.35,z:-5.55,w:3.1,d:1.5},{x:7.05,z:-6.38,w:1.35,d:1.1});
 const photo=box("archiveStudentPhoto",3.95,2.08,-1.15,.55,.75,.03,dustedPaper,false);const photoMark=textSprite("10A",.16,"#5c5146");photoMark.position.set(3.95,2.08,-1.10);scene.add(photoMark);
 box("archiveClock",7.95,3.65,-1.65,.06,.72,.72,M.ink,false);const archiveClockText=textSprite("23:47",.38,"#e2c875");archiveClockText.position.set(7.86,3.65,-1.65);scene.add(archiveClockText);
 
@@ -4299,6 +4303,7 @@ const survey=box("archiveSurvey",-3.95,1.16,-5.45,.62,.018,.82,dustedPaper);addI
 const hintPaper=box("archiveHintPaper",-4.5,1.16,-5.2,.38,.018,.48,mat(0xd0b54e,.72,.1));addInteract(hintPaper,"Chọn để xem",()=>doc("GHI CHÚ",'<div class="note">Hồ sơ bạn cần không nằm ở ngăn dưới.</div>'));
 /* Tủ thấp cạnh bàn: đặt máy ghi âm đúng theo sơ đồ phòng. */
 box("archiveLowCabinet",4.35,.62,-5.45,1.45,1.18,.82,rust);
+archiveCollisionRects.push({x:4.35,z:-5.45,w:1.45,d:.82});
 const recorder=box("archiveRecorder",4.35,1.33,-5.45,.78,.30,.48,M.ink);
 addInteract(recorder,"Nhấn để nghe",()=>openArchiveRecorder());
 /* Lịch giấy dựng đứng trên bàn, không còn là một mặt phẳng nằm ngang. */
@@ -4332,11 +4337,11 @@ doc("THỨ TỰ KÝ HIỆU",'<div class="note" style="text-align:center"><b>▲ 
 document.querySelectorAll(".archiveSymbolChoice").forEach(button=>button.onclick=()=>{entered.push(button.dataset.symbol);if(entered.length<4)return;if(entered.join("")===archiveSymbolOrder.join("")){archiveHiddenUnlocked=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>MỞ KHÓA THỬ THÁCH MỚI</b><br><br>TÌM HỒ SƠ ẨN.</div>';beep(760,.24,"square");logEvent("ARCHIVE_SYMBOL_CHALLENGE_COMPLETE",{order:archiveSymbolOrder});return}document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center">Thứ tự không khớp.<br><br><button class="btn" id="archiveRetry">NHẬP LẠI</button> <button class="btn" id="archiveQuit">BỎ CUỘC</button></div>';document.getElementById("archiveRetry").onclick=()=>{entered=[];render("Nhập lại thứ tự bạn đã ghi nhận.")};document.getElementById("archiveQuit").onclick=()=>{document.getElementById("doc").style.display="none";modalOpen=false;renderer.domElement.requestPointerLock?.()}})};
 render("Nhập lại thứ tự bạn đã ghi nhận.");
 };
-const makeArchiveSymbol=(name,symbol,x,y,z)=>{const mark=box(name,x,y,z,.35,.35,.04,mat(0xd4c786,.55,.06),false);const markText=textSprite(symbol,.28,"#202329");markText.position.set(x,y,z+.05);scene.add(markText);addInteract(mark,"Nhấn để nhận",()=>recordArchiveSymbol(symbol))};
-makeArchiveSymbol("archiveTriangle","▲",.25,1.22,.28);
-makeArchiveSymbol("archiveSquare","■",-6.7,2.55,-5.28);
-makeArchiveSymbol("archiveStar","★",-1.5,3.1,-5.28);
-makeArchiveSymbol("archiveHeart","♥",8.82,2.55,3.1);
+const makeArchiveWallSymbol=(name,symbol,x,y,z,rotationY)=>{const canvas=document.createElement("canvas");canvas.width=256;canvas.height=256;const ctx=canvas.getContext("2d");ctx.fillStyle="#d4c786";ctx.fillRect(8,8,240,240);ctx.strokeStyle="#473b2b";ctx.lineWidth=10;ctx.strokeRect(8,8,240,240);ctx.fillStyle="#202329";ctx.font="700 150px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(symbol,128,137);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const mark=new THREE.Mesh(new THREE.PlaneGeometry(.42,.42),new THREE.MeshBasicMaterial({map:texture,transparent:true}));mark.name=name;mark.position.set(x,y,z);mark.rotation.y=rotationY;scene.add(mark);addInteract(mark,"Nhấn để nhận",()=>recordArchiveSymbol(symbol))};
+makeArchiveWallSymbol("archiveTriangle","▲",.25,1.22,-7.885,0);
+makeArchiveWallSymbol("archiveSquare","■",-8.885,2.55,-5.28,Math.PI/2);
+makeArchiveWallSymbol("archiveStar","★",-1.5,3.1,-7.885,0);
+makeArchiveWallSymbol("archiveHeart","♥",8.885,2.55,3.1,-Math.PI/2);
 
 logEvent("ARCHIVE_ROOM_ENTER");
 say("Phòng tài liệu vẫn có ánh sáng từ các khung cửa sổ phủ bụi.");
@@ -4375,7 +4380,7 @@ playArchiveVoice(clear)
 
 function openArchiveRecorder(){
 stopArchiveRecording();let digits=[1,1,1,1];
-const render=()=>{const frequency=digits.join("");const clear=frequency==="2347";doc("MÁY GHI ÂM",'<div class="note" style="text-align:center"><b>THIẾT BỊ GHI ÂM</b><br><small id="recorderNoise">'+(archiveRecorderOn?(clear?"Tín hiệu rõ hơn, tiếng rè đã giảm.":"Tiếng nói nhỏ, nhiễu rè và tạp âm rất mạnh."):"Máy đang tắt.")+'</small><br><br><b style="font-size:32px">'+digits[0]+digits[1]+":"+digits[2]+digits[3]+'</b><br><br><button class="btn" id="recorderPower">'+(archiveRecorderOn?"TẮT MÁY":"BẬT MÁY")+'</button><br><br><div id="recorderDials">'+digits.map((d,i)=>'<button class="btn recorderDial" data-index="'+i+'">'+d+' ▲</button>').join(" ")+'</div><p style="font-size:12px">Bấm từng nút để chuyển 1 → 9. Dò đúng tần số 23:47.</p></div>');document.getElementById("recorderPower").onclick=()=>{if(archiveRecorderOn)stopArchiveRecording();else startArchiveRecording(clear);render()};document.querySelectorAll(".recorderDial").forEach(button=>button.onclick=()=>{const i=+button.dataset.index;digits[i]=digits[i]===9?1:digits[i]+1;updateArchiveRecording(digits.join("")==="2347");render()})};
+const render=()=>{const frequency=digits.join("");const clear=frequency==="2347";doc("MÁY GHI ÂM",'<div class="note" style="text-align:center"><b>THIẾT BỊ GHI ÂM</b><br><small id="recorderNoise">'+(archiveRecorderOn?(clear?"Tín hiệu rõ hơn, tiếng rè đã giảm.":"Tiếng nói nhỏ, nhiễu rè và tạp âm rất mạnh."):"Máy đang tắt.")+'</small><br><br><b style="font-size:32px">'+digits[0]+digits[1]+":"+digits[2]+digits[3]+'</b><br><br><button class="btn" id="recorderPower">'+(archiveRecorderOn?"TẮT MÁY":"BẬT MÁY")+'</button><br><br><div id="recorderDials">'+digits.map((d,i)=>'<button class="btn recorderDial" data-index="'+i+'">'+d+' ▲</button>').join(" ")+'</div><p style="font-size:12px">Bấm từng nút để đổi chữ số.</p></div>');document.getElementById("recorderPower").onclick=()=>{if(archiveRecorderOn)stopArchiveRecording();else startArchiveRecording(clear);render()};document.querySelectorAll(".recorderDial").forEach(button=>button.onclick=()=>{const i=+button.dataset.index;digits[i]=digits[i]===9?1:digits[i]+1;updateArchiveRecording(digits.join("")==="2347");render()})};
 render()
 }
 
@@ -6309,6 +6314,11 @@ enterHallway()
 
 const keys={};
 
+function collidesArchiveRoom(x,z){
+const playerRadius=.28;
+return archiveCollisionRects.some(rect=>Math.abs(x-rect.x)<rect.w/2+playerRadius&&Math.abs(z-rect.z)<rect.d/2+playerRadius)
+}
+
 
 function collides(
 x,
@@ -6346,7 +6356,8 @@ currentRoom==="ARCHIVE_ROOM"
 return x<-8.25||
 x>8.25||
 z<-7.25||
-z>7.25;
+z>7.25||
+collidesArchiveRoom(x,z);
 
 }
 
