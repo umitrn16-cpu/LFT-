@@ -133,6 +133,18 @@ letter-spacing:.08em
 
 #inv b{color:#d4c786}
 
+#archiveBookCounter{
+position:absolute;
+right:20px;
+bottom:55px;
+background:rgba(24,31,31,.76);
+padding:8px 12px;
+font-size:10px;
+letter-spacing:.08em
+}
+
+#archiveBookCounter b{color:#d4c786}
+
 #giveupBtn{
 pointer-events:auto;
 position:absolute;
@@ -1046,6 +1058,10 @@ Hãy quan sát. Không phải mọi manh mối đều ở trước mắt.
 
 <div id="inv">
 TÚI: <b id="items">TRỐNG</b>
+</div>
+
+<div id="archiveBookCounter" aria-live="polite" style="display:none">
+SỐ LẦN CHỌN SÁCH: <b id="archiveBookCount">0</b>
 </div>
 
 </div>
@@ -2167,6 +2183,14 @@ let archiveRecorderNoise=null;
 let archiveRecorderVoiceTimer=null;
 let archiveRecorderVoiceToken=0;
 let archiveCollisionRects=[];
+let archiveBookSelections=0;
+
+function markArchiveDocumentSelected(code){
+archiveBookSelections++;
+const counter=document.getElementById("archiveBookCount");
+if(counter)counter.textContent=archiveBookSelections;
+logEvent("ARCHIVE_DOCUMENT_OPENED",{document:code,selection_count:archiveBookSelections});
+}
 
 let playing=false;
 
@@ -2258,6 +2282,8 @@ return mesh
 }
 
 function clearWorld(){
+
+document.getElementById("archiveBookCounter").style.display="none";
 
 while(scene.children.length){
 
@@ -4269,6 +4295,9 @@ archiveB02Opened=false;
 archiveB04Opened=false;
 archiveOnTile5=false;
 archiveCollisionRects=[];
+archiveBookSelections=0;
+document.getElementById("archiveBookCount").textContent="0";
+document.getElementById("archiveBookCounter").style.display="block";
 
 /* Ánh sáng từ cửa sổ giữ căn phòng cũ kỹ nhưng không quá tối. */
 scene.add(new THREE.HemisphereLight(0xdfe7df,0x454b45,2.15));
@@ -4276,7 +4305,8 @@ const archiveSun=new THREE.DirectionalLight(0xe9e5d6,1.15);archiveSun.position.s
 const windowGlow=new THREE.PointLight(0xc8dde0,2.1,11);windowGlow.position.set(-7.3,3.1,-1.8);scene.add(windowGlow);
 const deskGlow=new THREE.PointLight(0xe4d7a6,.75,6);deskGlow.position.set(1.2,3.2,1.1);scene.add(deskGlow);
 
-const oldWall=mat(0x888a7e,.92,.16),oldFloor=mat(0x535149,.78,.26),oldCeiling=mat(0x9a9a8c,.88,.12),dustedPaper=mat(0xc7bea2,.72,.12),rust=mat(0x62453c,.78,.36,0x240d09,.06);
+/* Room 3 giữ sàn cũ, nhưng tường và trần được sơn trắng. */
+const oldWall=mat(0xf5f4ef,.92,.12),oldFloor=mat(0x535149,.78,.26),oldCeiling=mat(0xffffff,.88,.08),dustedPaper=mat(0xc7bea2,.72,.12),rust=mat(0x62453c,.78,.36,0x240d09,.06);
 box("archiveFloor",0,-.08,0,18,.16,16,oldFloor);box("archiveCeiling",0,4.9,0,18,.18,16,oldCeiling);box("archiveBack",0,2.45,-8,18,4.9,.18,oldWall);box("archiveLeft",-9,2.45,0,.18,4.9,16,oldWall);box("archiveRight",9,2.45,0,.18,4.9,16,oldWall);
 
 /* Cửa sổ bám bụi ở tường trái. */
@@ -4284,10 +4314,34 @@ for(const z of[-3.4,.4,4.1]){box("archiveWindowFrame",-8.87,2.85,z,.08,2.15,1.9,
 box("archiveEntryFrameL",-1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntryFrameR",1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntry",0,2.1,7.87,.14,4,2.1,mat(0x4c5049,.82,.18));
 
 const aisleColors=[0x873d3d,0xa3843d,0xc6c3b5,0x666a68,0x496f5d],aisleLetters=["E","F","G","H","I"];
+/* Mỗi tầng có đủ 01–26, được xáo vị trí cố định để không xuất hiện theo thứ tự. */
+const archiveDocumentOrder=[12,3,24,18,7,26,2,15,9,21,5,14,1,23,10,19,4,25,8,16,6,22,11,20,13,17];
 /* Mỗi kệ kín ba mặt; mặt dài bên phải hướng ra lối đi, lộ các gáy sách dày. */
 const bookSpineColors=[0x4f2929,0x875c31,0x294f5d,0x67604f,0x503e58,0x8d7b60,0x264238,0x6b3635];
 const makeArchiveSpineLabel=(text,x,y,z,height)=>{const canvas=document.createElement("canvas");canvas.width=256;canvas.height=96;const ctx=canvas.getContext("2d");ctx.fillStyle="#eee1bf";ctx.font="700 38px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(text,128,48);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const label=new THREE.Mesh(new THREE.PlaneGeometry(.17,Math.min(.26,height*.54)),new THREE.MeshBasicMaterial({map:texture,transparent:true}));label.position.set(x+.044,y,z);label.rotation.y=Math.PI/2;scene.add(label)};
 aisleLetters.forEach((letter,aisle)=>{const x=-6+aisle*3;const shelfMat=mat(aisleColors[aisle],.72,.2);const frontX=x+.51;box("archiveCabinetBack_"+letter,x-.47,2.05,-.75,.08,3.85,7.0,shelfMat);box("archiveCabinetEndNorth_"+letter,x,2.05,-4.21,1.02,3.85,.08,shelfMat);box("archiveCabinetEndSouth_"+letter,x,2.05,2.71,1.02,3.85,.08,shelfMat);box("archiveCabinetTop_"+letter,x,3.92,-.75,1.02,.10,7.0,shelfMat);box("archiveCabinetBase_"+letter,x,.18,-.75,1.02,.12,7.0,shelfMat);for(let tier=0;tier<3;tier++){const boardY=.72+tier*1.05;box("archiveShelf_"+letter+tier,x,boardY,-.75,.94,.10,7.0,shelfMat);for(let book=0;book<26;book++){const redTop=letter==="E"&&tier===2,redMiddle=letter==="E"&&tier===1;const id=redTop?"A"+String(book+1).padStart(2,"0"):redMiddle?"B"+String(book+1).padStart(2,"0"):letter==="I"&&tier===1&&book===3?"B02":letter==="I"&&tier===1&&book===21?"◆B04":"";const bookHeight=.62+((book*3+aisle+tier)%4)*.055;const spineY=boardY+.055+bookHeight/2;const spineZ=-3.95+book*.252;const coverMat=id==="◆B04"?mat(0x7d2a2b,.75,.18,0x341012,.08):id?mat(0x4d6b64,.66,.12):mat(bookSpineColors[(book+tier+aisle)%bookSpineColors.length],.70,.16);box("archiveBookPages_"+letter+tier+book,frontX-.06,spineY,spineZ,.11,bookHeight-.10,.19,dustedPaper,false);const spine=box("archiveBook_"+letter+tier+book,frontX,spineY,spineZ,.055,bookHeight,.225,coverMat,false);box("archiveBookCoverTop_"+letter+tier+book,frontX-.03,spineY+bookHeight/2-.018,spineZ,.13,.025,.24,coverMat,false);box("archiveBookCoverBottom_"+letter+tier+book,frontX-.03,spineY-bookHeight/2+.018,spineZ,.13,.025,.24,coverMat,false);if(id){makeArchiveSpineLabel(id,frontX,spineY,spineZ,bookHeight);if(id==="B02"){box("archiveB02Paper",frontX+.015,boardY+.16,spineZ,.025,.28,.19,dustedPaper,false)}if(redTop){addInteract(spine,"Nhấn để xem tài liệu "+String(book+1).padStart(2,"0"),()=>book===4?openArchiveA05():openArchiveDocument("A",book+1))}else if(redMiddle){addInteract(spine,"Nhấn để xem tài liệu B"+String(book+1).padStart(2,"0"),()=>openArchiveDocument("B",book+1),"KeyH")}else{addInteract(spine,"Nhấn để xem "+id,()=>id==="B02"?openArchiveB02():openArchiveB04())}}}}const aisleTag=textSprite(letter,.42,"#ece3ca");aisleTag.position.set(frontX+.03,4.12,-3.86);scene.add(aisleTag);archiveCollisionRects.push({x,z:-.75,w:1.02,d:7.0})});
+
+/* Ghi đè nhãn/cơ chế cũ: mọi gáy ở 5 dãy × 3 tầng đều là tài liệu 01–26.
+   Riêng A05 vẫn là hồ sơ ẩn; các tài liệu còn lại mở bằng phím E. */
+const archiveTierOrder=[12,3,24,18,5,26,2,15,9,21,7,14,1,23,10,19,4,25,8,16,6,22,11,20,13,17];
+interactables=interactables.filter(entry=>!entry.mesh.name.startsWith("archiveBook_"));
+aisleLetters.forEach((letter,aisle)=>{
+  const frontX=-6+aisle*3+.51;
+  for(let tier=0;tier<3;tier++){
+    for(let book=0;book<26;book++){
+      const number=archiveTierOrder[book];
+      const spine=scene.getObjectByName("archiveBook_"+letter+tier+book);
+      if(!spine)continue;
+      const boardY=.72+tier*1.05,bookHeight=.62+((book*3+aisle+tier)%4)*.055;
+      const spineY=boardY+.055+bookHeight/2,spineZ=-3.95+book*.252;
+      const specialA05=letter==="E"&&tier===2&&book===4;
+      makeArchiveSpineLabel(specialA05?"A05":String(number).padStart(2,"0"),frontX+.012,spineY,spineZ,bookHeight);
+      addInteract(spine,"Nhấn để xem tài liệu "+(specialA05?"A05":String(number).padStart(2,"0")),()=>specialA05?openArchiveA05():openArchiveDocument("",number));
+    }
+  }
+  const cabinetLabel=textSprite("TỦ TÀI LIỆU · DÃY "+letter,.17,"#f2ead7");
+  cabinetLabel.position.set(frontX+.055,3.62,-.75);cabinetLabel.rotation.y=Math.PI/2;scene.add(cabinetLabel);
+});
 
 /* Mẫu giấy kẹp dưới B02 có kẹp kim loại nhỏ giữ ở mép gáy. */
 box("archiveB02PaperClip",6.555,2.055,-3.194,.035,.06,.12,M.ink,false);
@@ -4296,19 +4350,34 @@ box("archiveB02PaperClip",6.555,2.055,-3.194,.035,.06,.12,M.ink,false);
 const deskX=-3.35,deskZ=-6.25,deskWood=mat(0x78604d,.76,.16);
 box("archiveDesk",deskX,1.04,deskZ,3.45,.18,1.42,deskWood);box("archiveDeskPedestalL",deskX-1.48,.52,deskZ,.46,1.0,1.20,deskWood);box("archiveDeskPedestalR",deskX+1.48,.52,deskZ,.46,1.0,1.20,deskWood);box("archiveDeskModesty",deskX,.70,deskZ-.59,2.30,.54,.08,mat(0x5d483b,.82,.16));box("archiveDeskDrawer",deskX-1.48,.77,deskZ-.63,.34,.17,.025,mat(0x4a3930,.82,.14),false);box("archiveMonitor",deskX+.65,1.66,deskZ-.22,1.0,.82,.13,M.dark);box("archiveScreen",deskX+.65,1.66,deskZ-.30,.78,.57,.02,mat(0x586b64,.22,.02,0x385048,.22),false);box("archiveKeyboard",deskX+.65,1.16,deskZ+.20,.92,.05,.30,dustedPaper);const chairSeat=box("archiveChairSeat",deskX,.82,-7.18,1.08,.18,.92,mat(0x3f3029,.72,.22));box("archiveChairBack",deskX,1.65,-7.53,1.08,1.34,.18,mat(0x5b4033,.72,.20));cyl("archiveChairStem",deskX,.44,-7.18,.07,.64,M.ink);for(let i=0;i<5;i++){const a=i*Math.PI*2/5;const wheelX=deskX+Math.cos(a)*.55,wheelZ=-7.18+Math.sin(a)*.55;box("archiveChairLeg"+i,(deskX+wheelX)/2,.20,(-7.18+wheelZ)/2,.08,.08,.70,M.ink,false);cyl("archiveChairWheel"+i,wheelX,.10,wheelZ,.09,.10,M.ink)}for(let i=0;i<3;i++)box("archiveBox",6.75+i*.34,.42,-6.55+i*.18,.42,.7,.58,rust);
 archiveCollisionRects.push({x:deskX,z:deskZ,w:3.45,d:1.42},{x:deskX,z:-7.18,w:1.25,d:1.1},{x:7.05,z:-6.38,w:1.35,d:1.1});
-box("archiveClock",7.95,3.65,-1.65,.06,.72,.72,M.ink,false);const archiveClockText=textSprite("23:47",.38,"#e2c875");archiveClockText.position.set(7.86,3.65,-1.65);scene.add(archiveClockText);
+/* Màn hình và bàn phím hướng về phía ghế (phía nam của bàn). */
+scene.getObjectByName("archiveMonitor").position.z=deskZ-.25;
+scene.getObjectByName("archiveScreen").position.z=deskZ-.17;
+scene.getObjectByName("archiveKeyboard").position.z=deskZ+.24;
+/* Đồng hồ gắn sát tường phải, không lơ lửng trong phòng. */
+box("archiveClock",8.88,3.65,-1.65,.08,.72,.72,M.ink,false);const archiveClockText=textSprite("23:47",.38,"#e2c875");archiveClockText.position.set(8.825,3.65,-1.65);archiveClockText.rotation.y=-Math.PI/2;scene.add(archiveClockText);
 
 const makeDeskPaperLabel=(text,x,z,color,w,d)=>{const canvas=document.createElement("canvas");canvas.width=512;canvas.height=256;const ctx=canvas.getContext("2d");ctx.fillStyle=color;ctx.fillRect(0,0,512,256);ctx.strokeStyle="#8b816f";ctx.lineWidth=8;ctx.strokeRect(8,8,496,240);ctx.fillStyle="#38342d";ctx.font="700 40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(text,256,72);ctx.font="22px serif";ctx.textAlign="left";ctx.fillText("________________________",56,132);ctx.fillText("________________________",56,178);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const page=new THREE.Mesh(new THREE.PlaneGeometry(w-.03,d-.03),new THREE.MeshBasicMaterial({map:texture}));page.position.set(x,1.162,z);page.rotation.x=-Math.PI/2;scene.add(page)};
 const survey=box("archiveSurvey",deskX-.72,1.145,deskZ+.18,.62,.018,.82,mat(0xf4f0e7,.72,.08));makeDeskPaperLabel("Tờ giấy khảo sát",deskX-.72,deskZ+.18,"#f4f0e7",.62,.82);addInteract(survey,"Nhấn để xem thông tin",()=>doc("TỜ GIẤY KHẢO SÁT",'<div class="note"><b>RESEARCH 23:47 — INVESTIGATION FORM</b><br><br>01. RESEARCH 23:47 là gì?<br>____________<br>02. Tại sao dự án bị dừng?<br>____________<br>03. Người phụ trách đã đi đâu?<br>____________<br>04. Những người tham gia nghiên cứu là ai?<br>____________<br>05. 23:47 có ý nghĩa gì?<br>____________<br>06. Tại sao hồ sơ của một số học sinh bị xóa?<br>____________<br>07. Bạn nghĩ mình đang làm gì ở đây?<br>____________<br><br><i>“Chỉ được điền câu trả lời khi đã tìm thấy bằng chứng.”</i></div>'));
 const hintPaper=box("archiveHintPaper",deskX-1.30,1.145,deskZ+.32,.38,.018,.48,mat(0xd0b54e,.72,.1));makeDeskPaperLabel("Ghi chú",deskX-1.30,deskZ+.32,"#d0b54e",.38,.48);addInteract(hintPaper,"Chọn để xem",()=>doc("GHI CHÚ",'<div class="note">Hồ sơ bạn cần không nằm ở ngăn dưới.</div>'));
 /* Tủ thấp cạnh bàn: đặt máy ghi âm đúng theo sơ đồ phòng. */
-box("archiveLowCabinet",4.35,.62,-5.45,1.45,1.18,.82,rust);
-archiveCollisionRects.push({x:4.35,z:-5.45,w:1.45,d:.82});
-const recorder=box("archiveRecorder",4.35,1.33,-5.45,.78,.30,.48,M.ink);
+box("archiveLowCabinet",deskX+2.18,.62,deskZ,1.45,1.18,.82,rust);
+archiveCollisionRects.push({x:deskX+2.18,z:deskZ,w:1.45,d:.82});
+const recorder=box("archiveRecorder",deskX+2.18,1.33,deskZ,.78,.30,.48,M.ink);
 addInteract(recorder,"Nhấn để nghe",()=>openArchiveRecorder());
 /* Lịch bàn nằm ngang trên mặt bàn, có gáy lò xo, các ô ngày và ghi chú khoanh tròn. */
 const calendarCanvas=document.createElement("canvas");calendarCanvas.width=560;calendarCanvas.height=420;const calendarCtx=calendarCanvas.getContext("2d");calendarCtx.fillStyle="#eee6d2";calendarCtx.fillRect(0,0,560,420);calendarCtx.fillStyle="#53473c";calendarCtx.font="bold 34px serif";calendarCtx.textAlign="center";calendarCtx.fillText("THÁNG 8 · 2018",280,48);calendarCtx.font="18px serif";for(let row=0;row<5;row++){for(let col=0;col<7;col++){const day=row*7+col+1;if(day>31)continue;const px=25+col*73,py=78+row*63;calendarCtx.strokeStyle="#a99f8b";calendarCtx.strokeRect(px,py,67,55);calendarCtx.fillStyle="#4b4239";calendarCtx.fillText(day,px+12,py+19);if(day===5){calendarCtx.strokeStyle="#9d5b42";calendarCtx.lineWidth=4;calendarCtx.beginPath();calendarCtx.arc(px+34,py+27,23,0,Math.PI*2);calendarCtx.stroke();calendarCtx.lineWidth=1}}}const calendarTexture=new THREE.CanvasTexture(calendarCanvas);calendarTexture.colorSpace=THREE.SRGBColorSpace;const calendar=box("archiveCalendar",deskX+1.20,1.145,deskZ+.20,.86,.025,.66,dustedPaper);const calendarPage=new THREE.Mesh(new THREE.PlaneGeometry(.80,.60),new THREE.MeshBasicMaterial({map:calendarTexture}));calendarPage.position.set(deskX+1.20,1.162,deskZ+.20);calendarPage.rotation.x=-Math.PI/2;scene.add(calendarPage);for(let ring=0;ring<4;ring++)cyl("archiveCalendarRing"+ring,deskX+.90+ring*.20,1.18,deskZ-.08,.025,.05,M.ink);
 addInteract(calendar,"Nhấn để xem lịch",()=>openArchiveCalendar());
+/* Thay lịch nằm bằng lịch bàn dựng đứng, có chân đỡ và lò xo phía trên. */
+calendar.visible=false;calendarPage.visible=false;
+const calendarZ=deskZ+.38,calendarX=deskX+1.20;
+box("archiveCalendarBase",calendarX,1.19,calendarZ+.12,1.02,.10,.42,M.ink,false);
+box("archiveCalendarBack",calendarX,1.50,calendarZ+.20,1.02,.68,.06,M.ink,false);
+const standingCalendar=box("archiveStandingCalendar",calendarX,1.51,calendarZ-.02,.86,.64,.025,dustedPaper);
+const standingPage=new THREE.Mesh(new THREE.PlaneGeometry(.80,.60),new THREE.MeshBasicMaterial({map:calendarTexture}));
+standingPage.position.set(calendarX,1.51,calendarZ-.038);scene.add(standingPage);
+for(let ring=0;ring<4;ring++)cyl("archiveStandingCalendarRing"+ring,calendarX-.30+ring*.20,1.84,calendarZ-.07,.025,.07,M.ink);
+addInteract(standingCalendar,"Nhấn để xem lịch",()=>openArchiveCalendar());
 const looseNote=box("archiveLooseNote",5.22,1.70,-5.18,.34,.018,.42,dustedPaper);addInteract(looseNote,"Nhấn để xem thông tin",()=>doc("MẨU GIẤY",'<div class="note">Có những thứ bị đánh dấu sai.<br>Đừng tin vào thứ được viết bên ngoài.</div>'));
 
 /* Hồ sơ B02 và ◆B04 nằm ở tầng B dãy I; dãy E tầng A chứa trọn bộ A01 → A26. */
@@ -4383,7 +4452,9 @@ let cells="";for(let day=1;day<=31;day++){const note=day===2?"Nhập hồ sơ":d
 
 function openArchiveDocument(prefix,number){
 const code=String(number).padStart(2,"0");
-doc("TÀI LIỆU "+prefix+code,'<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:96px;background:#7b3838;color:#f5efdc;font-size:50px;border:5px double #d9c79a"><b>'+code+'</b><br><small style="font-size:13px">HỒ SƠ '+prefix+' LƯU TRỮ</small></div></div>')
+markArchiveDocumentSelected(code);
+const fileCode=prefix+code;
+doc("TÀI LIỆU "+fileCode,'<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:96px;background:#7b3838;color:#f5efdc;font-size:50px;border:5px double #d9c79a"><b>'+code+'</b><br><small style="font-size:13px">HỒ SƠ '+fileCode+'</small></div></div>')
 }
 
 function openArchiveB02(){
@@ -4397,6 +4468,7 @@ doc("HỒ SƠ ◆B04",'<div class="note" style="text-align:center"><b>◆B04</b>
 }
 
 function openArchiveA05(){
+markArchiveDocumentSelected("A05");
 doc("THÀNH CÔNG",'<div class="note" style="text-align:center"><b>Thành công Thử thách Tìm hồ sơ ẩn.</b><br><br>Challenge 1 — Room 3 đã hoàn thành.</div>');logEvent("ARCHIVE_CHALLENGE_1_COMPLETE")
 }
 
