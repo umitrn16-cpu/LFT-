@@ -145,6 +145,13 @@ letter-spacing:.08em
 
 #archiveBookCounter b{color:#d4c786}
 
+.a07cell{border-radius:50%;border:2px solid #bba98a;cursor:pointer;transition:.15s}
+.a07cell.black{background:#111;box-shadow:inset 0 2px 5px #777}
+.a07cell.white{background:#eee9dc;box-shadow:inset 0 2px 5px #fff}
+.a07cell.glow{outline:3px solid #ff555e;box-shadow:0 0 17px 5px #ff263b;background:#7d171c}
+.a07cell.mistake{animation:a07shake .28s ease;background:#a74c50}
+@keyframes a07shake{50%{transform:translateX(5px)}}
+
 #giveupBtn{
 pointer-events:auto;
 position:absolute;
@@ -4427,8 +4434,10 @@ const workBoardTitle=textSprite("BẢNG PHÂN CÔNG\nTHÁNG 08/2018",.18,"#f3ead
 addInteract(workBoard,"Mở bảng công việc",()=>openArchive07WorkBoard());
 const comparisonSheet=box("archive07ComparisonSheet",6.52,2.28,-3.35,.035,.72,.52,dustedPaper,false);
 addInteract(comparisonSheet,"Xem Phiếu đối chiếu",()=>openArchive07Comparison());
-const hsFiles=["HS-03","HS-11","HS-07","HS-19"];
-hsFiles.forEach((code,index)=>{const file=box("archive07File_"+code,7.62,1.10,-3.92+index*.36,.12,.56,.25,mat([0x7f6d52,0x5d7280,0x7a5a4e,0x62705a][index],.72,.14),false);const label=textSprite(code,.12,"#f3e8ca");label.position.set(7.70,1.10,-3.92+index*.36);label.rotation.y=Math.PI/2;scene.add(label);addInteract(file,"Mở hồ sơ "+code,()=>openArchive07File(code))});
+const hsFiles=["HS-03","HS-11","HS-07","HS-04"];
+/* Dãy kệ hồ sơ trắng: HS-07 cố định ở tầng trên cùng, kèm ba hồ sơ gây nhiễu. */
+const whiteShelf=mat(0xe9e8e1,.68,.12);box("archive07WhiteShelfBack",5.65,2.10,6.88,3.35,3.30,.10,whiteShelf);for(let tier=0;tier<3;tier++)box("archive07WhiteShelfTier"+tier,5.65,1.02+tier*1.04,6.62,3.35,.09,.55,whiteShelf);
+hsFiles.forEach((code,index)=>{const oldFile=box("archive07OldFile_"+code,7.62,1.10,-3.92+index*.36,.12,.56,.25,mat([0x7f6d52,0x5d7280,0x7a5a4e,0x62705a][index],.72,.14),false);oldFile.visible=false;const file=box("archive07File_"+code,4.55+index*.73,3.34,6.54,.56,.62,.16,mat(0x9a9a90,.68,.12),false);const label=textSprite(code,.12,"#343832");label.position.set(4.55+index*.73,3.34,6.445);scene.add(label);addInteract(file,"Mở hồ sơ "+code,()=>openArchive07File(code))});
 const storageBox=box("archive07StorageBox",5.55,.56,-5.65,1.25,.52,.82,mat(0x60432e,.78,.18));
 const storageGlass=box("archive07StorageGlass",5.55,.84,-5.65,.82,.025,.52,mat(0x7eafb5,.18,.02,0xa0e5e9,.35),false);
 const redFilterPreview=box("archive07RedFilterPreview",5.55,.86,-5.65,.62,.018,.38,mat(0xb6222a,.32,.04,0xb6222a,.32),false);
@@ -4436,6 +4445,7 @@ addInteract(storageBox,"Mở HỘP LƯU TRỮ 07",()=>openArchive07Box());
 const chessX=5.45,chessZ=2.28,chessBoard=box("archive07ChessBoard",chessX,.42,chessZ,2.20,.16,2.20,M.ink);
 for(let row=0;row<6;row++)for(let col=0;col<6;col++){const isBlack=archive07Initial[row][col]===1;const piece=cyl("archive07Piece_"+row+"_"+col,chessX-.78+col*.312,.57,chessZ-.78+row*.312,.105,.12,mat(isBlack?0x171717:0xe9e4d8,.62,.16,isBlack?0x050505:0x111111,.04));piece.userData={row,col,isBlack};archive07ChessPieces.push(piece);addInteract(piece,"Lật quân cờ",()=>flipArchive07Piece(row,col))}
 addInteract(chessBoard,"Đặt Red Filter lên bàn cờ",()=>openArchive07ChessControl());
+chessBoard.visible=false;archive07ChessPieces.forEach(piece=>piece.visible=false);
 archiveCollisionRects.push({x:chessX,z:chessZ,w:2.20,d:2.20},{x:5.55,z:-5.65,w:1.25,d:.82});
 logEvent("ARCHIVE_ROOM_ENTER");
 say("Phòng tài liệu vẫn có ánh sáng từ các khung cửa sổ phủ bụi.");
@@ -4516,29 +4526,33 @@ document.getElementById("a07Submit").onclick=()=>{const chosen=[...document.quer
 
 function openArchive07Comparison(){
 if(!archive07WorkDone){say("Hồ sơ chỉ hợp lệ khi đã hoàn tất đủ các bước.");return}
-doc("PHIẾU ĐỐI CHIẾU",'<div class="note"><b>PHIẾU ĐỐI CHIẾU</b><table style="border-collapse:collapse;margin:14px auto;text-align:center">'+[[2,7,4,9],[5,1,8,3],[6,0,2,7]].map(row=>'<tr>'+row.map(n=>'<td style="border:1px solid #555;padding:8px 14px">'+n+'</td>').join('')+'</tr>').join('')+'</table><small>Ngày lập: 07/09/2026<br>Mã lưu trữ: HS-07<br>Người phụ trách: __________</small></div>');
+doc("PHIẾU ĐỐI CHIẾU",'<div class="note"><b>PHIẾU ĐỐI CHIẾU</b><table style="border-collapse:collapse;margin:14px auto;text-align:center">'+[[2,7,4,9],[5,1,0,3],[6,8,2,7]].map(row=>'<tr>'+row.map(n=>'<td style="border:1px solid #555;padding:8px 14px">'+n+'</td>').join('')+'</tr>').join('')+'</table><small>Ngày lập: 07/09/2026<br>Mã lưu trữ: HS-07<br>Người phụ trách: __________</small></div>');
 }
 
 function openArchive07File(code){
 if(!archive07WorkDone){say("Hồ sơ chỉ hợp lệ khi chưa hoàn tất quy trình.");return}
 if(code!=="HS-07"){doc("HỒ SƠ "+code,'<div class="note">Hồ sơ lưu trữ thông thường. Không có mã vị trí cần đối chiếu.</div>');return}
-archive07HsOpened=true;archive07State="PUZZLE_PASSWORD";doc("HỒ SƠ HS-07",'<div class="note"><b>Mã vị trí:</b> A1<br><b>Mã kiểm tra:</b> A4<br><b>Mã rà soát:</b> C2<br><b>Mã lưu trữ:</b> B4<br><br><i>Đối chiếu các vị trí này với Phiếu đối chiếu.</i></div>');logEvent("ARCHIVE07_HS07_OPENED")
+archive07HsOpened=true;archive07State="PUZZLE_PASSWORD";doc("HỒ SƠ HS-07",'<div class="note"><b>Mã vị trí:</b> A1<br><b>Mã kiểm tra:</b> D1<br><b>Mã rà soát:</b> B3<br><b>Mã lưu trữ:</b> D2<br><br><i>Đối chiếu các vị trí này với Phiếu đối chiếu.</i></div>');logEvent("ARCHIVE07_HS07_OPENED")
 }
 
 function openArchive07Box(){
 if(!archive07HsOpened){say("Hộp đang khóa. Bạn cần tìm manh mối trong hồ sơ.");return}
-if(archive07BoxOpened){say("Bạn đã lấy Red Filter.");return}
-doc("HỘP ĐANG KHÓA — NHẬP MẬT KHẨU",'<div class="note" style="text-align:center"><b>HỘP LƯU TRỮ 07</b><br><br><input id="a07Password" inputmode="numeric" maxlength="4" style="font-size:25px;width:120px;text-align:center"><br><button class="btn" id="a07Unlock">MỞ HỘP</button><p id="a07PasswordMessage"></p></div>');document.getElementById("a07Unlock").onclick=()=>{if(document.getElementById("a07Password").value!=="2903"){document.getElementById("a07PasswordMessage").textContent="Mật khẩu không đúng.";return}archive07BoxOpened=true;archive07State="RED_FILTER_OBTAINED";scene.getObjectByName("archive07StorageGlass").rotation.z=-.8;scene.getObjectByName("archive07RedFilterPreview").visible=false;addItem("RED FILTER");document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>HỘP ĐÃ MỞ</b><br><br>Bạn nhận được <b>RED FILTER</b>. Hãy đặt nó lên bàn quân cờ.</div>';logEvent("ARCHIVE07_FILTER_OBTAINED")}}
+if(archive07BoxOpened){openArchive07HiddenChallenge();return}
+doc("HỘP ĐANG KHÓA — NHẬP MẬT KHẨU",'<div class="note" style="text-align:center"><b>HỘP LƯU TRỮ 07</b><br><br><input id="a07Password" inputmode="numeric" maxlength="4" style="font-size:25px;width:120px;text-align:center"><br><button class="btn" id="a07Unlock">MỞ HỘP</button><p id="a07PasswordMessage"></p></div>');document.getElementById("a07Unlock").onclick=()=>{if(document.getElementById("a07Password").value!=="2903"){document.getElementById("a07PasswordMessage").textContent="Mật khẩu không đúng.";return}archive07BoxOpened=true;archive07State="RED_FILTER_OBTAINED";scene.getObjectByName("archive07StorageGlass").rotation.z=-.8;scene.getObjectByName("archive07RedFilterPreview").visible=false;addItem("RED FILTER");document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>HỘP ĐÃ MỞ</b><br><br>Bạn đã tìm thấy một vật có thể làm thay đổi cách nhìn của mình.<br><br><button class="btn" id="a07EnterHidden">VÀO THỬ THÁCH ẨN</button></div>';document.getElementById("a07EnterHidden").onclick=()=>openArchive07HiddenChallenge();logEvent("ARCHIVE07_FILTER_OBTAINED")}}
 
-function openArchive07ChessControl(){
-if(!archive07BoxOpened){say("Bàn cờ cần Red Filter từ Hộp lưu trữ 07.");return}
-const left=3-archive07FilterUses;doc("BÀN QUÂN CỜ",'<div class="note" style="text-align:center"><b>RED FILTER</b><br><br>Lượt quan sát còn lại: <b>'+left+'</b>/3<br><br><button class="btn" id="a07AlignFilter" '+(left<1?"disabled":"")+'>ĐẶT + CĂN CHỈNH RED FILTER</button><p id="a07FilterMessage">Chỉ khi căn chỉnh đúng, các quân cần lật mới phát sáng.</p></div>');document.getElementById("a07AlignFilter").onclick=()=>activateArchive07Filter()}
+function openArchive07ChessControl(){openArchive07HiddenChallenge()}
 
-function activateArchive07Filter(){
-if(archive07FilterUses>=3)return;archive07FilterUses++;archive07State="MEMORY_PHASE";archive07ChessPieces.forEach(piece=>{const key=piece.userData.row+"-"+piece.userData.col;if(archive07TargetCells.has(key)){piece.material.emissive?.setHex(0xaa1111);piece.material.emissiveIntensity=1.8}});document.getElementById("a07FilterMessage").textContent="Red Filter đã khớp. Hãy ghi nhớ 21 vị trí phát sáng…";logEvent("ARCHIVE07_FILTER_USED",{use:archive07FilterUses});clearTimeout(archive07RevealTimer);archive07RevealTimer=setTimeout(()=>{archive07ChessPieces.forEach(piece=>{piece.material.emissive?.setHex(piece.userData.isBlack?0x050505:0x111111);piece.material.emissiveIntensity=.04});archive07State="BOARD_SOLVING";const message=document.getElementById("a07FilterMessage");if(message)message.textContent="Red Filter đã được tháo ra. Hãy lật quân theo trí nhớ."},5500)}
+function openArchive07HiddenChallenge(){
+if(!archive07BoxOpened)return;document.getElementById("doc").style.display="none";modalOpen=true;document.exitPointerLock?.();archive07State="HIDDEN_CHALLENGE_RED_FILTER";
+let panel=document.getElementById("archive07Hidden");if(panel)panel.remove();panel=document.createElement("div");panel.id="archive07Hidden";panel.style.cssText="position:fixed;inset:0;z-index:110;background:radial-gradient(circle,#334044,#080d0f 75%);display:grid;place-items:center;color:#f5f0e3;font-family:serif";
+const cells=archive07Initial.map((row,r)=>row.map((black,c)=>'<button class="a07cell '+(black?"black":"white")+'" data-cell="'+r+'-'+c+'"></button>').join("")).join("");panel.innerHTML='<div style="position:relative;width:min(760px,94vw);min-height:570px;padding:30px;text-align:center;border:1px solid #d4c78688;background:#111b1d;box-shadow:0 25px 90px #000"><button id="a07Close" style="position:absolute;right:16px;top:14px">×</button><h2 style="margin:0">THỬ THÁCH ẨN</h2><p id="a07HiddenMsg">Kéo tấm Red Filter vào chính giữa bàn cờ.</p><b id="a07UseCount">RED FILTER: '+(3-archive07FilterUses)+'/3</b><div id="a07Board" style="position:relative;margin:22px auto;width:330px;height:330px;display:grid;grid-template-columns:repeat(6,1fr);gap:7px;padding:14px;background:#795a3b;border:10px solid #3a281b">'+cells+'</div><div id="a07Filter" style="position:absolute;right:38px;bottom:45px;width:105px;height:70px;background:rgba(204,30,38,.55);border:2px solid #ff8b8b;cursor:grab;touch-action:none;display:grid;place-items:center;font-weight:bold">RED FILTER</div></div>';
+document.body.appendChild(panel);const board=panel.querySelector("#a07Board"),filter=panel.querySelector("#a07Filter"),msg=panel.querySelector("#a07HiddenMsg"),count=panel.querySelector("#a07UseCount");let dragging=false,active=false;
+const clearGlow=()=>panel.querySelectorAll(".a07cell.glow").forEach(cell=>cell.classList.remove("glow"));const resetFilter=()=>{filter.style.left="";filter.style.top="";filter.style.right="38px";filter.style.bottom="45px";filter.style.opacity="1"};
+filter.onpointerdown=e=>{if(archive07FilterUses>=3&&!active)return;dragging=true;filter.setPointerCapture(e.pointerId);filter.style.cursor="grabbing";filter.style.opacity=".72"};filter.onpointermove=e=>{if(!dragging)return;const rect=panel.getBoundingClientRect();filter.style.left=(e.clientX-rect.left-52)+"px";filter.style.top=(e.clientY-rect.top-35)+"px";filter.style.right="auto";filter.style.bottom="auto"};filter.onpointerup=e=>{if(!dragging)return;dragging=false;filter.releasePointerCapture?.(e.pointerId);filter.style.cursor="grab";const rect=board.getBoundingClientRect(),inside=e.clientX>rect.left+35&&e.clientX<rect.right-35&&e.clientY>rect.top+35&&e.clientY<rect.bottom-35;if(active&&!inside){active=false;clearGlow();resetFilter();msg.textContent="Red Filter đã tháo ra. Hãy lật quân theo trí nhớ.";return}if(!inside){resetFilter();msg.textContent="Red Filter chưa đặt đúng vị trí.";return}if(!active){if(archive07FilterUses>=3){resetFilter();msg.textContent="Bạn đã dùng hết 3 lượt Red Filter.";return}active=true;archive07FilterUses++;filter.style.left=(rect.left-panel.getBoundingClientRect().left+112)+"px";filter.style.top=(rect.top-panel.getBoundingClientRect().top+130)+"px";panel.querySelectorAll(".a07cell").forEach(cell=>{if(archive07TargetCells.has(cell.dataset.cell))cell.classList.add("glow")});count.textContent="RED FILTER: "+(3-archive07FilterUses)+"/3";msg.textContent="ĐÃ PHÁT HIỆN DẤU HIỆU. Ghi nhớ 21 vị trí, rồi kéo Red Filter ra ngoài.";logEvent("ARCHIVE07_FILTER_USED",{use:archive07FilterUses})}};
+panel.querySelectorAll(".a07cell").forEach(cell=>cell.onclick=()=>{if(active||archive07FilterUses===0){msg.textContent="Chỉ lật sau khi đã đặt rồi tháo Red Filter.";return}const key=cell.dataset.cell,parts=key.split("-").map(Number);if(!archive07TargetCells.has(key)){cell.classList.add("mistake");msg.textContent="Quân không đúng vị trí.";logEvent("ARCHIVE07_CHESS_WRONG",{row:parts[0],col:parts[1]});return}if(archive07Flipped.has(key))return;archive07Flipped.add(key);cell.classList.toggle("black");cell.classList.toggle("white");logEvent("ARCHIVE07_CHESS_FLIP",{row:parts[0],col:parts[1],count:archive07Flipped.size});if(archive07Flipped.size===21){panel.querySelectorAll(".a07cell").forEach(c=>{const [r,col]=c.dataset.cell.split("-").map(Number);c.className="a07cell "+(archive07KeyPattern[r][col]?"black":"white")});archive07State="CHALLENGE_COMPLETED";msg.innerHTML="<b>ĐÃ HOÀN TẤT THỬ THÁCH</b>";addItem("KEY 04");logEvent("ARCHIVE07_COMPLETE",{flips:21,key:"KEY 04"})}});panel.querySelector("#a07Close").onclick=()=>{panel.remove();modalOpen=false;renderer.domElement.requestPointerLock?.()};
+}
 
-function flipArchive07Piece(row,col){
-if(!archive07BoxOpened){say("Bạn cần Red Filter trước.");return}if(archive07FilterUses===0){say("Hãy đặt và căn chỉnh Red Filter để quan sát bàn cờ trước.");return}const key=row+"-"+col;if(!archive07TargetCells.has(key)){say("Quân cờ không phản hồi đúng vị trí.");logEvent("ARCHIVE07_CHESS_WRONG",{row,col});return}if(archive07Flipped.has(key))return;archive07Flipped.add(key);const piece=archive07ChessPieces.find(p=>p.userData.row===row&&p.userData.col===col);piece.userData.isBlack=archive07KeyPattern[row][col]===1;piece.material.color.setHex(piece.userData.isBlack?0x171717:0xe9e4d8);piece.material.emissive.setHex(piece.userData.isBlack?0x050505:0x111111);logEvent("ARCHIVE07_CHESS_FLIP",{row,col,count:archive07Flipped.size});if(archive07Flipped.size===21){archive07ChessPieces.forEach(p=>{p.userData.isBlack=archive07KeyPattern[p.userData.row][p.userData.col]===1;p.material.color.setHex(p.userData.isBlack?0x171717:0xe9e4d8)});archive07State="CHALLENGE_COMPLETED";doc("ĐÃ HOÀN TẤT THỬ THÁCH",'<div class="note" style="text-align:center"><b>ĐÃ HOÀN TẤT THỬ THÁCH</b><br><br>Các quân trắng và đen đã tạo thành hình chiếc chìa khóa.</div>');logEvent("ARCHIVE07_COMPLETE",{flips:21})}}
+function flipArchive07Piece(){say("Bàn cờ chỉ mở trong Thử thách ẩn.")}
 
 function updateArchiveFloorGrid(){
 return
