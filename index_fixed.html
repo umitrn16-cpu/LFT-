@@ -4360,22 +4360,27 @@ box("archiveClock",8.88,3.65,-1.65,.08,.72,.72,M.ink,false);const archiveClockTe
 const makeDeskPaperLabel=(text,x,z,color,w,d)=>{const canvas=document.createElement("canvas");canvas.width=512;canvas.height=256;const ctx=canvas.getContext("2d");ctx.fillStyle=color;ctx.fillRect(0,0,512,256);ctx.strokeStyle="#8b816f";ctx.lineWidth=8;ctx.strokeRect(8,8,496,240);ctx.fillStyle="#38342d";ctx.font="700 40px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(text,256,72);ctx.font="22px serif";ctx.textAlign="left";ctx.fillText("________________________",56,132);ctx.fillText("________________________",56,178);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const page=new THREE.Mesh(new THREE.PlaneGeometry(w-.03,d-.03),new THREE.MeshBasicMaterial({map:texture}));page.position.set(x,1.162,z);page.rotation.x=-Math.PI/2;scene.add(page)};
 const survey=box("archiveSurvey",deskX-.72,1.145,deskZ+.18,.62,.018,.82,mat(0xf4f0e7,.72,.08));makeDeskPaperLabel("Tờ giấy khảo sát",deskX-.72,deskZ+.18,"#f4f0e7",.62,.82);addInteract(survey,"Nhấn để xem thông tin",()=>doc("TỜ GIẤY KHẢO SÁT",'<div class="note"><b>RESEARCH 23:47 — INVESTIGATION FORM</b><br><br>01. RESEARCH 23:47 là gì?<br>____________<br>02. Tại sao dự án bị dừng?<br>____________<br>03. Người phụ trách đã đi đâu?<br>____________<br>04. Những người tham gia nghiên cứu là ai?<br>____________<br>05. 23:47 có ý nghĩa gì?<br>____________<br>06. Tại sao hồ sơ của một số học sinh bị xóa?<br>____________<br>07. Bạn nghĩ mình đang làm gì ở đây?<br>____________<br><br><i>“Chỉ được điền câu trả lời khi đã tìm thấy bằng chứng.”</i></div>'));
 const hintPaper=box("archiveHintPaper",deskX-1.30,1.145,deskZ+.32,.38,.018,.48,mat(0xd0b54e,.72,.1));makeDeskPaperLabel("Ghi chú",deskX-1.30,deskZ+.32,"#d0b54e",.38,.48);addInteract(hintPaper,"Chọn để xem",()=>doc("GHI CHÚ",'<div class="note">Hồ sơ bạn cần không nằm ở ngăn dưới.</div>'));
-/* Tủ thấp cạnh bàn: đặt máy ghi âm đúng theo sơ đồ phòng. */
-box("archiveLowCabinet",deskX+2.18,.62,deskZ,1.45,1.18,.82,rust);
-archiveCollisionRects.push({x:deskX+2.18,z:deskZ,w:1.45,d:.82});
-const recorder=box("archiveRecorder",deskX+2.18,1.33,deskZ,.78,.30,.48,M.ink);
+/* Tủ ghi âm thấp, đặt cạnh bàn với một khoảng trống để không dính vào bàn làm việc. */
+const recorderCabinetX=deskX+3.05,recorderCabinetZ=deskZ+.18;
+box("archiveLowCabinet",recorderCabinetX,.41,recorderCabinetZ,1.45,.82,.82,rust);
+archiveCollisionRects.push({x:recorderCabinetX,z:recorderCabinetZ,w:1.45,d:.82});
+const recorder=box("archiveRecorder",recorderCabinetX,.94,recorderCabinetZ,.78,.30,.48,M.ink);
 addInteract(recorder,"Nhấn để nghe",()=>openArchiveRecorder());
 /* Lịch bàn nằm ngang trên mặt bàn, có gáy lò xo, các ô ngày và ghi chú khoanh tròn. */
 const calendarCanvas=document.createElement("canvas");calendarCanvas.width=560;calendarCanvas.height=420;const calendarCtx=calendarCanvas.getContext("2d");calendarCtx.fillStyle="#eee6d2";calendarCtx.fillRect(0,0,560,420);calendarCtx.fillStyle="#53473c";calendarCtx.font="bold 34px serif";calendarCtx.textAlign="center";calendarCtx.fillText("THÁNG 8 · 2018",280,48);calendarCtx.font="18px serif";for(let row=0;row<5;row++){for(let col=0;col<7;col++){const day=row*7+col+1;if(day>31)continue;const px=25+col*73,py=78+row*63;calendarCtx.strokeStyle="#a99f8b";calendarCtx.strokeRect(px,py,67,55);calendarCtx.fillStyle="#4b4239";calendarCtx.fillText(day,px+12,py+19);if(day===5){calendarCtx.strokeStyle="#9d5b42";calendarCtx.lineWidth=4;calendarCtx.beginPath();calendarCtx.arc(px+34,py+27,23,0,Math.PI*2);calendarCtx.stroke();calendarCtx.lineWidth=1}}}const calendarTexture=new THREE.CanvasTexture(calendarCanvas);calendarTexture.colorSpace=THREE.SRGBColorSpace;const calendar=box("archiveCalendar",deskX+1.20,1.145,deskZ+.20,.86,.025,.66,dustedPaper);const calendarPage=new THREE.Mesh(new THREE.PlaneGeometry(.80,.60),new THREE.MeshBasicMaterial({map:calendarTexture}));calendarPage.position.set(deskX+1.20,1.162,deskZ+.20);calendarPage.rotation.x=-Math.PI/2;scene.add(calendarPage);for(let ring=0;ring<4;ring++)cyl("archiveCalendarRing"+ring,deskX+.90+ring*.20,1.18,deskZ-.08,.025,.05,M.ink);
 addInteract(calendar,"Nhấn để xem lịch",()=>openArchiveCalendar());
-/* Thay lịch nằm bằng lịch bàn dựng đứng, có chân đỡ và lò xo phía trên. */
+/* Lịch bàn dựng đứng với chân đỡ tam giác, theo mẫu lịch để bàn dạng chữ A. */
 calendar.visible=false;calendarPage.visible=false;
 const calendarZ=deskZ+.38,calendarX=deskX+1.20;
-box("archiveCalendarBase",calendarX,1.19,calendarZ+.12,1.02,.10,.42,M.ink,false);
-box("archiveCalendarBack",calendarX,1.50,calendarZ+.20,1.02,.68,.06,M.ink,false);
+const calendarStandMat=mat(0x9d9a92,.74,.16);
+box("archiveCalendarBase",calendarX,1.19,calendarZ+.12,1.02,.10,.56,calendarStandMat,false);
+box("archiveCalendarBack",calendarX,1.47,calendarZ+.29,1.02,.58,.06,calendarStandMat,false);
 const standingCalendar=box("archiveStandingCalendar",calendarX,1.51,calendarZ-.02,.86,.64,.025,dustedPaper);
 const standingPage=new THREE.Mesh(new THREE.PlaneGeometry(.80,.60),new THREE.MeshBasicMaterial({map:calendarTexture}));
 standingPage.position.set(calendarX,1.51,calendarZ-.038);scene.add(standingPage);
+/* Hai mặt tam giác ở cạnh tạo dáng lịch chữ A, phần lưng tựa ra sau. */
+const makeCalendarTriangle=(name,x)=>{const geometry=new THREE.BufferGeometry();geometry.setAttribute("position",new THREE.Float32BufferAttribute([x,1.22,calendarZ-.06,x,1.22,calendarZ+.33,x,1.84,calendarZ-.06],3));geometry.setIndex([0,1,2]);geometry.computeVertexNormals();const side=new THREE.Mesh(geometry,calendarStandMat);side.name=name;scene.add(side)};
+makeCalendarTriangle("archiveCalendarTriangleL",calendarX-.49);makeCalendarTriangle("archiveCalendarTriangleR",calendarX+.49);
 for(let ring=0;ring<4;ring++)cyl("archiveStandingCalendarRing"+ring,calendarX-.30+ring*.20,1.84,calendarZ-.07,.025,.07,M.ink);
 addInteract(standingCalendar,"Nhấn để xem lịch",()=>openArchiveCalendar());
 const looseNote=box("archiveLooseNote",5.22,1.70,-5.18,.34,.018,.42,dustedPaper);addInteract(looseNote,"Nhấn để xem thông tin",()=>doc("MẨU GIẤY",'<div class="note">Có những thứ bị đánh dấu sai.<br>Đừng tin vào thứ được viết bên ngoài.</div>'));
