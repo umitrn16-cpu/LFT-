@@ -4417,15 +4417,36 @@ if(archiveSymbolsTaken.has(symbol)){say("Ký hiệu này đã được ghi nhậ
 archiveSymbolsTaken.add(symbol);archiveSymbolOrder.push(symbol);beep(520,.08,"sine");
 if(archiveSymbolOrder.length<4){say("Bạn đã nhận được một ký hiệu.");return}
 const notice=document.getElementById("room2Notice");
-notice.querySelector("div").textContent="BẠN ĐÃ TÌM THẤY CHÚNG. NHƯNG THỨ TỰ THÌ SAO?";
+notice.querySelector("div").textContent="Bạn đã tìm thấy kí hiệu. Nhưng thứ tự thì sao?";
 notice.style.display="grid";modalOpen=true;document.exitPointerLock?.();
 setTimeout(()=>{notice.style.display="none";showArchiveSymbolAnswer()},6000);
+};
+const resetArchiveSymbolChallenge=()=>{
+archiveSymbolOrder=[];
+archiveSymbolsTaken=new Set();
+archiveHiddenUnlocked=false;
 };
 const showArchiveSymbolAnswer=()=>{
 let entered=[];
 const render=message=>{
 doc("THỨ TỰ KÝ HIỆU",'<div class="note" style="text-align:center"><b>▲ ■ ★ ♥</b><br><br>'+message+'<br><br><div id="archiveSymbolChoices"><button class="btn archiveSymbolChoice" data-symbol="▲">▲</button> <button class="btn archiveSymbolChoice" data-symbol="■">■</button> <button class="btn archiveSymbolChoice" data-symbol="★">★</button> <button class="btn archiveSymbolChoice" data-symbol="♥">♥</button></div></div>');
-document.querySelectorAll(".archiveSymbolChoice").forEach(button=>button.onclick=()=>{entered.push(button.dataset.symbol);if(entered.length<4)return;if(entered.join("")===archiveSymbolOrder.join("")){archiveHiddenUnlocked=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>MỞ KHÓA THỬ THÁCH MỚI</b><br><br>TÌM HỒ SƠ ẨN.</div>';beep(760,.24,"square");logEvent("ARCHIVE_SYMBOL_CHALLENGE_COMPLETE",{order:archiveSymbolOrder});return}document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center">Thứ tự không khớp.<br><br><button class="btn" id="archiveRetry">NHẬP LẠI</button> <button class="btn" id="archiveQuit">BỎ CUỘC</button></div>';document.getElementById("archiveRetry").onclick=()=>{entered=[];render("Nhập lại thứ tự bạn đã ghi nhận.")};document.getElementById("archiveQuit").onclick=()=>{document.getElementById("doc").style.display="none";modalOpen=false;renderer.domElement.requestPointerLock?.()}})};
+const finishAnswer=()=>{
+if(entered.join("")===archiveSymbolOrder.join("")){
+archiveHiddenUnlocked=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>MỞ KHÓA THỬ THÁCH MỚI</b><br><br>TÌM HỒ SƠ ẨN.</div>';beep(760,.24,"square");logEvent("ARCHIVE_SYMBOL_CHALLENGE_COMPLETE",{order:archiveSymbolOrder});return
+}
+document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center">Thứ tự không khớp.<br><br><button class="btn" id="archiveRetry">NHẬP LẠI</button> <button class="btn" id="archiveQuit">BỎ CUỘC</button></div>';
+document.getElementById("archiveRetry").onclick=()=>{entered=[];render("Nhập lại thứ tự bạn đã ghi nhận.")};
+document.getElementById("archiveQuit").onclick=()=>{resetArchiveSymbolChallenge();document.getElementById("doc").style.display="none";modalOpen=false;renderer.domElement.requestPointerLock?.()};
+};
+document.querySelectorAll(".archiveSymbolChoice").forEach(button=>{
+button.onclick=()=>{
+button.animate([{filter:"brightness(1)",boxShadow:"0 0 0 transparent"},{filter:"brightness(1.75)",boxShadow:"0 0 14px #fff4a8"},{filter:"brightness(1)",boxShadow:"0 0 0 transparent"}],{duration:220,easing:"ease-out"});
+entered.push(button.dataset.symbol);if(entered.length<4)return;
+document.querySelectorAll(".archiveSymbolChoice").forEach(choice=>choice.disabled=true);
+setTimeout(finishAnswer,220);
+};
+});
+};
 render("Nhập lại thứ tự bạn đã ghi nhận.");
 };
 const makeArchiveWallSymbol=(name,symbol,x,y,z,rotationY)=>{const canvas=document.createElement("canvas");canvas.width=256;canvas.height=256;const ctx=canvas.getContext("2d");ctx.fillStyle="#d4c786";ctx.fillRect(8,8,240,240);ctx.strokeStyle="#473b2b";ctx.lineWidth=10;ctx.strokeRect(8,8,240,240);ctx.fillStyle="#202329";ctx.font="700 150px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(symbol,128,137);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const mark=new THREE.Mesh(new THREE.PlaneGeometry(.42,.42),new THREE.MeshBasicMaterial({map:texture,transparent:true}));mark.name=name;mark.position.set(x,y,z);mark.rotation.y=rotationY;scene.add(mark);addInteract(mark,"Nhấn để nhận",()=>recordArchiveSymbol(symbol))};
