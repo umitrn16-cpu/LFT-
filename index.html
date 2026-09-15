@@ -4539,7 +4539,7 @@ doc("TÀI LIỆU "+fileCode,'<div class="note" style="text-align:center"><div st
 
 function openArchiveB02(){
 if(!archiveHiddenUnlocked){say("Hồ sơ này chỉ mở sau khi thử thách ký hiệu được mở khóa.");return}
-doc("HỒ SƠ B02",'<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:105px;background:#53635c;color:#f5efdc;font-size:28px"><b>B02</b></div><br><button class="btn" id="archiveB02Back">MẶT SAU</button></div>');document.getElementById("archiveB02Back").onclick=()=>{archiveB02Opened=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:72px;background:#59645e;color:#f5efdc;font-size:42px">◆<br><small style="font-size:13px">Nếu đã tìm thấy hồ sơ này, hãy tiếp tục đến nơi được đánh dấu.</small></div></div>';logEvent("ARCHIVE_B02_OPENED")}
+doc("HỒ SƠ B02",'<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:105px;background:#53635c;color:#f5efdc;font-size:28px"><b>B02</b></div><br><button class="btn" id="archiveB02Back">MẶT SAU</button></div>');document.getElementById("archiveB02Back").onclick=()=>{archiveB02Opened=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:72px;background:#59645e;color:#f5efdc;font-size:42px"><div style="margin-bottom:14px">◆</div><div style="padding:0 14px;font:20px/1.7 Arial,\'Segoe UI\',sans-serif">Nếu đã tìm thấy hồ sơ này, hãy tiếp tục đến nơi được đánh dấu.</div></div></div>';logEvent("ARCHIVE_B02_OPENED")}
 }
 
 function openArchiveB04(){
