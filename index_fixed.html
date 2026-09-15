@@ -4339,7 +4339,7 @@ aisleLetters.forEach((letter,aisle)=>{const x=-6+aisle*3;const shelfMat=mat(aisl
 /* Ghi đè nhãn/cơ chế cũ: mọi gáy ở 5 dãy × 3 tầng đều là tài liệu 01–26.
    Riêng A05 vẫn là hồ sơ ẩn; các tài liệu còn lại mở bằng phím E. */
 const archiveTierOrder=[12,3,24,18,5,26,2,15,9,21,7,14,1,23,10,19,4,25,8,16,6,22,11,20,13,17];
-interactables=interactables.filter(entry=>!entry.mesh.name.startsWith("archiveBook_"));
+interactables=interactables.filter(entry=>!entry.mesh.name.startsWith("archiveBook_")||entry.mesh.name==="archiveBook_I13"||entry.mesh.name==="archiveBook_I121");
 aisleLetters.forEach((letter,aisle)=>{
   const frontX=-6+aisle*3+.51;
   for(let tier=0;tier<3;tier++){
@@ -4347,6 +4347,7 @@ aisleLetters.forEach((letter,aisle)=>{
       const number=archiveTierOrder[book];
       const spine=scene.getObjectByName("archiveBook_"+letter+tier+book);
       if(!spine)continue;
+      if(letter==="I"&&tier===1&&(book===3||book===21))continue;
       const boardY=.72+tier*1.05,bookHeight=.62+((book*3+aisle+tier)%4)*.055;
       const spineY=boardY+.055+bookHeight/2,spineZ=-3.95+book*.252;
       const specialA05=letter==="E"&&tier===2&&book===4;
