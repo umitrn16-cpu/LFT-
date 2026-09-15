@@ -1855,7 +1855,7 @@ if(!window.THREE){
 
 document.getElementById("begin").disabled=true;
 
-return
+throw new Error("Không thể tải Three.js; không thể khởi tạo trò chơi.")
 
 }
 
@@ -4361,8 +4361,9 @@ aisleLetters.forEach((letter,aisle)=>{
 /* Mẫu giấy kẹp dưới B02 có kẹp kim loại nhỏ giữ ở mép gáy. */
 box("archiveB02PaperClip",6.555,2.055,-3.194,.035,.06,.12,M.ink,false);
 /* Phiếu đối chiếu không còn thuộc B02; bản duy nhất được dán ở mặt bên tủ đỏ. */
-scene.getObjectByName("archiveB02Paper")?.visible=false;
-scene.getObjectByName("archiveB02PaperClip")?.visible=false;
+const archiveB02Paper=scene.getObjectByName("archiveB02Paper"),archiveB02PaperClip=scene.getObjectByName("archiveB02PaperClip");
+if(archiveB02Paper)archiveB02Paper.visible=false;
+if(archiveB02PaperClip)archiveB02PaperClip.visible=false;
 
 /* Bàn được đẩy sát tường sau, có hộc bàn và ghế làm việc kiểu cũ. */
 const deskX=-3.35,deskZ=-6.25,deskWood=mat(0x78604d,.76,.16);
