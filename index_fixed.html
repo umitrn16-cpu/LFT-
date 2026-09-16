@@ -21,6 +21,57 @@ color:#fff
 
 canvas{display:block}
 
+/* Intro is intentionally an isolated layer: the existing start screen and game
+   remain untouched underneath until the player chooses to continue. */
+#introScreen{
+position:fixed;
+inset:0;
+z-index:200;
+display:grid;
+place-items:center;
+background:#000;
+color:#f1ead8;
+text-align:center
+}
+
+#introScreen.is-hidden{display:none}
+
+#introContent{
+width:min(880px,calc(100% - 44px));
+min-height:150px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center
+}
+
+#introText{
+margin:0;
+font:700 clamp(25px,4.4vw,52px)/1.35 "Times New Roman",Times,serif;
+letter-spacing:.07em;
+text-shadow:0 0 18px rgba(241,234,216,.16)
+}
+
+#introBegin{
+display:none;
+margin-top:34px;
+padding:12px 30px;
+border:1px solid #d4c786;
+background:transparent;
+color:#f1ead8;
+font:700 14px "Times New Roman",Times,serif;
+letter-spacing:.12em;
+cursor:pointer;
+transition:background .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease
+}
+
+#introBegin.is-visible{display:inline-block}
+#introBegin:hover{background:#d4c786;color:#151a1b;box-shadow:0 0 24px rgba(212,199,134,.34);transform:translateY(-1px)}
+#introBegin:focus-visible{outline:2px solid #fff;outline-offset:4px}
+
+/* The original participant-ID screen is only revealed after Intro. */
+#start{display:none}
+
 #hud{
 position:fixed;
 inset:0;
@@ -1038,6 +1089,14 @@ padding:13px
 </head>
 
 <body>
+
+<!-- Intro precedes the original participant-ID screen. -->
+<section id="introScreen" aria-label="PROJECT 23:47 intro">
+<div id="introContent">
+<p id="introText" aria-live="polite"></p>
+<button id="introBegin" type="button">Bắt đầu</button>
+</div>
+</section>
 
 <div id="hud">
 
@@ -2453,6 +2512,103 @@ audio.currentTime+dur
 }
 
 let audio=null;
+
+
+/* =========================================================
+   INTRO — runs before the original participant-ID screen
+========================================================= */
+
+const introScreen=document.getElementById("introScreen");
+const introText=document.getElementById("introText");
+const introBegin=document.getElementById("introBegin");
+let introActive=true;
+let introTimer=null;
+
+function introTypeSound(){
+
+if(!introActive)
+return;
+
+/* Reuse the game's existing Web Audio helper. Browsers that disallow
+   autoplay simply ignore this safely via beep's existing error handling. */
+beep(118+Math.random()*32,.026,"square",.012)
+
+}
+
+function typeIntroLine(text,onComplete){
+
+const characters=Array.from(text);
+let index=0;
+introText.textContent="";
+
+const writeCharacter=()=>{
+
+if(!introActive)
+return;
+
+if(index>=characters.length){
+onComplete?.();
+return
+}
+
+const character=characters[index++];
+introText.textContent+=character;
+
+if(character.trim()&&Math.random()>.22)
+introTypeSound();
+
+introTimer=setTimeout(writeCharacter,46+Math.random()*20)
+
+};
+
+writeCharacter()
+
+}
+
+function startIntro(){
+
+typeIntroLine(
+"BẠN ĐÃ NHẬN ĐƯỢC MỘT THƯ ẨN DANH MỜI VỀ ĐIỀU TRA DỰ ÁN BỊ BỎ QUÊN “23:47”",
+()=>{
+
+introTimer=setTimeout(()=>{
+
+if(!introActive)
+return;
+
+introText.textContent="";
+
+typeIntroLine(
+"LIỆU ĐÓ CÓ PHẢI LÀ SỰ THẬT?",
+()=>{
+
+if(introActive)
+introBegin.classList.add("is-visible")
+
+}
+)
+
+},1700)
+
+}
+)
+
+}
+
+introBegin.addEventListener("click",()=>{
+
+if(!introActive)
+return;
+
+introActive=false;
+clearTimeout(introTimer);
+introScreen.classList.add("is-hidden");
+document.getElementById("start").style.display="grid";
+document.getElementById("participantIdInput").focus()
+
+});
+
+startIntro();
 
 
 /* GIỮ NGUYÊN */
