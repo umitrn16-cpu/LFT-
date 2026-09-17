@@ -2294,6 +2294,7 @@ let challenge2TrackStarted=false;
 let challenge2Attempt=0;
 let bookOrder=[];
 let bookIndex=0;
+let bookEarthquakeTimer=null;
 
 /* ROOM 02 / CHALLENGE 03 */
 let c3Active=false;
@@ -2460,17 +2461,19 @@ archive07HeldKey.position.set(.34,-.27,-.62);archive07HeldKey.rotation.set(-.25,
 function leaveArchiveRoom(){
 if(!archive07RoomKeyReceived){say("Cửa chỉ mở sau khi bạn nhận được chìa khóa Room 3.");return}
 enterHallway();
-clearTimeout(archive07HintTimer);
-archive07HintTimer=setTimeout(showArchiveHint,10000);
 logEvent("ARCHIVE_ROOM_EXITED_WITH_KEY");
 }
 
-function showArchiveHint(){
-if(currentRoom==="ARCHIVE_ROOM")return;
-let button=document.getElementById("archiveHintButton");
-if(!button){button=document.createElement("button");button.id="archiveHintButton";button.textContent="Hint";button.style.cssText="position:fixed;left:18px;top:66px;z-index:19;padding:9px 14px;border:1px solid #d4c786;background:rgba(24,31,31,.92);color:#f5edda;cursor:pointer";document.body.appendChild(button)}
-button.style.display="block";button.onclick=()=>{doc("HINT",'<div class="note" style="text-align:center">Bạn có chắc chắn là bạn đã tìm được đáp án cho câu trả lời chưa?</div>');logEvent("ARCHIVE_HINT_OPENED")};
-logEvent("ARCHIVE_HINT_AVAILABLE");
+function grantArchiveRoomKey(){
+if(archive07RoomKeyReceived)return;
+addItem("KEY 04");
+say("Bạn đã có chìa khóa mở cửa Phòng tài liệu.");
+clearTimeout(archive07HintTimer);
+archive07HintTimer=setTimeout(()=>{
+doc("XÁC NHẬN HOÀN THÀNH",'<div class="note" style="text-align:center">Bạn có chắc là đã hoàn thành xong?</div>');
+logEvent("ARCHIVE_COMPLETION_CONFIRMATION_SHOWN");
+},10000);
+logEvent("ARCHIVE_ROOM_KEY_GRANTED");
 }
 
 }
@@ -4648,12 +4651,14 @@ boardPapers.forEach(([y,z,h,w,tilt],i)=>{const paper=box("archive07BoardPaper"+i
 const boardCord=(name,points)=>{const geometry=new THREE.BufferGeometry().setFromPoints(points.map(([y,z])=>new THREE.Vector3(8.675,y,z)));const cord=new THREE.Line(geometry,new THREE.LineBasicMaterial({color:0xa31d20,transparent:true,opacity:.88}));cord.name=name;scene.add(cord)};
 boardCord("archive07CordA",[[3.25,3.82],[2.56,4.48],[3.15,5.22],[2.52,5.78],[3.15,5.88]]);boardCord("archive07CordB",[[1.94,4.15],[2.56,4.48],[1.96,5.42],[2.52,5.78]]);boardCord("archive07CordC",[[3.14,4.56],[2.55,5.13],[3.12,5.88]]);
 addInteract(workBoard,"Mở bảng công việc",()=>openArchive07WorkBoard());
-/* Phiếu đối chiếu duy nhất: dán ở mặt bên ngoài của tủ tài liệu đỏ (dãy E). */
+/* Tờ giấy tham khảo là vật thể độc lập trên tường; không phải Phiếu đối chiếu. */
+const wallReferenceNote=box("archiveWallReferenceNote",-8.87,2.30,1.45,.025,.82,.62,dustedPaper,false);
+const wallReferenceTexture=new THREE.TextureLoader().load("school-note-reference.png");
+wallReferenceTexture.colorSpace=THREE.SRGBColorSpace;wallReferenceNote.material.map=wallReferenceTexture;wallReferenceNote.material.needsUpdate=true;
+addInteract(wallReferenceNote,"Nhấn để xem",()=>doc("TỜ GIẤY DÁN TRÊN TƯỜNG",'<div class="note" style="text-align:center"><img src="school-note-reference.png" alt="Tờ giấy dán trên tường" style="display:block;max-width:100%;max-height:68vh;object-fit:contain;margin:auto"></div>'));
+
+/* Phiếu đối chiếu vẫn là vật thể riêng ở vị trí hiện tại trên tường. */
 const comparisonSheet=box("archive07ComparisonSheet",-6.00,2.18,2.755,.64,.78,.025,dustedPaper,false);
-/* The supplied school-note image is used as the actual paper texture, cropped
-   to the pinned note so it remains a physical object rather than a HUD item. */
-const comparisonTexture=new THREE.TextureLoader().load("school-note-reference.png");
-comparisonTexture.colorSpace=THREE.SRGBColorSpace;comparisonTexture.repeat.set(118/474,104/326);comparisonTexture.offset.set(184/474,1-(190+104)/326);comparisonSheet.material.map=comparisonTexture;comparisonSheet.material.needsUpdate=true;
 const comparisonSheetLabel=textSprite("Giấy đối chiếu",.22,"#3d342a");
 comparisonSheetLabel.position.set(-6.00,2.34,2.781);scene.add(comparisonSheetLabel);
 addInteract(comparisonSheet,"Xem Phiếu đối chiếu",()=>openArchive07Comparison());
@@ -4742,12 +4747,13 @@ doc("THÀNH CÔNG",'<div class="note" style="text-align:center"><b>Thành công 
 ========================================================= */
 function openArchive07WorkBoard(){
 const tasks=["NHẬP HỒ SƠ","PHÂN LOẠI","ĐỐI CHIẾU","RÀ SOÁT","HOÀN TẤT HỒ SƠ"],dates=["02/08","03/08","04/08","05/08","06/08"];
+const comparisonReady=archive07ComparisonViewed&&archive07HsOpened;
 const papers=[
  ["PHIẾU TIẾP NHẬN","02/08","Hồ sơ mới đã được tiếp nhận vào hệ thống.",0,8,7,-8],
  ["PHIẾU LƯU KHO","07/08","Tài liệu được đưa vào khu vực lưu trữ.",null,42,5,6],
  ["PHIẾU PHÂN LOẠI","03/08","Hồ sơ đã được chia thành các nhóm lưu trữ.",1,72,8,-5],
  ["PHIẾU KIỂM KÊ","08/08","Danh sách hồ sơ được cập nhật theo định kỳ.",null,25,27,10],
- ["PHIẾU ĐỐI CHIẾU","04/08","Thông tin hồ sơ đã được kiểm tra với danh sách.",2,57,29,-10],
+ ["PHIẾU ĐỐI CHIẾU","04/08",comparisonReady?"Trạng thái hoàn tất":"Trạng thái chờ hoàn tất",2,57,29,-10],
  ["PHIẾU BÀN GIAO","01/08","Tài liệu đã được chuyển đến bộ phận tiếp nhận.",null,4,49,4],
  ["PHIẾU RÀ SOÁT","05/08","Hồ sơ được kiểm tra trước khi hoàn tất.",3,75,54,7],
  ["PHIẾU XÁC NHẬN","09/08","Thông tin người tiếp nhận đã được ghi nhận.",null,38,55,-4],
@@ -4756,13 +4762,13 @@ const papers=[
  ];
 const taskRows=tasks.map((task,i)=>'<div class="a07-task-row" data-index="'+i+'">'+(archive07WorkSelections.has(i)?"✓":"□")+' <b>'+task+'</b><span>'+ (archive07WorkSelections.has(i)?dates[i]:"__/08")+'</span></div>').join('');
 const paperCards=papers.map(([title,date,text,task,left,top,angle],i)=>'<button class="a07-paper" data-paper="'+i+'" style="left:'+left+'%;top:'+top+'%;transform:rotate('+angle+'deg);z-index:'+(10+i)+'"><i class="a07-pin"></i><b>'+title+'</b><small>Ngày: '+date+'</small><em>'+text+'</em></button>').join('');
-doc("BẢNG PHÂN CÔNG CÔNG VIỆC – THÁNG 08/2018",'<style>#doc .panel.a07-board-panel{width:min(1120px,96vw);max-height:94vh;padding:18px;background:#38261a;color:#2c2119;border:10px solid #b58a58;box-shadow:0 25px 100px #000;animation:a07BoardOpen .2s ease-out}#doc .panel.a07-board-panel .eyebrow,#doc .panel.a07-board-panel>#docTitle{display:none}@keyframes a07BoardOpen{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}.a07-board{position:relative;min-height:630px;padding:22px 28px;background:radial-gradient(circle at 30% 30%,#8d6746,#68472f 74%);overflow:hidden;box-shadow:inset 0 0 45px #28180d}.a07-board-title{text-align:center;color:#f1e5cf;font:700 clamp(19px,2.4vw,31px) Georgia,serif;text-shadow:0 2px #342114;margin:0 0 17px}.a07-board-main{display:grid;grid-template-columns:31% 1fr;gap:28px;align-items:stretch}.a07-checklist{position:relative;background:#e8dfc8;padding:27px 22px 20px;min-height:475px;box-shadow:5px 8px 12px #20150d99;transform:rotate(-1.5deg);font-family:Georgia,serif}.a07-checklist:before{content:"";position:absolute;top:-9px;left:50%;width:16px;height:16px;background:#a51d20;border-radius:50%;box-shadow:0 3px 3px #0008;transform:translateX(-50%)}.a07-checklist h3{text-align:center;font-size:20px;margin:12px 0 28px}.a07-task-row{display:flex;justify-content:space-between;border-bottom:1px dotted #8d806b;padding:12px 0;font-size:14px}.a07-task-row span{font-weight:bold}.a07-papers{position:relative;min-height:535px;border:1px solid #513720;background:#785436cc;box-shadow:inset 0 0 28px #332114}.a07-paper{position:absolute;width:20%;min-width:112px;aspect-ratio:1;background:#eee5d1;border:0;color:#322921;padding:22px 10px 8px;display:flex;flex-direction:column;gap:9px;text-align:left;font-family:Georgia,serif;cursor:pointer;box-shadow:4px 7px 11px #20140d99}.a07-paper:hover,.a07-paper.a07-read{filter:brightness(1.05);box-shadow:5px 9px 15px #16100bbb}.a07-paper b{font-size:12px;line-height:1.1}.a07-paper small{font-size:11px}.a07-paper em{font-size:10px;line-height:1.25;font-style:normal}.a07-pin{position:absolute;width:14px;height:14px;border-radius:50%;top:-7px;left:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 28%,#ff7772 0 16%,#b41b20 31%,#630d12 100%);box-shadow:0 2px 3px #0008}.a07-board-status{color:#f7e9cc;text-align:center;min-height:26px;margin:12px 0 0;font-weight:bold}@media(max-width:750px){.a07-board{padding:14px}.a07-board-main{grid-template-columns:1fr}.a07-checklist{min-height:unset}.a07-papers{min-height:500px}.a07-paper{min-width:92px}.a07-paper b{font-size:10px}.a07-paper em{font-size:9px}}</style><div class="a07-board"><h3 class="a07-board-title">BẢNG PHÂN CÔNG CÔNG VIỆC – THÁNG 08/2018</h3><div class="a07-board-main"><section class="a07-checklist"><h3>CÁC CÔNG VIỆC<br>CẦN LÀM</h3>'+taskRows+'</section><section class="a07-papers">'+paperCards+'</section></div><p class="a07-board-status" id="a07WorkMessage">Hồ sơ chỉ hợp lệ khi đã hoàn tất đủ các bước.</p></div>');
+doc("BẢNG PHÂN CÔNG CÔNG VIỆC – THÁNG 08/2018",'<style>#doc .panel.a07-board-panel{width:min(1120px,96vw);max-height:94vh;padding:18px;background:#38261a;color:#2c2119;border:10px solid #b58a58;box-shadow:0 25px 100px #000;animation:a07BoardOpen .2s ease-out}#doc .panel.a07-board-panel .eyebrow,#doc .panel.a07-board-panel>#docTitle{display:none}@keyframes a07BoardOpen{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}.a07-board{position:relative;min-height:630px;padding:22px 28px;background:radial-gradient(circle at 30% 30%,#8d6746,#68472f 74%);overflow:hidden;box-shadow:inset 0 0 45px #28180d}.a07-board-title{text-align:center;color:#f1e5cf;font:700 clamp(19px,2.4vw,31px) Georgia,serif;text-shadow:0 2px #342114;margin:0 0 17px}.a07-board-main{display:grid;grid-template-columns:31% 1fr;gap:28px;align-items:stretch}.a07-checklist{position:relative;background:#e8dfc8;padding:27px 22px 20px;min-height:475px;box-shadow:5px 8px 12px #20150d99;transform:rotate(-1.5deg);font-family:Georgia,serif}.a07-checklist:before{content:"";position:absolute;top:-9px;left:50%;width:16px;height:16px;background:#a51d20;border-radius:50%;box-shadow:0 3px 3px #0008;transform:translateX(-50%)}.a07-checklist h3{text-align:center;font-size:20px;margin:12px 0 28px}.a07-task-row{display:flex;justify-content:space-between;border-bottom:1px dotted #8d806b;padding:12px 0;font-size:14px}.a07-task-row span{font-weight:bold}.a07-papers{position:relative;min-height:535px;border:1px solid #513720;background:#785436cc;box-shadow:inset 0 0 28px #332114}.a07-paper{position:absolute;width:20%;min-width:112px;aspect-ratio:1;background:#eee5d1;border:0;color:#322921;padding:22px 10px 8px;display:flex;flex-direction:column;gap:9px;text-align:left;font-family:Georgia,serif;cursor:pointer;box-shadow:4px 7px 11px #20140d99}.a07-paper:hover,.a07-paper.a07-read{filter:brightness(1.05);box-shadow:5px 9px 15px #16100bbb}.a07-paper b{font-size:12px;line-height:1.1}.a07-paper small{font-size:11px}.a07-paper em{font-size:10px;line-height:1.25;font-style:normal}.a07-pin{position:absolute;width:14px;height:14px;border-radius:50%;top:-7px;left:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 28%,#ff7772 0 16%,#b41b20 31%,#630d12 100%);box-shadow:0 2px 3px #0008}.a07-board-status{color:#f7e9cc;text-align:center;min-height:26px;margin:12px 0 0;font-weight:bold}@media(max-width:750px){.a07-board{padding:14px}.a07-board-main{grid-template-columns:1fr}.a07-checklist{min-height:unset}.a07-papers{min-height:500px}.a07-paper{min-width:92px}.a07-paper b{font-size:10px}.a07-paper em{font-size:9px}}</style><div class="a07-board"><h3 class="a07-board-title">BẢNG PHÂN CÔNG CÔNG VIỆC – THÁNG 08/2018</h3><div class="a07-board-main"><section class="a07-checklist"><h3>CÁC CÔNG VIỆC<br>CẦN LÀM</h3>'+taskRows+'</section><section class="a07-papers">'+paperCards+'</section></div><p class="a07-board-status" id="a07WorkMessage">Hồ sơ chỉ được xác nhận hoàn thành khi tất cả các bước trong quy trình đã được thực hiện đầy đủ.</p></div>');
 document.querySelector("#doc .panel").classList.add("a07-board-panel");document.querySelectorAll(".a07-paper").forEach(card=>card.onclick=()=>{card.classList.add("a07-read");const paper=papers[+card.dataset.paper],task=paper[3];if(task===null||archive07WorkSelections.has(task))return;if(task===2&&(!archive07ComparisonViewed||!archive07HsOpened)){document.getElementById("a07WorkMessage").textContent="ĐỐI CHIẾU cần xem Phiếu đối chiếu và hồ sơ HS-07 trước.";say("Bạn chưa đủ thông tin để hoàn thành ĐỐI CHIẾU.");return}archive07WorkSelections.add(task);const row=document.querySelector('.a07-task-row[data-index="'+task+'"]');row.innerHTML='✓ <b>'+tasks[task]+'</b><span>'+dates[task]+'</span>';logEvent("ARCHIVE07_WORK_PAPER_SELECTED",{task,paper:+card.dataset.paper});if(archive07WorkSelections.size===5&&!archive07WorkDone){archive07WorkDone=true;archive07State="SEARCH_HS07";document.querySelector(".a07-checklist").insertAdjacentHTML("beforeend",'<p style="margin:18px 0 0;color:#9d1f20;font-weight:bold;text-align:center">Màu đỏ là màu quan trọng.</p>');document.getElementById("a07WorkMessage").innerHTML="<b style=\"font-size:20px\">ĐÃ HOÀN TẤT QUY TRÌNH</b>";logEvent("ARCHIVE07_WORK_COMPLETED")}})
 }
 
 function openArchive07Comparison(){
 archive07ComparisonViewed=true;logEvent("ARCHIVE07_COMPARISON_VIEWED");
-doc("PHIẾU ĐỐI CHIẾU",'<div class="note"><b>PHIẾU ĐỐI CHIẾU</b><div style="width:min(100%,360px);height:300px;overflow:hidden;margin:16px auto;border:1px solid #a99b83"><img src="school-note-reference.png" alt="Phiếu đối chiếu dán trên tường" style="display:block;width:1440px;max-width:none;transform:translate(-560px,-576px);transform-origin:top left"></div><table style="border-collapse:collapse;margin:14px auto;text-align:center">'+[[2,7,4,9],[5,1,8,3],[6,0,2,7]].map(row=>'<tr>'+row.map(n=>'<td style="border:1px solid #555;padding:8px 14px">'+n+'</td>').join('')+'</tr>').join('')+'</table><small>Ngày lập: 07/09/2026<br>Mã lưu trữ: HS-07<br>Người phụ trách: __________</small></div>');
+doc("PHIẾU ĐỐI CHIẾU",'<div class="note"><b>PHIẾU ĐỐI CHIẾU</b><p>Đối chiếu mã vị trí trong hồ sơ HS-07 với bảng số bên dưới.</p><table style="border-collapse:collapse;margin:14px auto;text-align:center">'+[[2,7,4,9],[5,1,8,3],[6,0,2,7]].map(row=>'<tr>'+row.map(n=>'<td style="border:1px solid #555;padding:8px 14px">'+n+'</td>').join('')+'</tr>').join('')+'</table><small>Ngày lập: 07/09/2026<br>Mã lưu trữ: HS-07<br>Người phụ trách: __________</small></div>');
 }
 
 function openArchive07File(code){
@@ -4772,7 +4778,7 @@ archive07HsOpened=true;archive07State="PUZZLE_PASSWORD";logEvent("ARCHIVE07_HS07
 }
 
 function openArchive07Box(){
-if(!archive07HsOpened){say("Hộp đang khóa. Bạn cần tìm manh mối trong hồ sơ.");return}
+if(!archive07WorkDone){say("Hộp Red vẫn khóa. Bạn cần hoàn thành bảng phân công.");return}
 if(archive07BoxOpened){openArchive07HiddenChallenge();return}
 doc("HỘP ĐANG KHÓA — NHẬP MẬT KHẨU",'<div class="note" style="text-align:center"><b>HỘP LƯU TRỮ 07</b><br><br><input id="a07Password" inputmode="numeric" maxlength="4" style="font-size:25px;width:120px;text-align:center"><br><button class="btn" id="a07Unlock">MỞ HỘP</button><p id="a07PasswordMessage"></p></div>');document.getElementById("a07Unlock").onclick=()=>{if(document.getElementById("a07Password").value!=="2903"){document.getElementById("a07PasswordMessage").textContent="Mật khẩu không đúng.";return}archive07BoxOpened=true;archive07State="RED_FILTER_OBTAINED";scene.getObjectByName("archive07StorageGlass").rotation.z=-.8;scene.getObjectByName("archive07RedFilterPreview").visible=false;addItem("RED FILTER");document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>HỘP ĐÃ MỞ</b><br><br>Bạn đã tìm thấy một vật có thể làm thay đổi cách nhìn của mình.<br><br><button class="btn" id="a07EnterHidden">VÀO THỬ THÁCH ẨN</button></div>';document.getElementById("a07EnterHidden").onclick=()=>openArchive07HiddenChallenge();logEvent("ARCHIVE07_FILTER_OBTAINED")}}
 
@@ -4788,7 +4794,7 @@ const clearGlow=()=>panel.querySelectorAll(".a07cell.glow").forEach(cell=>cell.c
 filter.onpointerdown=e=>{if(archive07FilterUses>=3){msg.textContent="Red Filter đã hết lượt sử dụng.";return}dragging=true;chargedThisDrag=false;filter.style.transition="none";const rect=filter.getBoundingClientRect();offsetX=e.clientX-rect.left;offsetY=e.clientY-rect.top;filter.setPointerCapture(e.pointerId);filter.style.cursor="grabbing";filter.style.opacity=".74"};
 filter.onpointermove=e=>{if(!dragging)return;const rect=stage.getBoundingClientRect();filter.style.left=(e.clientX-rect.left-offsetX)+"px";filter.style.top=(e.clientY-rect.top-offsetY)+"px";filter.style.right="auto";filter.style.bottom="auto";if(aligned())reveal();else if(revealing){revealing=false;clearGlow();msg.textContent="Căn Red Filter phủ khít bàn cờ."}};
 filter.onpointerup=e=>{if(!dragging)return;dragging=false;filter.releasePointerCapture?.(e.pointerId);filter.style.cursor="grab";const sawHint=revealing;revealing=false;clearGlow();resetFilter();if(sawHint){msg.textContent=archive07FilterUses>=3?"Red Filter đã hết lượt. Hãy thao tác theo trí nhớ.":"Red Filter đã trượt sang góc. Hãy thao tác theo trí nhớ."}else msg.textContent="Red Filter chưa khớp vùng bàn cờ."};filter.onpointercancel=filter.onpointerup;
-panel.querySelectorAll(".a07cell").forEach(cell=>cell.onclick=()=>{if(revealing){msg.textContent="Buông Red Filter trước khi lật quân cờ.";return}const key=cell.dataset.cell,[row,col]=key.split("-").map(Number);cell.classList.toggle("black");cell.classList.toggle("white");logEvent("ARCHIVE07_CHESS_FLIP",{row,col,state:cell.classList.contains("black")?"black":"white"});const solved=[...panel.querySelectorAll(".a07cell")].every(c=>{const [r,k]=c.dataset.cell.split("-").map(Number);return c.classList.contains(archive07KeyPattern[r][k]?"black":"white")});if(solved){archive07State="CHALLENGE_COMPLETED";clearGlow();msg.innerHTML="<b style=\"font-size:22px\">ĐÃ HOÀN TẤT THỬ THÁCH</b>";addItem("KEY 04");logEvent("ARCHIVE07_COMPLETE",{key:"KEY 04"})}});panel.querySelector("#a07GiveUp").onclick=()=>{resetArchive07Challenge();panel.remove();modalOpen=false;renderer.domElement.requestPointerLock?.();say("Thử thách đã được đặt lại.")};panel.querySelector("#a07Close").onclick=()=>{panel.remove();modalOpen=false;renderer.domElement.requestPointerLock?.()};
+panel.querySelectorAll(".a07cell").forEach(cell=>cell.onclick=()=>{if(revealing){msg.textContent="Buông Red Filter trước khi lật quân cờ.";return}const key=cell.dataset.cell,[row,col]=key.split("-").map(Number);cell.classList.toggle("black");cell.classList.toggle("white");logEvent("ARCHIVE07_CHESS_FLIP",{row,col,state:cell.classList.contains("black")?"black":"white"});const solved=[...panel.querySelectorAll(".a07cell")].every(c=>{const [r,k]=c.dataset.cell.split("-").map(Number);return c.classList.contains(archive07KeyPattern[r][k]?"black":"white")});if(solved){archive07State="CHALLENGE_COMPLETED";clearGlow();msg.innerHTML="<b style=\"font-size:22px\">ĐÃ HOÀN TẤT THỬ THÁCH</b>";grantArchiveRoomKey();logEvent("ARCHIVE07_COMPLETE",{key:"KEY 04"})}});panel.querySelector("#a07GiveUp").onclick=()=>{resetArchive07Challenge();panel.remove();modalOpen=false;renderer.domElement.requestPointerLock?.();say("Thử thách đã được đặt lại.")};panel.querySelector("#a07Close").onclick=()=>{panel.remove();modalOpen=false;renderer.domElement.requestPointerLock?.()};
 }
 
 function resetArchive07Challenge(){
@@ -7005,7 +7011,7 @@ return
 const b=nearest();
 
 
-el.textContent=b?(b.key==="KeyH"?"H":"E")+" — "+b.label:"";
+el.textContent=b?(b.label==="Nhấn để xem"?"E - Nhấn để xem":(b.key==="KeyH"?"H":"E")+" — "+b.label):"";
 
 
 el.style.opacity=
@@ -7370,12 +7376,13 @@ book.disabled=true;
 setTimeout(()=>book.classList.add("falling"),i*35)
 });
 logEvent("CH2_EARTHQUAKE",{at_book:16});
-setTimeout(()=>{
+bookEarthquakeTimer=setTimeout(()=>{
 document.getElementById("bookChallenge").style.display="none";
 document.getElementById("bookFailReason").textContent="Tất cả sách đã rơi khỏi kệ.";
 document.getElementById("challenge2Fail").style.display="grid";
 shell.classList.remove("floorQuake");
-shelf.classList.remove("shelfShaking")
+shelf.classList.remove("shelfShaking");
+bookEarthquakeTimer=null;
 },1300)
 }
 
@@ -7448,6 +7455,36 @@ o.intensity=o.userData.c3Base*level
 });
 scene.background=new THREE.Color(level<.2?0x050709:0xf4f4f1);
 scene.fog=new THREE.FogExp2(level<.2?0x071012:0xdfe4e2,level<.2?.11:.055)
+}
+
+/* Bỏ cuộc tại phần ký hiệu là ngoại lệ: đưa toàn bộ Challenge 2 về nguyên trạng,
+   nhưng tuyệt đối không đụng tới vị trí hay tiến trình của các Room khác. */
+function resetEntireChallenge2(){
+clearTimeout(bookEarthquakeTimer);bookEarthquakeTimer=null;
+document.getElementById("bookChallenge").style.display="none";
+document.getElementById("challenge2Fail").style.display="none";
+document.getElementById("challenge2QuitConfirm").style.display="none";
+document.getElementById("c3SymbolGame").style.display="none";
+document.getElementById("c3SymbolQuitConfirm").style.display="none";
+document.getElementById("c3Message").style.display="none";
+document.getElementById("c3Countdown").style.display="none";
+document.getElementById("c3Fail").style.display="none";
+document.getElementById("c3Hud").style.display="none";
+document.getElementById("flashlightButton").style.display="none";
+document.getElementById("bookShelf").innerHTML="";
+document.getElementById("bookPile").innerHTML="";
+document.querySelector(".bookShell")?.classList.remove("floorQuake");
+document.getElementById("bookShelf").classList.remove("shelfShaking");
+bookOrder=[];bookIndex=0;challenge2Started=false;challenge2TrackStarted=false;challenge2Attempt=0;room2Challenge2Done=false;
+c3SymbolRun++;c3Sequence=[];c3SequenceIndex=0;c3Active=false;c3BatteryTaken=false;c3FlashlightTaken=false;c3LightOn=false;c3SymbolDone=false;c3Stage="idle";
+if(c3Npc)scene.remove(c3Npc);c3Npc=null;clearC3FinalNpcs();
+[c3Cabinet1,c3Cabinet2,c3Switch].forEach(object=>{if(object)scene.remove(object)});
+c3Cabinet1=null;c3Cabinet2=null;c3Switch=null;
+interactables=interactables.filter(entry=>!String(entry.mesh.name).startsWith("c3"));
+inventory=inventory.filter(item=>!["KEY 02","PIN","ĐÈN PIN"].includes(item));
+document.getElementById("items").textContent=inventory.join(" · ");
+setC3RoomLight(1);
+logEvent("CH2_FULL_RESET_FROM_SYMBOL_GIVE_UP");
 }
 
 function activateChallenge3(){
@@ -7542,14 +7579,11 @@ document.getElementById("cancelQuitC3Symbols").onclick=()=>{
 document.getElementById("c3SymbolQuitConfirm").style.display="none";
 };
 document.getElementById("confirmQuitC3Symbols").onclick=()=>{
-document.getElementById("c3SymbolQuitConfirm").style.display="none";
-document.getElementById("c3SymbolGame").style.display="none";
-c3SymbolRun++;c3Stage="idle";c3Sequence=[];c3SequenceIndex=0;modalOpen=false;playing=true;
-document.getElementById("flashlightButton").textContent="CHƠI LẠI KÝ HIỆU";
-document.getElementById("flashlightButton").style.display="block";
+resetEntireChallenge2();
+modalOpen=false;playing=true;
 renderer.domElement.requestPointerLock?.();
-say("Bạn đã rời khỏi thử thách ký hiệu.");
-logEvent("CH3_SYMBOLS_GIVE_UP");
+say("Challenge 2 đã được đặt lại từ đầu.");
+logEvent("CH3_SYMBOLS_GIVE_UP_RESET_CH2");
 };
 
 function flashC3Symbol(value){
