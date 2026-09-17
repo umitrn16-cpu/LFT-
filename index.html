@@ -4771,28 +4771,30 @@ document.getElementById("archiveA05Puzzle")?.remove();
 modalOpen=true;
 document.exitPointerLock?.();
 
+/* 17 mảnh polygon đi theo chính các nét kẻ trên bản hồng. 16 mảnh mang một
+   lỗ tròn tại vị trí chữ trên ảnh; chỉ mảnh 13 không có lỗ. */
 const pieces=[
- [[0,0],[320,0],[500,100],[160,270],[0,310]],
- [[320,0],[745,0],[660,260],[500,100]],
- [[745,0],[1040,0],[1040,380],[660,260]],
- [[0,310],[160,270],[160,440],[0,690]],
- [[160,270],[500,100],[590,440],[160,440]],
- [[500,100],[660,260],[590,440]],
- [[660,260],[1040,380],[730,510],[590,440]],
- [[0,690],[160,440],[260,440],[400,630],[330,720],[0,720]],
- [[160,440],[260,440],[400,630],[330,720],[160,720]],
- [[260,440],[590,440],[400,630]],
- [[590,440],[730,510],[730,720],[400,720],[400,630]],
- [[730,510],[1040,380],[1040,720],[730,720]],
- /* Năm nét cắt phụ tách theo các đường giao nhau trong ảnh tham khảo. */
- [[0,0],[170,0],[320,0],[160,270]],
- [[170,0],[320,0],[500,100],[330,80]],
- [[500,100],[745,0],[700,145],[660,260]],
- [[0,310],[160,270],[85,410],[0,460]],
- [[730,510],[875,455],[1040,380],[930,575]]
-].map((points,index)=>{
+ {points:[[0,0],[500,95],[160,270],[0,310]],hole:[205,205]},
+ {points:[[0,0],[320,0],[500,95]],hole:[360,115]},
+ {points:[[320,0],[745,0],[660,260],[500,95]],hole:[600,130]},
+ {points:[[745,0],[900,0],[875,155],[660,260]],hole:[879,102]},
+ {points:[[900,0],[1040,0],[1040,380],[875,155]],hole:[960,155]},
+ {points:[[0,310],[160,270],[160,440],[0,690]],hole:[118,382]},
+ {points:[[160,270],[500,95],[590,440],[160,440]],hole:[407,382]},
+ {points:[[500,95],[660,260],[590,440]],hole:[516,288]},
+ {points:[[660,260],[765,205],[1040,380],[730,510],[590,440]],hole:[682,298]},
+ {points:[[765,205],[1040,380],[765,455]],hole:[849,355]},
+ {points:[[590,440],[730,510],[730,720],[400,720],[400,630]],hole:[646,450]},
+ {points:[[0,690],[160,440],[260,440],[400,630],[330,720],[0,720]],hole:[245,619]},
+ {points:[[160,440],[260,440],[400,630],[330,720],[160,720]],hole:null},
+ {points:[[260,440],[590,440],[400,630]],hole:[398,523]},
+ {points:[[730,510],[1040,380],[1040,720],[730,720]],hole:[889,494]},
+ {points:[[400,630],[730,510],[730,720]],hole:[620,620]},
+ {points:[[875,455],[1040,380],[1040,720],[930,575]],hole:[980,660]}
+].map((piece,index)=>{
+const points=piece.points;
 const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);
-return {id:index,points,bounds:{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
+return {id:index,points,hole:piece.hole,bounds:{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}}
 });
 
 const panel=document.createElement("div");
@@ -4809,7 +4811,7 @@ panel.innerHTML='<style>'+
 '#archiveA05Puzzle .a05-tray{min-height:420px;padding:13px;border:1px solid #d4c78655;background:#0b1112}'+
 '#archiveA05Puzzle .a05-tray h3{margin:0 0 10px;color:#d4c786;font-size:15px;letter-spacing:.08em}'+
 '#archiveA05Puzzle .a05-pieces{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center}'+
-'#archiveA05Puzzle .a05-piece{border:1px solid #f3d4df66;background:#d977b0;cursor:grab;padding:0;box-shadow:0 5px 12px #0008;transition:transform .16s,filter .16s}'+
+'#archiveA05Puzzle .a05-piece{border:0;background:transparent;cursor:grab;padding:0;filter:drop-shadow(0 5px 7px #0009);transition:transform .16s,filter .16s}'+
 '#archiveA05Puzzle .a05-piece:hover{transform:translateY(-3px) rotate(-1deg);filter:brightness(1.08)}'+
 '#archiveA05Puzzle .a05-piece:active{cursor:grabbing}'+
 '#archiveA05Puzzle .a05-piece svg{display:block;width:100%;height:100%}'+
@@ -4825,8 +4827,10 @@ document.body.appendChild(panel);
 const svgFor=(piece,placed)=>{
 const {x,y,w,h}=piece.bounds,points=piece.points.map(p=>p.join(",")).join(" ");
 const clip="a05clip"+piece.id+(placed?"b":"t");
+const mask="a05mask"+piece.id+(placed?"b":"t");
 const viewBox=placed?"0 0 1040 720":x+" "+y+" "+Math.max(w,1)+" "+Math.max(h,1);
-return '<svg viewBox="'+viewBox+'" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="'+clip+'"><polygon points="'+points+'"/></clipPath></defs><image href="archive-a05-pink-pieces.png" x="0" y="0" width="1040" height="720" preserveAspectRatio="none" clip-path="url(#'+clip+')"/></svg>'
+const hole=piece.hole?'<circle cx="'+piece.hole[0]+'" cy="'+piece.hole[1]+'" r="22" fill="#000"/>':'';
+return '<svg viewBox="'+viewBox+'" preserveAspectRatio="none" aria-hidden="true"><defs><clipPath id="'+clip+'"><polygon points="'+points+'"/></clipPath><mask id="'+mask+'"><rect width="1040" height="720" fill="#fff"/>'+hole+'</mask></defs><image href="archive-a05-pink-pieces.png" x="0" y="0" width="1040" height="720" preserveAspectRatio="none" clip-path="url(#'+clip+')" mask="url(#'+mask+')"/></svg>'
 };
 const tray=panel.querySelector("#a05Pieces"),board=panel.querySelector("#a05Board"),status=panel.querySelector("#a05Status"),placed=new Set();
 const makeTrayPiece=piece=>{
