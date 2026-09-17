@@ -1003,6 +1003,7 @@ margin-bottom:8px
 #unlockBanner.archive-key-notice{
 min-width:min(780px,calc(100vw - 48px));
 padding:42px 46px;
+z-index:200;
 border-color:#d4c786;
 box-shadow:0 30px 110px #000,0 0 38px rgba(212,199,134,.28)
 }
@@ -2465,21 +2466,27 @@ archive07HeldKey.position.set(.34,-.27,-.62);archive07HeldKey.rotation.set(-.25,
 }
 
 function leaveArchiveRoom(){
-if(!archive07RoomKeyReceived){say("Cửa chỉ mở sau khi bạn nhận được chìa khóa Room 3.");return}
+if(!archive07RoomKeyReceived&&!inventory.includes("CHÌA KHÓA ROOM 3")){say("Cửa chỉ mở sau khi bạn nhận được chìa khóa Room 3.");return}
 enterHallway();
 logEvent("ARCHIVE_ROOM_EXITED_WITH_KEY");
 }
 
 function grantArchiveRoomKey(){
-if(archive07RoomKeyReceived)return;
-addItem("KEY 04");
+/* Hoàn thành Red Filter luôn phải khôi phục quyền điều khiển rồi mới trao chìa khóa.
+   Điều này cũng tự sửa state nếu người chơi quay lại phòng sau một overlay cũ. */
+document.getElementById("archive07Hidden")?.remove();
+modalOpen=false;
 const keyBanner=document.getElementById("unlockBanner");
-keyBanner.querySelector("h2").textContent="Bạn đã có chìa khóa mở cửa Phòng tài liệu.";
+keyBanner.querySelector("h2").textContent="Bạn đã có chìa khóa Phòng Tài Liệu.";
 keyBanner.querySelector("p").textContent="Cửa Phòng tài liệu đã được mở khóa.";
 keyBanner.classList.add("archive-key-notice");
 keyBanner.style.display="block";
+/* Chỉ trao key sau khi thông báo đã được hiển thị. */
+if(!inventory.includes("CHÌA KHÓA ROOM 3"))addItem("KEY 04");
+else{archive07RoomKeyReceived=true;showArchiveHeldKey()}
+renderer.domElement.requestPointerLock?.();
 setTimeout(()=>{keyBanner.style.display="none";keyBanner.classList.remove("archive-key-notice")},3500);
-say("Bạn đã có chìa khóa mở cửa Phòng tài liệu.");
+say("Bạn đã có chìa khóa Phòng Tài Liệu.");
 clearTimeout(archive07HintTimer);
 archive07HintTimer=setTimeout(()=>{
 doc("XÁC NHẬN HOÀN THÀNH",'<div class="note" style="text-align:center">Bạn có chắc chắn là bạn đã tìm được đáp án cho câu trả lời chưa?</div>');
