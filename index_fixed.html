@@ -47,7 +47,7 @@ justify-content:center
 
 #introText{
 margin:0;
-font:700 clamp(25px,4.4vw,52px)/1.35 "Times New Roman",Times,serif;
+font:700 clamp(22px,3.8vw,45px)/1.35 "Times New Roman",Times,serif;
 letter-spacing:.07em;
 text-shadow:0 0 18px rgba(241,234,216,.16)
 }
@@ -1140,23 +1140,9 @@ SỐ LẦN CHỌN SÁCH: <b id="archiveBookCount">0</b>
 
 <div class="panel">
 
-<div class="eyebrow">
-ASTERIA SCHOOL / ROOM 01 · CINEMATIC MEMORY
-</div>
-
 <h1>
-THE LAST<br>
-<span>BELL</span>
+23:47
 </h1>
-
-<p>
-23:47. Lớp học 10A không có người. Một cơn mưa vừa dứt.
-Ánh đèn huỳnh quang chập chờn, đồng hồ treo tường đứng im.
-</p>
-
-<p>
-Bạn không nhớ mình đã vào đây bằng cách nào.
-</p>
 
 <div style="margin:16px 0 6px">
 
@@ -1580,6 +1566,7 @@ KHÔNG THỬ LẠI
 <div id="c3Hud">CHALLENGE 03<br><span id="c3HudText">Tìm nguồn sáng.</span><div id="c3Health"></div></div>
 
 <div id="c3SymbolGame">
+<button id="c3SymbolGiveUp" type="button" style="position:absolute;left:18px;top:18px;padding:9px 13px;border:1px solid #a65b64;background:rgba(52,18,24,.9);color:#ffd9dd;cursor:pointer">BỎ CUỘC</button>
 <div class="c3Shell">
 <div class="eyebrow" style="color:#d4c786">ROOM 02 / CHALLENGE 03 · GIAI ĐOẠN 1</div>
 <h2 style="color:#f4efdc">GHI NHỚ KÝ HIỆU</h2>
@@ -1590,6 +1577,10 @@ KHÔNG THỬ LẠI
 <button class="c3Symbol" data-c3="3">◆</button><button class="c3Symbol" data-c3="4">★</button><button class="c3Symbol" data-c3="5">♥</button>
 </div>
 </div>
+
+<div id="c3SymbolQuitConfirm" class="overlay" style="display:none;z-index:95"><div class="panel" style="max-width:520px;text-align:center">
+<h2>Bạn có chắc muốn bỏ cuộc?</h2><div class="failChoices"><button class="btn" id="confirmQuitC3Symbols" type="button">CÓ</button><button class="btn" id="cancelQuitC3Symbols" type="button" style="background:#ddd7c7">KHÔNG</button></div>
+</div></div>
 </div>
 
 <div id="c3Message"><div id="c3MessageText"></div></div>
@@ -1617,7 +1608,7 @@ Cửa đã bị khóa.
 style="
 font-size:.62em;
 color:#d4c786">
-Cần sưu tập đủ 4 chiếc chìa khóa để mở.
+Cần sưu tập đủ 3 chiếc chìa khóa để mở.
 </span>
 
 </div>
@@ -2251,7 +2242,8 @@ let archiveRecorderVoiceToken=0;
 let archiveCollisionRects=[];
 let archiveBookSelections=0;
 /* Challenge Hộp lưu trữ 07 — state độc lập trong Room 3. */
-let archive07State="WORK_TABLE",archive07WorkDone=false,archive07HsOpened=false,archive07BoxOpened=false,archive07FilterUses=0,archive07Flipped=new Set(),archive07RevealTimer=null;
+let archive07State="WORK_TABLE",archive07WorkDone=false,archive07HsOpened=false,archive07ComparisonViewed=false,archive07BoxOpened=false,archive07FilterUses=0,archive07Flipped=new Set(),archive07RevealTimer=null;
+let archive07RoomKeyReceived=false,archive07HintTimer=null,archive07HeldKey=null;
 let archive07WorkSelections=new Set();
 let archive07ChessPieces=[];
 const archive07TargetCells=new Set(["0-0","0-1","0-4","0-5","1-1","1-2","1-4","1-5","2-1","2-3","2-5","3-1","3-2","3-3","3-5","4-0","4-2","4-5","5-0","5-1","5-5"]);
@@ -2312,6 +2304,7 @@ let c3SymbolDone=false;
 let c3Stage="idle";
 let c3Sequence=[];
 let c3SequenceIndex=0;
+let c3SymbolRun=0;
 let c3Npc=null;
 let c3NpcFake=false;
 let c3FinalNpcs=[];
@@ -2437,6 +2430,12 @@ document.exitPointerLock?.()
 
 function addItem(x){
 
+if(x==="KEY 04"){
+x="CHÌA KHÓA ROOM 3";
+archive07RoomKeyReceived=true;
+showArchiveHeldKey();
+}
+
 if(!inventory.includes(x)){
 
 inventory.push(x);
@@ -2446,6 +2445,32 @@ document.getElementById(
 ).textContent=
 inventory.join(" · ")
 
+}
+
+function showArchiveHeldKey(){
+if(archive07HeldKey)return;
+archive07HeldKey=new THREE.Group();
+const gold=new THREE.MeshStandardMaterial({color:0xc9a238,metalness:.72,roughness:.25});
+const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.035,.035,.34,10),gold);shaft.rotation.z=Math.PI/2;archive07HeldKey.add(shaft);
+const bow=new THREE.Mesh(new THREE.TorusGeometry(.10,.028,8,16),gold);bow.position.x=-.19;bow.rotation.y=Math.PI/2;archive07HeldKey.add(bow);
+for(const y of[-.055,.055]){const tooth=new THREE.Mesh(new THREE.BoxGeometry(.09,.06,.04),gold);tooth.position.set(.16,y,0);archive07HeldKey.add(tooth)}
+archive07HeldKey.position.set(.34,-.27,-.62);archive07HeldKey.rotation.set(-.25,.55,-.38);camera.add(archive07HeldKey);
+}
+
+function leaveArchiveRoom(){
+if(!archive07RoomKeyReceived){say("Cửa chỉ mở sau khi bạn nhận được chìa khóa Room 3.");return}
+enterHallway();
+clearTimeout(archive07HintTimer);
+archive07HintTimer=setTimeout(showArchiveHint,10000);
+logEvent("ARCHIVE_ROOM_EXITED_WITH_KEY");
+}
+
+function showArchiveHint(){
+if(currentRoom==="ARCHIVE_ROOM")return;
+let button=document.getElementById("archiveHintButton");
+if(!button){button=document.createElement("button");button.id="archiveHintButton";button.textContent="Hint";button.style.cssText="position:fixed;left:18px;top:66px;z-index:19;padding:9px 14px;border:1px solid #d4c786;background:rgba(24,31,31,.92);color:#f5edda;cursor:pointer";document.body.appendChild(button)}
+button.style.display="block";button.onclick=()=>{doc("HINT",'<div class="note" style="text-align:center">Bạn có chắc chắn là bạn đã tìm được đáp án cho câu trả lời chưa?</div>');logEvent("ARCHIVE_HINT_OPENED")};
+logEvent("ARCHIVE_HINT_AVAILABLE");
 }
 
 }
@@ -2579,7 +2604,7 @@ return;
 introText.textContent="";
 
 typeIntroLine(
-"LIỆU ĐÓ CÓ PHẢI LÀ SỰ THẬT?",
+"LIỆU ĐIỀU ĐÓ CÓ PHẢI LÀ SỰ THẬT?",
 ()=>{
 
 if(introActive)
@@ -4466,7 +4491,7 @@ archiveB04Opened=false;
 archiveOnTile5=false;
 archiveCollisionRects=[];
 archiveBookSelections=0;
-archive07State="WORK_TABLE";archive07WorkDone=false;archive07WorkSelections=new Set();archive07HsOpened=false;archive07BoxOpened=false;archive07FilterUses=0;archive07Flipped=new Set();archive07ChessPieces=[];clearTimeout(archive07RevealTimer);
+archive07State="WORK_TABLE";archive07WorkDone=false;archive07WorkSelections=new Set();archive07HsOpened=false;archive07ComparisonViewed=false;archive07BoxOpened=false;archive07FilterUses=0;archive07Flipped=new Set();archive07ChessPieces=[];clearTimeout(archive07RevealTimer);
 document.getElementById("archiveBookCount").textContent="0";
 document.getElementById("archiveBookCounter").style.display="block";
 
@@ -4482,7 +4507,7 @@ box("archiveFloor",0,-.08,0,18,.16,16,oldFloor);box("archiveCeiling",0,4.9,0,18,
 
 /* Cửa sổ bám bụi ở tường trái. */
 for(const z of[-3.4,.4,4.1]){box("archiveWindowFrame",-8.87,2.85,z,.08,2.15,1.9,M.ink,false);box("archiveWindow",-8.80,2.85,z,.025,1.78,1.54,mat(0x9fb4b4,.2,.04,0xc4d8d6,.18),false);box("archiveWindowV",-8.76,2.85,z,.03,1.84,.06,rust,false);box("archiveWindowH",-8.76,2.85,z,.03,.06,1.62,rust,false)}
-box("archiveEntryFrameL",-1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntryFrameR",1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntry",0,2.1,7.87,.14,4,2.1,mat(0x4c5049,.82,.18));
+box("archiveEntryFrameL",-1.28,2.25,7.86,.22,4.4,.24,M.ink);box("archiveEntryFrameR",1.28,2.25,7.86,.22,4.4,.24,M.ink);const archiveExitDoor=box("archiveEntry",0,2.1,7.87,.14,4,2.1,mat(0x4c5049,.82,.18));addInteract(archiveExitDoor,"Rời Phòng tài liệu",()=>leaveArchiveRoom());
 
 const aisleColors=[0x873d3d,0xa3843d,0xc6c3b5,0x666a68,0x496f5d],aisleLetters=["E","F","G","H","I"];
 /* Mỗi tầng có đủ 01–26, được xáo vị trí cố định để không xuất hiện theo thứ tự. */
@@ -4625,6 +4650,10 @@ boardCord("archive07CordA",[[3.25,3.82],[2.56,4.48],[3.15,5.22],[2.52,5.78],[3.1
 addInteract(workBoard,"Mở bảng công việc",()=>openArchive07WorkBoard());
 /* Phiếu đối chiếu duy nhất: dán ở mặt bên ngoài của tủ tài liệu đỏ (dãy E). */
 const comparisonSheet=box("archive07ComparisonSheet",-6.00,2.18,2.755,.64,.78,.025,dustedPaper,false);
+/* The supplied school-note image is used as the actual paper texture, cropped
+   to the pinned note so it remains a physical object rather than a HUD item. */
+const comparisonTexture=new THREE.TextureLoader().load("school-note-reference.png");
+comparisonTexture.colorSpace=THREE.SRGBColorSpace;comparisonTexture.repeat.set(118/474,104/326);comparisonTexture.offset.set(184/474,1-(190+104)/326);comparisonSheet.material.map=comparisonTexture;comparisonSheet.material.needsUpdate=true;
 const comparisonSheetLabel=textSprite("Giấy đối chiếu",.22,"#3d342a");
 comparisonSheetLabel.position.set(-6.00,2.34,2.781);scene.add(comparisonSheetLabel);
 addInteract(comparisonSheet,"Xem Phiếu đối chiếu",()=>openArchive07Comparison());
@@ -4695,7 +4724,7 @@ doc("TÀI LIỆU "+fileCode,'<div class="note" style="text-align:center"><div st
 
 function openArchiveB02(){
 if(!archiveHiddenUnlocked){say("Hồ sơ này chỉ mở sau khi thử thách ký hiệu được mở khóa.");return}
-doc("HỒ SƠ B02",'<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:105px;background:#53635c;color:#f5efdc;font-size:28px"><b>B02</b></div><br><button class="btn" id="archiveB02Back">MẶT SAU</button></div>');document.getElementById("archiveB02Back").onclick=()=>{archiveB02Opened=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:72px;background:#59645e;color:#f5efdc;font-size:42px"><div style="margin-bottom:14px">◆</div><div style="padding:0 14px;font:20px/1.7 Arial,\'Segoe UI\',sans-serif">Nếu đã tìm thấy hồ sơ này, hãy tiếp tục đến nơi được đánh dấu.</div></div></div>';logEvent("ARCHIVE_B02_OPENED")}
+doc("HỒ SƠ B02",'<div class="note" style="text-align:center"><div style="width:190px;height:250px;margin:auto;padding-top:105px;background:#53635c;color:#f5efdc;font-size:28px"><b>B02</b></div><br><button class="btn" id="archiveB02Back">MẶT SAU</button></div>');document.getElementById("archiveB02Back").onclick=()=>{archiveB02Opened=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><div style="box-sizing:border-box;width:190px;height:250px;margin:auto;padding:20px 15px;background:#59645e;color:#f5efdc;display:flex;flex-direction:column;align-items:center"><div style="font-size:38px;line-height:1;margin:0 0 15px">◆</div><div style="font:600 17px/1.55 Arial,\'Segoe UI\',sans-serif;letter-spacing:.01em;max-width:160px">Nếu đã tìm thấy hồ sơ này, hãy tiếp tục đến nơi được đánh dấu.</div></div></div>';logEvent("ARCHIVE_B02_OPENED")}
 }
 
 function openArchiveB04(){
@@ -4728,18 +4757,18 @@ const papers=[
 const taskRows=tasks.map((task,i)=>'<div class="a07-task-row" data-index="'+i+'">'+(archive07WorkSelections.has(i)?"✓":"□")+' <b>'+task+'</b><span>'+ (archive07WorkSelections.has(i)?dates[i]:"__/08")+'</span></div>').join('');
 const paperCards=papers.map(([title,date,text,task,left,top,angle],i)=>'<button class="a07-paper" data-paper="'+i+'" style="left:'+left+'%;top:'+top+'%;transform:rotate('+angle+'deg);z-index:'+(10+i)+'"><i class="a07-pin"></i><b>'+title+'</b><small>Ngày: '+date+'</small><em>'+text+'</em></button>').join('');
 doc("BẢNG PHÂN CÔNG CÔNG VIỆC – THÁNG 08/2018",'<style>#doc .panel.a07-board-panel{width:min(1120px,96vw);max-height:94vh;padding:18px;background:#38261a;color:#2c2119;border:10px solid #b58a58;box-shadow:0 25px 100px #000;animation:a07BoardOpen .2s ease-out}#doc .panel.a07-board-panel .eyebrow,#doc .panel.a07-board-panel>#docTitle{display:none}@keyframes a07BoardOpen{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}.a07-board{position:relative;min-height:630px;padding:22px 28px;background:radial-gradient(circle at 30% 30%,#8d6746,#68472f 74%);overflow:hidden;box-shadow:inset 0 0 45px #28180d}.a07-board-title{text-align:center;color:#f1e5cf;font:700 clamp(19px,2.4vw,31px) Georgia,serif;text-shadow:0 2px #342114;margin:0 0 17px}.a07-board-main{display:grid;grid-template-columns:31% 1fr;gap:28px;align-items:stretch}.a07-checklist{position:relative;background:#e8dfc8;padding:27px 22px 20px;min-height:475px;box-shadow:5px 8px 12px #20150d99;transform:rotate(-1.5deg);font-family:Georgia,serif}.a07-checklist:before{content:"";position:absolute;top:-9px;left:50%;width:16px;height:16px;background:#a51d20;border-radius:50%;box-shadow:0 3px 3px #0008;transform:translateX(-50%)}.a07-checklist h3{text-align:center;font-size:20px;margin:12px 0 28px}.a07-task-row{display:flex;justify-content:space-between;border-bottom:1px dotted #8d806b;padding:12px 0;font-size:14px}.a07-task-row span{font-weight:bold}.a07-papers{position:relative;min-height:535px;border:1px solid #513720;background:#785436cc;box-shadow:inset 0 0 28px #332114}.a07-paper{position:absolute;width:20%;min-width:112px;aspect-ratio:1;background:#eee5d1;border:0;color:#322921;padding:22px 10px 8px;display:flex;flex-direction:column;gap:9px;text-align:left;font-family:Georgia,serif;cursor:pointer;box-shadow:4px 7px 11px #20140d99}.a07-paper:hover,.a07-paper.a07-read{filter:brightness(1.05);box-shadow:5px 9px 15px #16100bbb}.a07-paper b{font-size:12px;line-height:1.1}.a07-paper small{font-size:11px}.a07-paper em{font-size:10px;line-height:1.25;font-style:normal}.a07-pin{position:absolute;width:14px;height:14px;border-radius:50%;top:-7px;left:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 28%,#ff7772 0 16%,#b41b20 31%,#630d12 100%);box-shadow:0 2px 3px #0008}.a07-board-status{color:#f7e9cc;text-align:center;min-height:26px;margin:12px 0 0;font-weight:bold}@media(max-width:750px){.a07-board{padding:14px}.a07-board-main{grid-template-columns:1fr}.a07-checklist{min-height:unset}.a07-papers{min-height:500px}.a07-paper{min-width:92px}.a07-paper b{font-size:10px}.a07-paper em{font-size:9px}}</style><div class="a07-board"><h3 class="a07-board-title">BẢNG PHÂN CÔNG CÔNG VIỆC – THÁNG 08/2018</h3><div class="a07-board-main"><section class="a07-checklist"><h3>CÁC CÔNG VIỆC<br>CẦN LÀM</h3>'+taskRows+'</section><section class="a07-papers">'+paperCards+'</section></div><p class="a07-board-status" id="a07WorkMessage">Hồ sơ chỉ hợp lệ khi đã hoàn tất đủ các bước.</p></div>');
-document.querySelector("#doc .panel").classList.add("a07-board-panel");document.querySelectorAll(".a07-paper").forEach(card=>card.onclick=()=>{card.classList.add("a07-read");const paper=papers[+card.dataset.paper],task=paper[3];if(task===null||archive07WorkSelections.has(task))return;archive07WorkSelections.add(task);const row=document.querySelector('.a07-task-row[data-index="'+task+'"]');row.innerHTML='✓ <b>'+tasks[task]+'</b><span>'+dates[task]+'</span>';logEvent("ARCHIVE07_WORK_PAPER_SELECTED",{task,paper:+card.dataset.paper});if(archive07WorkSelections.size===5&&!archive07WorkDone){archive07WorkDone=true;archive07State="SEARCH_HS07";document.getElementById("a07WorkMessage").innerHTML="<b style=\"font-size:20px\">ĐÃ HOÀN TẤT QUY TRÌNH</b>";logEvent("ARCHIVE07_WORK_COMPLETED")}})
+document.querySelector("#doc .panel").classList.add("a07-board-panel");document.querySelectorAll(".a07-paper").forEach(card=>card.onclick=()=>{card.classList.add("a07-read");const paper=papers[+card.dataset.paper],task=paper[3];if(task===null||archive07WorkSelections.has(task))return;if(task===2&&(!archive07ComparisonViewed||!archive07HsOpened)){document.getElementById("a07WorkMessage").textContent="ĐỐI CHIẾU cần xem Phiếu đối chiếu và hồ sơ HS-07 trước.";say("Bạn chưa đủ thông tin để hoàn thành ĐỐI CHIẾU.");return}archive07WorkSelections.add(task);const row=document.querySelector('.a07-task-row[data-index="'+task+'"]');row.innerHTML='✓ <b>'+tasks[task]+'</b><span>'+dates[task]+'</span>';logEvent("ARCHIVE07_WORK_PAPER_SELECTED",{task,paper:+card.dataset.paper});if(archive07WorkSelections.size===5&&!archive07WorkDone){archive07WorkDone=true;archive07State="SEARCH_HS07";document.querySelector(".a07-checklist").insertAdjacentHTML("beforeend",'<p style="margin:18px 0 0;color:#9d1f20;font-weight:bold;text-align:center">Màu đỏ là màu quan trọng.</p>');document.getElementById("a07WorkMessage").innerHTML="<b style=\"font-size:20px\">ĐÃ HOÀN TẤT QUY TRÌNH</b>";logEvent("ARCHIVE07_WORK_COMPLETED")}})
 }
 
 function openArchive07Comparison(){
-if(!archive07WorkDone){say("Hồ sơ chỉ hợp lệ khi đã hoàn tất đủ các bước.");return}
-doc("PHIẾU ĐỐI CHIẾU",'<div class="note"><b>PHIẾU ĐỐI CHIẾU</b><table style="border-collapse:collapse;margin:14px auto;text-align:center">'+[[2,7,4,9],[5,1,8,3],[6,0,2,7]].map(row=>'<tr>'+row.map(n=>'<td style="border:1px solid #555;padding:8px 14px">'+n+'</td>').join('')+'</tr>').join('')+'</table><small>Ngày lập: 07/09/2026<br>Mã lưu trữ: HS-07<br>Người phụ trách: __________</small></div>');
+archive07ComparisonViewed=true;logEvent("ARCHIVE07_COMPARISON_VIEWED");
+doc("PHIẾU ĐỐI CHIẾU",'<div class="note"><b>PHIẾU ĐỐI CHIẾU</b><div style="width:min(100%,360px);height:300px;overflow:hidden;margin:16px auto;border:1px solid #a99b83"><img src="school-note-reference.png" alt="Phiếu đối chiếu dán trên tường" style="display:block;width:1440px;max-width:none;transform:translate(-560px,-576px);transform-origin:top left"></div><table style="border-collapse:collapse;margin:14px auto;text-align:center">'+[[2,7,4,9],[5,1,8,3],[6,0,2,7]].map(row=>'<tr>'+row.map(n=>'<td style="border:1px solid #555;padding:8px 14px">'+n+'</td>').join('')+'</tr>').join('')+'</table><small>Ngày lập: 07/09/2026<br>Mã lưu trữ: HS-07<br>Người phụ trách: __________</small></div>');
 }
 
 function openArchive07File(code){
-if(!archive07WorkDone){say("Hồ sơ chỉ hợp lệ khi chưa hoàn tất quy trình.");return}
+if(!archive07ComparisonViewed){say("Bạn cần xem Phiếu đối chiếu trước.");return}
 if(code!=="HS-07"){doc("HỒ SƠ "+code,'<div class="note">Hồ sơ lưu trữ thông thường. Không có mã vị trí cần đối chiếu.</div>');return}
-archive07HsOpened=true;archive07State="PUZZLE_PASSWORD";doc("HỒ SƠ HS-07",'<div class="note"><b>Mã vị trí:</b> A1<br><b>Mã kiểm tra:</b> D1<br><b>Mã rà soát:</b> B3<br><b>Mã lưu trữ:</b> D2<br><br><i>Đối chiếu các vị trí này với Phiếu đối chiếu.</i></div>');logEvent("ARCHIVE07_HS07_OPENED")
+archive07HsOpened=true;archive07State="PUZZLE_PASSWORD";logEvent("ARCHIVE07_HS07_VIEWED");doc("HỒ SƠ HS-07",'<div class="note"><b>Mã vị trí:</b> A1<br><b>Mã kiểm tra:</b> D1<br><b>Mã rà soát:</b> B3<br><b>Mã lưu trữ:</b> D2<br><br><i>Đối chiếu các vị trí này với Phiếu đối chiếu.</i></div>');logEvent("ARCHIVE07_HS07_OPENED")
 }
 
 function openArchive07Box(){
@@ -7487,6 +7516,7 @@ logEvent("CH3_LIGHTS_ON")
 
 function startC3Symbols(){
 c3Stage="symbols";
+const run=++c3SymbolRun;
 modalOpen=true;
 document.exitPointerLock?.();
 document.getElementById("c3SymbolGame").style.display="grid";
@@ -7495,13 +7525,32 @@ c3SequenceIndex=0;
 document.getElementById("c3Sequence").textContent="● ▲ ■ ◆ ★ ♥";
 document.getElementById("c3SymbolRule").textContent="Quan sát thứ tự các ký hiệu sáng lên.";
 document.querySelectorAll(".c3Symbol").forEach(b=>b.disabled=true);
-c3Sequence.forEach((value,index)=>setTimeout(()=>flashC3Symbol(value),600+index*780));
+c3Sequence.forEach((value,index)=>setTimeout(()=>{if(c3Stage==="symbols"&&run===c3SymbolRun)flashC3Symbol(value)},600+index*780));
 setTimeout(()=>{
+if(run!==c3SymbolRun||c3Stage!=="symbols")return;
 document.getElementById("c3Sequence").textContent="Hãy lặp lại thứ tự.";
 document.getElementById("c3SymbolRule").textContent="Bấm từng ký hiệu theo đúng trình tự vừa thấy.";
 document.querySelectorAll(".c3Symbol").forEach(b=>b.disabled=false)
 },750+c3Sequence.length*780)
 }
+
+document.getElementById("c3SymbolGiveUp").onclick=()=>{
+if(c3Stage!=="symbols")return;
+document.getElementById("c3SymbolQuitConfirm").style.display="grid";
+};
+document.getElementById("cancelQuitC3Symbols").onclick=()=>{
+document.getElementById("c3SymbolQuitConfirm").style.display="none";
+};
+document.getElementById("confirmQuitC3Symbols").onclick=()=>{
+document.getElementById("c3SymbolQuitConfirm").style.display="none";
+document.getElementById("c3SymbolGame").style.display="none";
+c3SymbolRun++;c3Stage="idle";c3Sequence=[];c3SequenceIndex=0;modalOpen=false;playing=true;
+document.getElementById("flashlightButton").textContent="CHƠI LẠI KÝ HIỆU";
+document.getElementById("flashlightButton").style.display="block";
+renderer.domElement.requestPointerLock?.();
+say("Bạn đã rời khỏi thử thách ký hiệu.");
+logEvent("CH3_SYMBOLS_GIVE_UP");
+};
 
 function flashC3Symbol(value){
 const b=document.querySelector(`.c3Symbol[data-c3="${value}"]`);
@@ -8567,8 +8616,8 @@ document.getElementById(
 
 if(
 !playing||
-memoryActive||
-currentRoom!=="ROOM_01"
+modalOpen||
+memoryActive
 )
 return;
 
