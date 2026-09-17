@@ -2456,6 +2456,8 @@ inventory.join(" · ")
 
 }
 
+}
+
 function showArchiveHeldKey(){
 if(archive07HeldKey)return;
 archive07HeldKey=new THREE.Group();
@@ -2473,20 +2475,21 @@ logEvent("ARCHIVE_ROOM_EXITED_WITH_KEY");
 }
 
 function grantArchiveRoomKey(){
-/* Hoàn thành Red Filter luôn phải khôi phục quyền điều khiển rồi mới trao chìa khóa.
-   Điều này cũng tự sửa state nếu người chơi quay lại phòng sau một overlay cũ. */
+/* Hoàn thành Red Filter: đóng overlay, hiện phần thưởng độc lập ở lớp cao nhất,
+   rồi mới đưa KEY 04 vào túi và bắt đầu đồng hồ 10 giây. */
 document.getElementById("archive07Hidden")?.remove();
 modalOpen=false;
-const keyBanner=document.getElementById("unlockBanner");
-keyBanner.querySelector("h2").textContent="Bạn đã có chìa khóa Phòng Tài Liệu.";
-keyBanner.querySelector("p").textContent="Cửa Phòng tài liệu đã được mở khóa.";
-keyBanner.classList.add("archive-key-notice");
-keyBanner.style.display="block";
-/* Chỉ trao key sau khi thông báo đã được hiển thị. */
+document.getElementById("archiveRoomKeyNotice")?.remove();
+const notice=document.createElement("div");
+notice.id="archiveRoomKeyNotice";
+notice.style.cssText="position:fixed;inset:0;z-index:1000;display:grid;place-items:center;pointer-events:none;background:rgba(0,0,0,.38);color:#f5edda;text-align:center";
+notice.innerHTML='<div style="width:min(800px,calc(100vw - 48px));padding:42px;border:2px solid #d4c786;background:rgba(9,14,15,.98);box-shadow:0 30px 110px #000,0 0 38px rgba(212,199,134,.32)"><div style="color:#d4c786;font-size:12px;font-weight:bold;letter-spacing:.2em;margin-bottom:15px">PHẦN THƯỞNG ĐÃ NHẬN</div><div style="font:700 clamp(30px,4vw,52px)/1.1 \'Times New Roman\',serif">Bạn đã có chìa khóa Phòng Tài Liệu.</div><p style="margin:16px 0 0;color:#e6e0ce;font-size:16px">Cửa Phòng tài liệu đã được mở khóa.</p></div>';
+document.body.appendChild(notice);
+/* requestAnimationFrame đảm bảo thông báo được vẽ trước khi key được trao. */
+requestAnimationFrame(()=>{
 if(!inventory.includes("CHÌA KHÓA ROOM 3"))addItem("KEY 04");
 else{archive07RoomKeyReceived=true;showArchiveHeldKey()}
 renderer.domElement.requestPointerLock?.();
-setTimeout(()=>{keyBanner.style.display="none";keyBanner.classList.remove("archive-key-notice")},3500);
 say("Bạn đã có chìa khóa Phòng Tài Liệu.");
 clearTimeout(archive07HintTimer);
 archive07HintTimer=setTimeout(()=>{
@@ -2494,8 +2497,8 @@ doc("XÁC NHẬN HOÀN THÀNH",'<div class="note" style="text-align:center">Bạ
 logEvent("ARCHIVE_COMPLETION_CONFIRMATION_SHOWN");
 },10000);
 logEvent("ARCHIVE_ROOM_KEY_GRANTED");
-}
-
+});
+setTimeout(()=>notice.remove(),3500);
 }
 
 
