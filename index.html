@@ -1048,6 +1048,19 @@ line-height:1.08
 #closeRoom2Secret{display:block;margin:18px auto 0;min-width:140px}
 @media(max-width:900px){.secretPuzzleLayout{grid-template-columns:1fr}.secretReference img{max-height:35vh}.secretWorkspace{min-height:580px}.secretTarget{width:68%}}
 
+/* ROOM 03 — A05 SECRET PAPER.  This challenge deliberately exists only as DOM/Canvas. */
+#a05SecretOverlay{display:none;position:fixed;inset:0;z-index:115;place-items:center;padding:24px;background:rgba(8,11,12,.90);color:#27231f}
+.a05SecretShell{position:relative;display:flex;align-items:center;justify-content:center;gap:clamp(18px,4vw,62px);width:min(1170px,calc(100vw - 48px));min-height:min(690px,calc(100vh - 48px));padding:36px 30px 80px;background:linear-gradient(145deg,#2b302d,#111716);border:1px solid #b7a778;box-shadow:0 30px 110px #000}
+.a05Paper{position:relative;width:min(700px,67vw);aspect-ratio:1.38;background:linear-gradient(120deg,#fffefa,#f7f3e9);box-shadow:8px 13px 25px #0008, inset 0 0 0 1px #e6dfd0;overflow:hidden;cursor:default}
+.a05Paper:after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 4px,rgba(91,75,50,.018) 5px);mix-blend-mode:multiply}
+#a05HiddenEntry{position:absolute;inset:0;display:grid;place-items:center;padding:12%;text-align:center;opacity:0;color:#26221e;font:500 clamp(23px,3.2vw,47px)/1.2 Georgia,"Times New Roman",serif;letter-spacing:.02em;transition:opacity 1s ease;z-index:1}.a05Paper.revealed #a05HiddenEntry{opacity:1}
+#a05PaintCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:2;touch-action:none}.a05Paper.hasPen #a05PaintCanvas{cursor:crosshair}
+.a05PencilMark{position:absolute;left:17px;bottom:13px;z-index:3;color:#4a4540;font:25px/1 "Segoe Print","Comic Sans MS",cursive;transform:rotate(-17deg);pointer-events:none}
+.a05PenPot{position:relative;width:152px;height:235px;align-self:flex-end;margin-bottom:18px;display:flex;align-items:flex-end;justify-content:center;border:3px solid #7d6750;border-top:0;border-radius:6px 6px 18px 18px;background:linear-gradient(90deg,#7e6953,#c2a781 46%,#75604b);box-shadow:inset 12px 0 #ffffff22,0 10px 20px #0007}.a05PenPot:before{content:"";position:absolute;left:-7px;right:-7px;top:-9px;height:21px;border:3px solid #7d6750;border-radius:50%;background:#2e2924}
+.a05Pen{position:absolute;bottom:204px;width:15px;height:156px;padding:0;border:0;border-radius:7px 7px 2px 2px;transform-origin:bottom;cursor:pointer;box-shadow:inset 3px 0 #fff5,0 3px 6px #0007}.a05Pen:before{content:"";position:absolute;left:1px;top:-14px;border-left:6.5px solid transparent;border-right:6.5px solid transparent;border-bottom:15px solid #d8c19a}.a05Pen:nth-child(1){left:21px;background:#8b3036;transform:rotate(-18deg)}.a05Pen:nth-child(2){left:50px;background:#324f75;transform:rotate(-7deg)}.a05Pen:nth-child(3){left:80px;background:#496651;transform:rotate(8deg)}.a05Pen:nth-child(4){left:111px;background:#8a6b34;transform:rotate(19deg)}.a05Pen.selected{filter:brightness(1.55);transform:translateY(-19px) rotate(-4deg);box-shadow:0 0 16px #f4e7b0, inset 3px 0 #fff9}.a05Pen:disabled{cursor:default;opacity:.65}
+#closeA05Secret{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);min-width:132px}
+@media(max-width:760px){.a05SecretShell{min-height:0;flex-direction:column;gap:16px;padding:28px 15px 75px}.a05Paper{width:min(620px,88vw)}.a05PenPot{align-self:center;transform:scale(.78);height:120px;margin:-58px 0 -15px}.a05Pen{bottom:104px}}
+
 
 /* =========================================================
    CIRCLE PROGRESS
@@ -1737,6 +1750,15 @@ Hãy tìm chúng và lấy <b>chìa khóa 1</b>.
 </div>
 </div>
 
+<!-- ROOM 03 / A05 SECRET: intentionally a screen overlay, never a Room 3 mesh. -->
+<div id="a05SecretOverlay" role="dialog" aria-modal="true" aria-label="A05 secret">
+<div class="a05SecretShell">
+<div id="a05Paper" class="a05Paper"><div id="a05HiddenEntry">read the ENTRY carefully</div><canvas id="a05PaintCanvas"></canvas><span class="a05PencilMark">✎</span></div>
+<div class="a05PenPot" aria-label="Lọ bút"><button class="a05Pen" type="button" aria-label="Bút 1"></button><button class="a05Pen" type="button" aria-label="Bút 2"></button><button class="a05Pen" type="button" aria-label="Bút 3"></button><button class="a05Pen" type="button" aria-label="Bút 4"></button></div>
+<button class="btn" id="closeA05Secret" type="button" style="background:#ddd7c7">Đóng</button>
+</div>
+</div>
+
 <!-- =======================================================
      MEMORY GAME
 ======================================================= -->
@@ -2286,6 +2308,15 @@ let archiveRecorderVoiceTimer=null;
 let archiveRecorderVoiceToken=0;
 let archiveCollisionRects=[];
 let archiveBookSelections=0;
+/* Room 3 / hồ sơ A05 — state cho secret overlay, tách hoàn toàn khỏi thế giới 3D. */
+let room3A05Completed=false;
+let a05SecretOverlayOpen=false;
+let hasPen=false;
+let penSelected=null;
+let paintingStarted=false;
+let paintProgress=0;
+let paperRevealCompleted=false;
+let a05PaintCells=new Set();
 /* Challenge Hộp lưu trữ 07 — state độc lập trong Room 3. */
 let archive07State="WORK_TABLE",archive07WorkDone=false,archive07HsOpened=false,archive07ComparisonViewed=false,archive07BoxOpened=false,archive07FilterUses=0,archive07Flipped=new Set(),archive07RevealTimer=null;
 let archive07RoomKeyReceived=false,archive07HintTimer=null,archive07HeldKey=null;
@@ -4798,8 +4829,25 @@ doc("HỒ SƠ ◆B04",'<div class="note" style="text-align:center"><b>◆B04</b>
 function openArchiveA05(){
 markArchiveDocumentSelected("A05");
 doc("THÀNH CÔNG",'<div class="note" style="text-align:center"><b>Thành công Thử thách Tìm hồ sơ ẩn.</b><br><br>Challenge 1 — Room 3 đã hoàn thành.</div>');
-logEvent("ARCHIVE_CHALLENGE_1_COMPLETE")
+if(!room3A05Completed){room3A05Completed=true;logEvent("ARCHIVE_CHALLENGE_1_COMPLETE");setTimeout(openA05SecretOverlay,120)}
+else if(!paperRevealCompleted)setTimeout(openA05SecretOverlay,120)
 }
+
+/* A05 secret overlay: no Three.js objects are created here. */
+function prepareA05Canvas(){
+const canvas=document.getElementById("a05PaintCanvas"),paper=document.getElementById("a05Paper"),ratio=Math.max(1,devicePixelRatio||1),w=Math.round(paper.clientWidth*ratio),h=Math.round(paper.clientHeight*ratio);
+if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;const ctx=canvas.getContext("2d");ctx.scale(ratio,ratio);ctx.lineCap="round";ctx.lineJoin="round"}
+return canvas
+}
+function a05CanvasPoint(event,canvas){const rect=canvas.getBoundingClientRect();return{x:event.clientX-rect.left,y:event.clientY-rect.top}}
+function paintA05Line(ctx,from,to){ctx.strokeStyle="rgba(66,61,55,.40)";ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(to.x,to.y);ctx.stroke();const distance=Math.hypot(to.x-from.x,to.y-from.y),steps=Math.max(1,Math.ceil(distance/11));for(let i=0;i<=steps;i++){const x=from.x+(to.x-from.x)*i/steps,y=from.y+(to.y-from.y)*i/steps;a05PaintCells.add(Math.floor(x/34)+":"+Math.floor(y/34))}paintProgress=a05PaintCells.size;if(!paperRevealCompleted&&paintProgress>=96){paperRevealCompleted=true;document.getElementById("a05Paper").classList.add("revealed");logEvent("ARCHIVE_A05_PAPER_REVEALED",{paint_progress:paintProgress})}}
+function openA05SecretOverlay(){
+if(!room3A05Completed||paperRevealCompleted)return;
+const overlay=document.getElementById("a05SecretOverlay");document.getElementById("doc").style.display="none";overlay.style.display="grid";a05SecretOverlayOpen=true;playing=false;modalOpen=true;document.exitPointerLock?.();prepareA05Canvas();logEvent("ARCHIVE_A05_SECRET_OPEN",{has_pen:hasPen,paint_progress:paintProgress})
+}
+document.querySelectorAll(".a05Pen").forEach((pen,index)=>pen.addEventListener("click",()=>{if(hasPen)return;hasPen=true;penSelected=index;pen.classList.add("selected");document.querySelectorAll(".a05Pen").forEach(other=>other.disabled=true);document.getElementById("a05Paper").classList.add("hasPen");logEvent("ARCHIVE_A05_PEN_SELECTED",{pen:index+1})}));
+(()=>{const canvas=document.getElementById("a05PaintCanvas");let drawing=false,last=null;canvas.addEventListener("pointerdown",event=>{if(!hasPen||paperRevealCompleted)return;drawing=true;paintingStarted=true;canvas.setPointerCapture?.(event.pointerId);last=a05CanvasPoint(event,canvas);const ctx=canvas.getContext("2d");paintA05Line(ctx,last,{x:last.x+.1,y:last.y+.1});event.preventDefault()});canvas.addEventListener("pointermove",event=>{if(!drawing||!hasPen||paperRevealCompleted)return;const next=a05CanvasPoint(event,canvas);paintA05Line(canvas.getContext("2d"),last,next);last=next;event.preventDefault()});const end=()=>{drawing=false;last=null};canvas.addEventListener("pointerup",end);canvas.addEventListener("pointercancel",end)})();
+document.getElementById("closeA05Secret").onclick=()=>{document.getElementById("a05SecretOverlay").style.display="none";a05SecretOverlayOpen=false;modalOpen=false;playing=true;renderer.domElement.requestPointerLock?.();logEvent("ARCHIVE_A05_SECRET_CLOSE",{revealed:paperRevealCompleted,paint_progress:paintProgress})};
 
 /* =========================================================
    CHALLENGE 07 — HỘP LƯU TRỮ / RED FILTER / BÀN CỜ
