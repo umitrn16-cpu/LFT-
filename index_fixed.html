@@ -969,7 +969,7 @@ cursor:pointer
 #c3Glitch{z-index:95;animation:c3Noise .16s infinite;background:repeating-linear-gradient(0deg,#fff1 0 2px,#0009 3px 6px);color:#fff;text-shadow:4px 0 #f24,-4px 0 #4cf}
 @keyframes c3Noise{50%{transform:translate(5px,-3px);filter:contrast(1.7)}}
 #c3Fail{z-index:96}
-#c3Hud{display:none;position:fixed;right:20px;top:72px;z-index:12;padding:10px 13px;background:rgba(10,16,17,.86);border:1px solid #d4c78677;color:#f4efdc;font-size:12px;line-height:1.55;text-align:right}
+#c3Hud{display:none;position:fixed;right:20px;top:102px;z-index:12;padding:10px 13px;background:rgba(10,16,17,.86);border:1px solid #d4c78677;color:#f4efdc;font-size:12px;line-height:1.55;text-align:right}
 #c3Hud > span{display:none}
 #c3Hud{padding:6px 8px}
 #c3Health{margin-top:0;color:#e85e67;font-size:17px;letter-spacing:.08em}
@@ -2467,10 +2467,15 @@ logEvent("ARCHIVE_ROOM_EXITED_WITH_KEY");
 function grantArchiveRoomKey(){
 if(archive07RoomKeyReceived)return;
 addItem("KEY 04");
+const keyBanner=document.getElementById("unlockBanner");
+keyBanner.querySelector("h2").textContent="Bạn đã có chìa khóa mở cửa Phòng tài liệu.";
+keyBanner.querySelector("p").textContent="Cửa Phòng tài liệu đã được mở khóa.";
+keyBanner.style.display="block";
+setTimeout(()=>{keyBanner.style.display="none"},3500);
 say("Bạn đã có chìa khóa mở cửa Phòng tài liệu.");
 clearTimeout(archive07HintTimer);
 archive07HintTimer=setTimeout(()=>{
-doc("XÁC NHẬN HOÀN THÀNH",'<div class="note" style="text-align:center">Bạn có chắc là đã hoàn thành xong?</div>');
+doc("XÁC NHẬN HOÀN THÀNH",'<div class="note" style="text-align:center">Bạn có chắc chắn là bạn đã tìm được đáp án cho câu trả lời chưa?</div>');
 logEvent("ARCHIVE_COMPLETION_CONFIRMATION_SHOWN");
 },10000);
 logEvent("ARCHIVE_ROOM_KEY_GRANTED");
@@ -4652,9 +4657,7 @@ const boardCord=(name,points)=>{const geometry=new THREE.BufferGeometry().setFro
 boardCord("archive07CordA",[[3.25,3.82],[2.56,4.48],[3.15,5.22],[2.52,5.78],[3.15,5.88]]);boardCord("archive07CordB",[[1.94,4.15],[2.56,4.48],[1.96,5.42],[2.52,5.78]]);boardCord("archive07CordC",[[3.14,4.56],[2.55,5.13],[3.12,5.88]]);
 addInteract(workBoard,"Mở bảng công việc",()=>openArchive07WorkBoard());
 /* Tờ giấy tham khảo là vật thể độc lập trên tường; không phải Phiếu đối chiếu. */
-const wallReferenceNote=box("archiveWallReferenceNote",-8.87,2.30,1.45,.025,.82,.62,dustedPaper,false);
-const wallReferenceTexture=new THREE.TextureLoader().load("school-note-reference.png");
-wallReferenceTexture.colorSpace=THREE.SRGBColorSpace;wallReferenceNote.material.map=wallReferenceTexture;wallReferenceNote.material.needsUpdate=true;
+const wallReferenceNote=box("archiveWallReferenceNote",-8.87,2.30,1.45,.025,.82,.62,mat(0xffffff,.72,.08),false);
 addInteract(wallReferenceNote,"Nhấn để xem",()=>doc("TỜ GIẤY DÁN TRÊN TƯỜNG",'<div class="note" style="text-align:center"><img src="school-note-reference.png" alt="Tờ giấy dán trên tường" style="display:block;max-width:100%;max-height:68vh;object-fit:contain;margin:auto"></div>'));
 
 /* Phiếu đối chiếu vẫn là vật thể riêng ở vị trí hiện tại trên tường. */
