@@ -999,6 +999,21 @@ color:#d4c786;
 margin-bottom:8px
 }
 
+/* Highlight only the Room 3 key announcement without changing other unlock banners. */
+#unlockBanner.archive-key-notice{
+min-width:min(780px,calc(100vw - 48px));
+padding:42px 46px;
+border-color:#d4c786;
+box-shadow:0 30px 110px #000,0 0 38px rgba(212,199,134,.28)
+}
+
+#unlockBanner.archive-key-notice h2{
+font-size:clamp(30px,4vw,52px);
+line-height:1.08
+}
+
+#unlockBanner.archive-key-notice p{font-size:16px}
+
 /* ROOM 02 — KHAY MỞ CỬA 3 CHÌA KHÓA */
 #room2KeyTray{display:none;z-index:85}
 .keyTrayPanel{max-width:760px;text-align:center}
@@ -1486,15 +1501,6 @@ Thử thách thất bại.
 id="numberFailReason"
 style="font-size:18px">
 </p>
-
-<div class="note">
-
-Bạn có thể thử lại.
-
-Ở lần thử lại, các số vẫn giữ nguyên vị trí.
-Khi chạm số 10, các vật thể gây xao nhãng sẽ xuất hiện.
-
-</div>
 
 <div class="failChoices">
 
@@ -2470,8 +2476,9 @@ addItem("KEY 04");
 const keyBanner=document.getElementById("unlockBanner");
 keyBanner.querySelector("h2").textContent="Bạn đã có chìa khóa mở cửa Phòng tài liệu.";
 keyBanner.querySelector("p").textContent="Cửa Phòng tài liệu đã được mở khóa.";
+keyBanner.classList.add("archive-key-notice");
 keyBanner.style.display="block";
-setTimeout(()=>{keyBanner.style.display="none"},3500);
+setTimeout(()=>{keyBanner.style.display="none";keyBanner.classList.remove("archive-key-notice")},3500);
 say("Bạn đã có chìa khóa mở cửa Phòng tài liệu.");
 clearTimeout(archive07HintTimer);
 archive07HintTimer=setTimeout(()=>{
@@ -4657,7 +4664,8 @@ const boardCord=(name,points)=>{const geometry=new THREE.BufferGeometry().setFro
 boardCord("archive07CordA",[[3.25,3.82],[2.56,4.48],[3.15,5.22],[2.52,5.78],[3.15,5.88]]);boardCord("archive07CordB",[[1.94,4.15],[2.56,4.48],[1.96,5.42],[2.52,5.78]]);boardCord("archive07CordC",[[3.14,4.56],[2.55,5.13],[3.12,5.88]]);
 addInteract(workBoard,"Mở bảng công việc",()=>openArchive07WorkBoard());
 /* Tờ giấy tham khảo là vật thể độc lập trên tường; không phải Phiếu đối chiếu. */
-const wallReferenceNote=box("archiveWallReferenceNote",-8.87,2.30,1.45,.025,.82,.62,mat(0xffffff,.72,.08),false);
+/* Dán lên mảng tường trống cạnh cửa ra vào theo ảnh tham khảo. */
+const wallReferenceNote=box("archiveWallReferenceNote",3.25,2.30,7.885,.62,.82,.025,mat(0xffffff,.72,.08),false);
 addInteract(wallReferenceNote,"Nhấn để xem",()=>doc("TỜ GIẤY DÁN TRÊN TƯỜNG",'<div class="note" style="text-align:center"><img src="school-note-reference.png" alt="Tờ giấy dán trên tường" style="display:block;max-width:100%;max-height:68vh;object-fit:contain;margin:auto"></div>'));
 
 /* Phiếu đối chiếu vẫn là vật thể riêng ở vị trí hiện tại trên tường. */
@@ -4766,7 +4774,7 @@ const papers=[
 const taskRows=tasks.map((task,i)=>'<div class="a07-task-row" data-index="'+i+'">'+(archive07WorkSelections.has(i)?"✓":"□")+' <b>'+task+'</b><span>'+ (archive07WorkSelections.has(i)?dates[i]:"__/08")+'</span></div>').join('');
 const paperCards=papers.map(([title,date,text,task,left,top,angle],i)=>'<button class="a07-paper" data-paper="'+i+'" style="left:'+left+'%;top:'+top+'%;transform:rotate('+angle+'deg);z-index:'+(10+i)+'"><i class="a07-pin"></i><b>'+title+'</b><small>Ngày: '+date+'</small><em>'+text+'</em></button>').join('');
 doc("BẢNG PHÂN CÔNG CÔNG VIỆC – THÁNG 08/2018",'<style>#doc .panel.a07-board-panel{width:min(1120px,96vw);max-height:94vh;padding:18px;background:#38261a;color:#2c2119;border:10px solid #b58a58;box-shadow:0 25px 100px #000;animation:a07BoardOpen .2s ease-out}#doc .panel.a07-board-panel .eyebrow,#doc .panel.a07-board-panel>#docTitle{display:none}@keyframes a07BoardOpen{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}.a07-board{position:relative;min-height:630px;padding:22px 28px;background:radial-gradient(circle at 30% 30%,#8d6746,#68472f 74%);overflow:hidden;box-shadow:inset 0 0 45px #28180d}.a07-board-title{text-align:center;color:#f1e5cf;font:700 clamp(19px,2.4vw,31px) Georgia,serif;text-shadow:0 2px #342114;margin:0 0 17px}.a07-board-main{display:grid;grid-template-columns:31% 1fr;gap:28px;align-items:stretch}.a07-checklist{position:relative;background:#e8dfc8;padding:27px 22px 20px;min-height:475px;box-shadow:5px 8px 12px #20150d99;transform:rotate(-1.5deg);font-family:Georgia,serif}.a07-checklist:before{content:"";position:absolute;top:-9px;left:50%;width:16px;height:16px;background:#a51d20;border-radius:50%;box-shadow:0 3px 3px #0008;transform:translateX(-50%)}.a07-checklist h3{text-align:center;font-size:20px;margin:12px 0 28px}.a07-task-row{display:flex;justify-content:space-between;border-bottom:1px dotted #8d806b;padding:12px 0;font-size:14px}.a07-task-row span{font-weight:bold}.a07-papers{position:relative;min-height:535px;border:1px solid #513720;background:#785436cc;box-shadow:inset 0 0 28px #332114}.a07-paper{position:absolute;width:20%;min-width:112px;aspect-ratio:1;background:#eee5d1;border:0;color:#322921;padding:22px 10px 8px;display:flex;flex-direction:column;gap:9px;text-align:left;font-family:Georgia,serif;cursor:pointer;box-shadow:4px 7px 11px #20140d99}.a07-paper:hover,.a07-paper.a07-read{filter:brightness(1.05);box-shadow:5px 9px 15px #16100bbb}.a07-paper b{font-size:12px;line-height:1.1}.a07-paper small{font-size:11px}.a07-paper em{font-size:10px;line-height:1.25;font-style:normal}.a07-pin{position:absolute;width:14px;height:14px;border-radius:50%;top:-7px;left:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 28%,#ff7772 0 16%,#b41b20 31%,#630d12 100%);box-shadow:0 2px 3px #0008}.a07-board-status{color:#f7e9cc;text-align:center;min-height:26px;margin:12px 0 0;font-weight:bold}@media(max-width:750px){.a07-board{padding:14px}.a07-board-main{grid-template-columns:1fr}.a07-checklist{min-height:unset}.a07-papers{min-height:500px}.a07-paper{min-width:92px}.a07-paper b{font-size:10px}.a07-paper em{font-size:9px}}</style><div class="a07-board"><h3 class="a07-board-title">BẢNG PHÂN CÔNG CÔNG VIỆC – THÁNG 08/2018</h3><div class="a07-board-main"><section class="a07-checklist"><h3>CÁC CÔNG VIỆC<br>CẦN LÀM</h3>'+taskRows+'</section><section class="a07-papers">'+paperCards+'</section></div><p class="a07-board-status" id="a07WorkMessage">Hồ sơ chỉ được xác nhận hoàn thành khi tất cả các bước trong quy trình đã được thực hiện đầy đủ.</p></div>');
-document.querySelector("#doc .panel").classList.add("a07-board-panel");document.querySelectorAll(".a07-paper").forEach(card=>card.onclick=()=>{card.classList.add("a07-read");const paper=papers[+card.dataset.paper],task=paper[3];if(task===null||archive07WorkSelections.has(task))return;if(task===2&&(!archive07ComparisonViewed||!archive07HsOpened)){document.getElementById("a07WorkMessage").textContent="ĐỐI CHIẾU cần xem Phiếu đối chiếu và hồ sơ HS-07 trước.";say("Bạn chưa đủ thông tin để hoàn thành ĐỐI CHIẾU.");return}archive07WorkSelections.add(task);const row=document.querySelector('.a07-task-row[data-index="'+task+'"]');row.innerHTML='✓ <b>'+tasks[task]+'</b><span>'+dates[task]+'</span>';logEvent("ARCHIVE07_WORK_PAPER_SELECTED",{task,paper:+card.dataset.paper});if(archive07WorkSelections.size===5&&!archive07WorkDone){archive07WorkDone=true;archive07State="SEARCH_HS07";document.querySelector(".a07-checklist").insertAdjacentHTML("beforeend",'<p style="margin:18px 0 0;color:#9d1f20;font-weight:bold;text-align:center">Màu đỏ là màu quan trọng.</p>');document.getElementById("a07WorkMessage").innerHTML="<b style=\"font-size:20px\">ĐÃ HOÀN TẤT QUY TRÌNH</b>";logEvent("ARCHIVE07_WORK_COMPLETED")}})
+document.querySelector("#doc .panel").classList.add("a07-board-panel");document.querySelectorAll(".a07-paper").forEach(card=>card.onclick=()=>{const paper=papers[+card.dataset.paper],task=paper[3];if(task===null||archive07WorkSelections.has(task))return;if(task===2&&(!archive07ComparisonViewed||!archive07HsOpened))return;card.classList.add("a07-read");archive07WorkSelections.add(task);const row=document.querySelector('.a07-task-row[data-index="'+task+'"]');row.innerHTML='✓ <b>'+tasks[task]+'</b><span>'+dates[task]+'</span>';logEvent("ARCHIVE07_WORK_PAPER_SELECTED",{task,paper:+card.dataset.paper});if(archive07WorkSelections.size===5&&!archive07WorkDone){archive07WorkDone=true;archive07State="SEARCH_HS07";document.querySelector(".a07-checklist").insertAdjacentHTML("beforeend",'<p style="margin:18px 0 0;color:#9d1f20;font-weight:bold;text-align:center">Màu đỏ là màu quan trọng.</p>');document.getElementById("a07WorkMessage").innerHTML="<b style=\"font-size:20px\">ĐÃ HOÀN TẤT QUY TRÌNH</b>";logEvent("ARCHIVE07_WORK_COMPLETED")}})
 }
 
 function openArchive07Comparison(){
