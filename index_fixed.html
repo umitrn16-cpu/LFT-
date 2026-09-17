@@ -1061,6 +1061,13 @@ line-height:1.08
 #closeA05Secret{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);min-width:132px}
 @media(max-width:760px){.a05SecretShell{min-height:0;flex-direction:column;gap:16px;padding:28px 15px 75px}.a05Paper{width:min(620px,88vw)}.a05PenPot{align-self:center;transform:scale(.78);height:120px;margin:-58px 0 -15px}.a05Pen{bottom:104px}}
 
+/* ROOM 03 — computer overlay; the in-room monitor remains the only 3D interaction. */
+#room3ComputerOverlay{display:none;position:fixed;inset:0;z-index:116;place-items:center;padding:22px;background:rgba(5,8,9,.91)}
+.room3ComputerShell{position:relative;width:min(820px,calc(100vw - 44px));padding:20px 20px 68px;background:linear-gradient(145deg,#222827,#0d1112);border:1px solid #a99e83;box-shadow:0 30px 110px #000;text-align:center}
+.room3ComputerVisual{position:relative;width:min(680px,100%);margin:auto;aspect-ratio:626/500;background:url('room3-computer-frame.png') center/contain no-repeat}
+.room3ComputerScreen{position:absolute;left:10.5%;right:10.5%;top:15%;height:54%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:auto;background:#fff;padding:14px;color:#151515}.room3ComputerScreen img{width:min(100%,540px);max-height:75%;object-fit:contain}.room3ComputerScreen form{width:min(330px,92%);margin-top:10px}.room3ComputerScreen input{width:100%;padding:9px 11px;border:1px solid #777;background:#fff;color:#111;text-align:center;font:600 18px Arial,sans-serif;letter-spacing:.1em}.room3ComputerScreen input.error{border:2px solid #c72c32;background:#fff1f1}.room3ComputerError{min-height:18px;margin-top:5px;color:#c72c32;font:700 12px Arial,sans-serif}.room3ComputerGreeting{display:none;font:700 clamp(24px,4vw,44px)/1.2 "Times New Roman",serif;color:#202820}.room3ComputerGreeting.show{display:block}.room3ComputerVisual.unlocked .room3ComputerScreen img,.room3ComputerVisual.unlocked .room3ComputerScreen form{display:none}
+#closeRoom3Computer{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);min-width:132px}
+
 
 /* =========================================================
    CIRCLE PROGRESS
@@ -1759,6 +1766,11 @@ Hãy tìm chúng và lấy <b>chìa khóa 1</b>.
 </div>
 </div>
 
+<!-- ROOM 03 / COMPUTER -->
+<div id="room3ComputerOverlay" role="dialog" aria-modal="true" aria-label="Máy tính Room 3">
+<div class="room3ComputerShell"><div id="room3ComputerVisual" class="room3ComputerVisual"><div class="room3ComputerScreen"><img src="room3-computer-key.png" alt="Bảng mã chữ cái và số"><form id="room3ComputerForm"><input id="room3ComputerPassword" type="password" inputmode="numeric" autocomplete="off" aria-label="Mật khẩu"><div id="room3ComputerError" class="room3ComputerError" aria-live="polite"></div></form><div id="room3ComputerGreeting" class="room3ComputerGreeting"></div></div></div><button class="btn" id="closeRoom3Computer" type="button" style="background:#ddd7c7">Đóng</button></div>
+</div>
+
 <!-- =======================================================
      MEMORY GAME
 ======================================================= -->
@@ -2308,6 +2320,7 @@ let archiveRecorderVoiceTimer=null;
 let archiveRecorderVoiceToken=0;
 let archiveCollisionRects=[];
 let archiveBookSelections=0;
+let room3ComputerUnlocked=false;
 /* Room 3 / hồ sơ A05 — state cho secret overlay, tách hoàn toàn khỏi thế giới 3D. */
 let room3A05Completed=false;
 let a05SecretOverlayOpen=false;
@@ -4642,12 +4655,12 @@ if(archiveB02PaperClip)archiveB02PaperClip.visible=false;
 
 /* Bàn được đẩy sát tường sau, có hộc bàn và ghế làm việc kiểu cũ. */
 const deskX=-3.35,deskZ=-6.25,deskWood=mat(0x78604d,.76,.16);
-box("archiveDesk",deskX,1.04,deskZ,3.45,.18,1.42,deskWood);box("archiveDeskPedestalL",deskX-1.48,.52,deskZ,.46,1.0,1.20,deskWood);box("archiveDeskPedestalR",deskX+1.48,.52,deskZ,.46,1.0,1.20,deskWood);box("archiveDeskModesty",deskX,.70,deskZ-.59,2.30,.54,.08,mat(0x5d483b,.82,.16));box("archiveDeskDrawer",deskX-1.48,.77,deskZ-.63,.34,.17,.025,mat(0x4a3930,.82,.14),false);box("archiveMonitor",deskX+.65,1.66,deskZ-.22,1.0,.82,.13,M.dark);box("archiveScreen",deskX+.65,1.66,deskZ-.30,.78,.57,.02,mat(0x586b64,.22,.02,0x385048,.22),false);box("archiveKeyboard",deskX+.65,1.16,deskZ+.20,.92,.05,.30,dustedPaper);const chairSeat=box("archiveChairSeat",deskX,.82,-7.18,1.08,.18,.92,mat(0x3f3029,.72,.22));box("archiveChairBack",deskX,1.65,-7.53,1.08,1.34,.18,mat(0x5b4033,.72,.20));cyl("archiveChairStem",deskX,.44,-7.18,.07,.64,M.ink);for(let i=0;i<5;i++){const a=i*Math.PI*2/5;const wheelX=deskX+Math.cos(a)*.55,wheelZ=-7.18+Math.sin(a)*.55;box("archiveChairLeg"+i,(deskX+wheelX)/2,.20,(-7.18+wheelZ)/2,.08,.08,.70,M.ink,false);cyl("archiveChairWheel"+i,wheelX,.10,wheelZ,.09,.10,M.ink)}for(let i=0;i<3;i++)box("archiveBox",6.75+i*.34,.42,-6.55+i*.18,.42,.7,.58,rust);
+box("archiveDesk",deskX,1.04,deskZ,3.45,.18,1.42,deskWood);box("archiveDeskPedestalL",deskX-1.48,.52,deskZ,.46,1.0,1.20,deskWood);box("archiveDeskPedestalR",deskX+1.48,.52,deskZ,.46,1.0,1.20,deskWood);box("archiveDeskModesty",deskX,.70,deskZ-.59,2.30,.54,.08,mat(0x5d483b,.82,.16));box("archiveDeskDrawer",deskX-1.48,.77,deskZ-.63,.34,.17,.025,mat(0x4a3930,.82,.14),false);const archiveMonitor=box("archiveMonitor",deskX+.65,1.66,deskZ-.22,1.0,.82,.13,M.dark);box("archiveScreen",deskX+.65,1.66,deskZ-.30,.78,.57,.02,mat(0x586b64,.22,.02,0x385048,.22),false);const chairSeat=box("archiveChairSeat",deskX,.82,-7.18,1.08,.18,.92,mat(0x3f3029,.72,.22));box("archiveChairBack",deskX,1.65,-7.53,1.08,1.34,.18,mat(0x5b4033,.72,.20));cyl("archiveChairStem",deskX,.44,-7.18,.07,.64,M.ink);for(let i=0;i<5;i++){const a=i*Math.PI*2/5;const wheelX=deskX+Math.cos(a)*.55,wheelZ=-7.18+Math.sin(a)*.55;box("archiveChairLeg"+i,(deskX+wheelX)/2,.20,(-7.18+wheelZ)/2,.08,.08,.70,M.ink,false);cyl("archiveChairWheel"+i,wheelX,.10,wheelZ,.09,.10,M.ink)}for(let i=0;i<3;i++)box("archiveBox",6.75+i*.34,.42,-6.55+i*.18,.42,.7,.58,rust);
 archiveCollisionRects.push({x:deskX,z:deskZ,w:3.45,d:1.42},{x:deskX,z:-7.18,w:1.25,d:1.1},{x:7.05,z:-6.38,w:1.35,d:1.1});
 /* Màn hình và bàn phím hướng thẳng về phía ghế (phía nam của bàn). */
 scene.getObjectByName("archiveMonitor").position.z=deskZ-.25;
 scene.getObjectByName("archiveScreen").position.z=deskZ-.17;
-scene.getObjectByName("archiveKeyboard").position.z=deskZ+.24;
+addInteract(archiveMonitor,"Nhấn để xem",()=>openRoom3Computer());
 /* Đồng hồ gắn sát tường phải, không lơ lửng trong phòng. */
 box("archiveClock",8.88,3.65,-1.65,.08,.72,.72,M.ink,false);const archiveClockText=textSprite("23:47",.38,"#e2c875");archiveClockText.position.set(8.825,3.65,-1.65);archiveClockText.rotation.y=-Math.PI/2;scene.add(archiveClockText);
 
@@ -4848,6 +4861,14 @@ const overlay=document.getElementById("a05SecretOverlay");document.getElementByI
 document.querySelectorAll(".a05Pen").forEach((pen,index)=>pen.addEventListener("click",()=>{if(hasPen)return;hasPen=true;penSelected=index;pen.classList.add("selected");document.querySelectorAll(".a05Pen").forEach(other=>other.disabled=true);document.getElementById("a05Paper").classList.add("hasPen");logEvent("ARCHIVE_A05_PEN_SELECTED",{pen:index+1})}));
 (()=>{const canvas=document.getElementById("a05PaintCanvas");let drawing=false,last=null;canvas.addEventListener("pointerdown",event=>{if(!hasPen||paperRevealCompleted)return;drawing=true;paintingStarted=true;canvas.setPointerCapture?.(event.pointerId);last=a05CanvasPoint(event,canvas);const ctx=canvas.getContext("2d");paintA05Line(ctx,last,{x:last.x+.1,y:last.y+.1});event.preventDefault()});canvas.addEventListener("pointermove",event=>{if(!drawing||!hasPen||paperRevealCompleted)return;const next=a05CanvasPoint(event,canvas);paintA05Line(canvas.getContext("2d"),last,next);last=next;event.preventDefault()});const end=()=>{drawing=false;last=null};canvas.addEventListener("pointerup",end);canvas.addEventListener("pointercancel",end)})();
 document.getElementById("closeA05Secret").onclick=()=>{document.getElementById("a05SecretOverlay").style.display="none";a05SecretOverlayOpen=false;modalOpen=false;playing=true;renderer.domElement.requestPointerLock?.();logEvent("ARCHIVE_A05_SECRET_CLOSE",{revealed:paperRevealCompleted,paint_progress:paintProgress})};
+
+function openRoom3Computer(){
+const overlay=document.getElementById("room3ComputerOverlay"),visual=document.getElementById("room3ComputerVisual"),input=document.getElementById("room3ComputerPassword"),error=document.getElementById("room3ComputerError"),greeting=document.getElementById("room3ComputerGreeting");
+overlay.style.display="grid";playing=false;modalOpen=true;document.exitPointerLock?.();error.textContent="";input.classList.remove("error");visual.classList.toggle("unlocked",room3ComputerUnlocked);greeting.textContent="Xin chào "+PARTICIPANT_ID;greeting.classList.toggle("show",room3ComputerUnlocked);if(!room3ComputerUnlocked)setTimeout(()=>input.focus(),0);logEvent("ARCHIVE_COMPUTER_OPEN",{unlocked:room3ComputerUnlocked})
+}
+document.getElementById("room3ComputerForm").addEventListener("submit",event=>{event.preventDefault();const input=document.getElementById("room3ComputerPassword"),error=document.getElementById("room3ComputerError");if(input.value!=="514201825"){input.classList.add("error");error.textContent="Mật khẩu không đúng.";logEvent("ARCHIVE_COMPUTER_PASSWORD",{success:false});return}room3ComputerUnlocked=true;input.classList.remove("error");error.textContent="";document.getElementById("room3ComputerVisual").classList.add("unlocked");const greeting=document.getElementById("room3ComputerGreeting");greeting.textContent="Xin chào "+PARTICIPANT_ID;greeting.classList.add("show");logEvent("ARCHIVE_COMPUTER_PASSWORD",{success:true})});
+document.getElementById("room3ComputerPassword").addEventListener("input",()=>{document.getElementById("room3ComputerPassword").classList.remove("error");document.getElementById("room3ComputerError").textContent=""});
+document.getElementById("closeRoom3Computer").onclick=()=>{document.getElementById("room3ComputerOverlay").style.display="none";modalOpen=false;playing=true;renderer.domElement.requestPointerLock?.();logEvent("ARCHIVE_COMPUTER_CLOSE",{unlocked:room3ComputerUnlocked})};
 
 /* =========================================================
    CHALLENGE 07 — HỘP LƯU TRỮ / RED FILTER / BÀN CỜ
