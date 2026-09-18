@@ -1030,24 +1030,6 @@ line-height:1.08
 .keyTrayHint{font-size:12px;color:#68756a;min-height:18px}
 @media(max-width:600px){.keyTray{grid-template-columns:1fr}.keySlot{min-height:92px}.room2Key{width:128px}}
 
-/* ROOM 02 — SECRET 20.  Uses the supplied reference and pink-piece artwork unchanged. */
-#room2SecretReminder{display:none;position:fixed;inset:0;z-index:110;place-items:center;text-align:center;background:rgba(5,7,7,.88);color:#f4f1df;pointer-events:none;animation:secretReminderIn .55s ease both}
-#room2SecretReminder .secretReminderLead{font:700 clamp(34px,5.3vw,76px)/1.08 "Times New Roman",Times,serif;letter-spacing:.03em;text-shadow:0 7px 28px #000}
-#room2SecretReminder .secretReminderSub{margin-top:17px;font:500 clamp(17px,2vw,27px)/1.3 Arial,sans-serif;letter-spacing:.08em;color:#d4c786}
-@keyframes secretReminderIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-#room2SecretChallenge{display:none;position:fixed;inset:0;z-index:111;place-items:center;padding:22px;background:rgba(4,7,7,.92);color:#29251f}
-.secretPuzzleShell{width:min(1320px,calc(100vw - 44px));max-height:calc(100vh - 44px);overflow:auto;padding:22px;background:#f3efe4;border:2px solid #b39b6e;box-shadow:0 28px 100px #000}
-.secretPuzzleLayout{display:grid;grid-template-columns:minmax(250px,.88fr) minmax(500px,1.35fr);gap:22px;align-items:start}
-.secretReference{margin:0;border:1px solid #c9c1af;background:#fff;min-width:0}.secretReference img{display:block;width:100%;height:auto;object-fit:contain;max-height:68vh}
-.secretWorkspace{position:relative;min-height:620px;border:1px solid #c7bba7;background:#e8e1d5;overflow:hidden;user-select:none;touch-action:none}
-.secretTarget{position:absolute;left:5%;top:5%;width:63%;aspect-ratio:1.18;background:#f576ac;background-image:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,0));box-shadow:inset 0 0 0 1px rgba(89,30,51,.28)}
-.secretPiece{position:absolute;width:88px;height:74px;background-image:url('room2-secret-pieces.png');background-size:510px 382px;background-repeat:no-repeat;cursor:grab;filter:drop-shadow(0 4px 5px rgba(46,17,29,.32));z-index:3;touch-action:none;clip-path:polygon(7% 12%,91% 3%,100% 74%,81% 100%,9% 90%,0 35%)}
-.secretPiece.dragging{cursor:grabbing;z-index:9;filter:drop-shadow(0 11px 9px rgba(46,17,29,.4)) brightness(1.03)}
-.secretPiece.locked{cursor:default;z-index:5;filter:none}
-.secretReveal{display:none;position:absolute;inset:0;z-index:8;pointer-events:none}.secretReveal.show{display:block;animation:secretReveal .8s ease both}.secretLetter{position:absolute;width:62px;height:62px;border:5px solid #e72222;border-radius:50%;background:#fff;color:#151515;display:grid;place-items:center;font:700 40px/1 "Comic Sans MS","Segoe Print",cursive;box-shadow:0 1px 7px #0004}.secretLetter:nth-child(1){left:14%;top:19%}.secretLetter:nth-child(2){left:45%;top:31%}.secretLetter:nth-child(3){left:66%;top:18%}.secretLetter:nth-child(4){left:77%;top:56%}@keyframes secretReveal{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
-#closeRoom2Secret{display:block;margin:18px auto 0;min-width:140px}
-@media(max-width:900px){.secretPuzzleLayout{grid-template-columns:1fr}.secretReference img{max-height:35vh}.secretWorkspace{min-height:580px}.secretTarget{width:68%}}
-
 /* ROOM 03 — A05 SECRET PAPER.  This challenge deliberately exists only as DOM/Canvas. */
 #a05SecretOverlay{display:none;position:fixed;inset:0;z-index:115;place-items:center;padding:24px;background:rgba(8,11,12,.90);color:#27231f}
 .a05SecretShell{position:relative;display:flex;align-items:center;justify-content:center;gap:clamp(18px,4vw,62px);width:min(1170px,calc(100vw - 48px));min-height:min(690px,calc(100vh - 48px));padding:36px 30px 80px;background:linear-gradient(145deg,#2b302d,#111716);border:1px solid #b7a778;box-shadow:0 30px 110px #000}
@@ -1745,20 +1727,6 @@ Hãy tìm chúng và lấy <b>chìa khóa 1</b>.
 </div>
 </div>
 
-<!-- ROOM 02 / SECRET 20 -->
-<div id="room2SecretReminder" aria-live="assertive">
-<div><div class="secretReminderLead">Bạn đã quên một thứ quan trọng.</div><div class="secretReminderSub">Bạn có 20 giây để suy nghĩ.</div></div>
-</div>
-<div id="room2SecretChallenge" role="dialog" aria-modal="true" aria-label="Secret challenge">
-<div class="secretPuzzleShell">
-<div class="secretPuzzleLayout">
-<figure class="secretReference"><img src="room2-secret-reference.png" alt=""></figure>
-<div id="room2SecretWorkspace" class="secretWorkspace" aria-label="Secret puzzle"><div class="secretTarget"><div id="room2SecretReveal" class="secretReveal"><span class="secretLetter">L</span><span class="secretLetter">A</span><span class="secretLetter">S</span><span class="secretLetter">T</span></div></div></div>
-</div>
-<button class="btn" id="closeRoom2Secret" type="button" style="background:#ddd7c7">Đóng</button>
-</div>
-</div>
-
 <!-- ROOM 03 / A05 SECRET: intentionally a screen overlay, never a Room 3 mesh. -->
 <div id="a05SecretOverlay" role="dialog" aria-modal="true" aria-label="A05 secret">
 <div class="a05SecretShell">
@@ -2306,10 +2274,6 @@ let room2Exited=false;
 /* Giữ tiến trình Room 02 khi người chơi đã mở cửa và quay lại. */
 let room2DoorUnlocked=false;
 let room2Challenge3Done=false;
-let room2SecretTriggered=false;
-let room2SecretChallengeOpen=false;
-let room2SecretLastCompleted=false;
-let room2SecretPiecesPlaced=new Set();
 let archiveSymbolOrder=[];
 let archiveSymbolsTaken=new Set();
 let archiveHiddenUnlocked=false;
@@ -5597,14 +5561,7 @@ n.rotation.y=p.rot;
 scene.add(n);
 
 
-	addInteract(
-	plate,
-	(i===19&&room2SecretTriggered&&room2AllChallengesCompleted())?"Nhấn để xem":"Nút "+(i+1),
-	()=>{
-		if(i===19&&room2SecretTriggered&&room2AllChallengesCompleted())openRoom2SecretChallenge();
-		else buttonHint(i+1,hints[i],plate)
-	}
-	);
+	addInteract(plate,"Nút "+(i+1),()=>buttonHint(i+1,hints[i],plate));
 
 });
 
@@ -5871,16 +5828,6 @@ hint+
    ROOM 02 — THREE-KEY DOOR TRAY
 ========================================================= */
 
-/* ROOM 02 — SECRET BUTTON 20 / PUZZLE */
-function room2AllChallengesCompleted(){return room2Challenge1Done&&room2Challenge2Done&&room2Challenge3Done&&["KEY 01","KEY 02","KEY 03"].every(key=>inventory.includes(key))}
-const room2SecretPieceSources=[[20,25],[330,25],[670,18],[1030,20],[1370,20],[1640,34],[110,330],[450,310],[790,330],[1130,300],[1480,350],[25,670],[350,660],[700,690],[1030,660],[1370,680],[1660,700]];
-const room2SecretTargets=[[.11,.10],[.34,.08],[.57,.09],[.78,.12],[.18,.31],[.43,.27],[.67,.31],[.08,.53],[.30,.49],[.54,.50],[.79,.49],[.17,.72],[.42,.70],[.66,.70],[.05,.88],[.32,.86],[.62,.87]];
-function secretPiecePoint(index){const workspace=document.getElementById("room2SecretWorkspace"),target=workspace.querySelector(".secretTarget"),point=room2SecretTargets[index];return{x:target.offsetLeft+point[0]*target.clientWidth-44,y:target.offsetTop+point[1]*target.clientHeight-37}}
-function renderRoom2SecretPuzzle(){const workspace=document.getElementById("room2SecretWorkspace");workspace.querySelectorAll(".secretPiece").forEach(piece=>piece.remove());const w=workspace.clientWidth;room2SecretPieceSources.forEach((source,index)=>{const piece=document.createElement("div");piece.className="secretPiece"+(room2SecretPiecesPlaced.has(index)?" locked":"");piece.style.backgroundPosition=`${-source[0]*.28}px ${-source[1]*.248}px`;let x,y;if(room2SecretPiecesPlaced.has(index))({x,y}=secretPiecePoint(index));else{x=w*.70+(index%3)*((w*.29)/3)+((index%2)*8);y=20+Math.floor(index/3)*96}piece.style.left=x+"px";piece.style.top=y+"px";if(!room2SecretPiecesPlaced.has(index))bindRoom2SecretPiece(piece,index);workspace.appendChild(piece)});document.getElementById("room2SecretReveal").classList.toggle("show",room2SecretLastCompleted)}
-function bindRoom2SecretPiece(piece,index){piece.addEventListener("pointerdown",event=>{event.preventDefault();piece.setPointerCapture?.(event.pointerId);piece.classList.add("dragging");const workspace=document.getElementById("room2SecretWorkspace"),box=workspace.getBoundingClientRect(),startX=event.clientX-parseFloat(piece.style.left),startY=event.clientY-parseFloat(piece.style.top);const move=e=>{piece.style.left=Math.max(-20,Math.min(workspace.clientWidth-45,e.clientX-startX-box.left))+"px";piece.style.top=Math.max(-20,Math.min(workspace.clientHeight-35,e.clientY-startY-box.top))+"px"},end=()=>{piece.classList.remove("dragging");piece.removeEventListener("pointermove",move);piece.removeEventListener("pointerup",end);piece.removeEventListener("pointercancel",end);const target=secretPiecePoint(index),x=parseFloat(piece.style.left),y=parseFloat(piece.style.top);if(Math.hypot(x-target.x,y-target.y)<=30){piece.style.left=target.x+"px";piece.style.top=target.y+"px";piece.classList.add("locked");room2SecretPiecesPlaced.add(index);logEvent("ROOM2_SECRET_PIECE_PLACED",{piece:index+1,total:room2SecretPiecesPlaced.size});if(room2SecretPiecesPlaced.size===17){room2SecretLastCompleted=true;document.getElementById("room2SecretReveal").classList.add("show");logEvent("ROOM2_SECRET_COMPLETE",{pieces:17})}}};piece.addEventListener("pointermove",move);piece.addEventListener("pointerup",end);piece.addEventListener("pointercancel",end)})}
-function openRoom2SecretChallenge(){if(!room2SecretTriggered||!room2AllChallengesCompleted())return;room2SecretChallengeOpen=true;playing=false;modalOpen=true;document.exitPointerLock?.();document.getElementById("room2SecretChallenge").style.display="grid";requestAnimationFrame(renderRoom2SecretPuzzle);logEvent("ROOM2_SECRET_OPEN",{completed:room2SecretLastCompleted})}
-document.getElementById("closeRoom2Secret").onclick=()=>{document.getElementById("room2SecretChallenge").style.display="none";room2SecretChallengeOpen=false;modalOpen=false;playing=true;renderer.domElement.requestPointerLock?.();logEvent("ROOM2_SECRET_CLOSE",{completed:room2SecretLastCompleted})};
-
 const room2DoorKeys=["KEY 01","KEY 02","KEY 03"];
 let room2PlacedKeys=[];
 
@@ -5961,7 +5908,6 @@ banner.style.display="block";
 setTimeout(()=>{
 banner.style.display="none";
 room2Exited=true;
-say("Cửa Room 2 mở ra. Bạn trở lại hành lang ban đầu.");
 enterHallway();
 },1400);
 },500);
@@ -5998,20 +5944,11 @@ document.getElementById(
 buildHallway();
 
 
-	setTimeout(
-	()=>{
-	if(room2DoorUnlocked&&room2AllChallengesCompleted()&&!room2SecretTriggered){
-		room2SecretTriggered=true;modalOpen=true;playing=false;
-		const reminder=document.getElementById("room2SecretReminder");reminder.style.display="grid";
-		logEvent("ROOM2_SECRET_REMINDER_SHOWN",{keys:3});
-		setTimeout(()=>{reminder.style.display="none";modalOpen=false;playing=true;renderer.domElement.requestPointerLock?.()},20000);
-	}else{
-		playing=true;modalOpen=false;renderer.domElement.requestPointerLock?.();
-	}
-
-},
-500
-)
+	setTimeout(()=>{
+		playing=true;
+		modalOpen=false;
+		renderer.domElement.requestPointerLock?.();
+	},500)
 
 }
 
