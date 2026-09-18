@@ -49,6 +49,7 @@ justify-content:center
 margin:0;
 font:700 clamp(22px,3.8vw,45px)/1.35 "Times New Roman",Times,serif;
 letter-spacing:.07em;
+white-space:pre-line;
 text-shadow:0 0 18px rgba(241,234,216,.16)
 }
 
@@ -1051,6 +1052,10 @@ line-height:1.08
 .room3Folders{display:none;grid-template-columns:repeat(3,minmax(90px,1fr));gap:12px;width:min(490px,100%);margin-top:26px}.room3ComputerVisual.unlocked .room3Folders{display:grid}.room3Folder{border:0;background:transparent;color:#171717;font:700 14px Arial,sans-serif;cursor:pointer;padding:0}.room3Folder img{display:block;width:100%;height:82px;object-fit:contain}.room3Folder:disabled{display:none}.room3Folder:hover:not(:disabled){transform:translateY(-3px)}
 #room3FileViewer{display:none;width:100%;height:100%;min-height:255px;position:relative;align-items:center;justify-content:center;flex-direction:column;gap:13px}.room3FileTitle{font:700 24px Arial,sans-serif}.room3Video{max-width:100%;max-height:220px;background:#111}.room3CvFiles{display:grid;grid-template-columns:repeat(2,minmax(105px,1fr));gap:18px;width:min(370px,100%);margin-top:8px}.room3CvFile{border:1px solid #a8a8a8;background:#f6f6f6;color:#171717;padding:12px;cursor:pointer;font:700 18px Arial,sans-serif}.room3CvFile:before{content:"📄";display:block;font-size:48px;margin-bottom:8px}.room3CvFile:hover{background:#e4e4e4;transform:translateY(-2px)}.room3CvDocument{display:block;max-width:100%;max-height:220px;object-fit:contain;border:1px solid #999}.room3FileClose{border:1px solid #777;background:#eee;width:38px;height:34px;padding:0;cursor:pointer;font:700 24px/1 Arial,sans-serif}.room3ComputerScreen.viewing>.room3ComputerGreeting,.room3ComputerScreen.viewing>.room3Folders{display:none}
 #closeRoom3Computer{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);min-width:132px}
+#room3FileViewer.letter-view{height:auto;min-height:0;align-items:stretch;padding-top:4px}
+.room3LetterPaper{position:relative;width:min(760px,100%);min-height:min(520px,68vh);margin:auto;padding:38px 48px 72px;background:#fffdf8;color:#25211d;border:1px solid #c8c0ad;box-shadow:0 8px 24px #0003;font:17px/1.6 "Times New Roman",Times,serif;text-align:left}
+.room3LetterPaper h2{font:700 31px/1.1 "Times New Roman",Times,serif;text-align:center;letter-spacing:.08em;margin:0 0 22px;color:#202020}.room3LetterPaper p{margin:0 0 15px;color:#25211d;line-height:1.6}.room3LetterPaper .letterEmphasis{font-weight:700}.room3LetterPaper .letterFinal{font-size:22px;text-align:center;line-height:1.35}.room3LetterNext{position:absolute;right:24px;bottom:20px;border:1px solid #6d6558;background:#f1ece0;color:#28231e;padding:8px 17px;font:700 14px Arial,sans-serif;cursor:pointer}.room3LetterNext:disabled{opacity:.35;cursor:default}
+#room3FinaleOverlay{display:none;position:fixed;inset:0;z-index:130;place-items:center;background:#000;color:#f1ead8;text-align:center;padding:28px}.room3FinaleContent{width:min(900px,100%)}#room3FinaleText{min-height:72px;font:700 clamp(27px,5vw,58px)/1.25 "Times New Roman",Times,serif;letter-spacing:.07em}#room3ExitGame{display:none;margin-top:32px;padding:12px 26px;border:1px solid #d4c786;background:transparent;color:#f1ead8;font:700 15px "Times New Roman",Times,serif;cursor:pointer}#room3ExitGame:hover{background:#d4c786;color:#151a1b}
 
 
 /* =========================================================
@@ -1738,8 +1743,9 @@ Hãy tìm chúng và lấy <b>chìa khóa 1</b>.
 
 <!-- ROOM 03 / COMPUTER -->
 <div id="room3ComputerOverlay" role="dialog" aria-modal="true" aria-label="Máy tính Room 3">
-<div class="room3ComputerShell"><div id="room3ComputerVisual" class="room3ComputerVisual"><div id="room3ComputerScreen" class="room3ComputerScreen"><img src="room3-computer-key.png" alt="Bảng mã chữ cái và số"><form id="room3ComputerForm"><input id="room3ComputerPassword" type="password" inputmode="numeric" autocomplete="off" aria-label="Mật khẩu"><div id="room3ComputerError" class="room3ComputerError" aria-live="polite"></div></form><div id="room3ComputerGreeting" class="room3ComputerGreeting"></div><div id="room3Folders" class="room3Folders"><button class="room3Folder" data-folder="VIDEO" type="button"><img src="room3-folder.png" alt=""><span>VIDEO</span></button><button class="room3Folder" data-folder="CV" type="button" disabled><img src="room3-folder.png" alt=""><span>CV</span></button><button class="room3Folder" data-folder="FACT" type="button" disabled><img src="room3-folder.png" alt=""><span>FACT</span></button></div><div id="room3FileViewer"><div id="room3FileContent"></div><button id="closeRoom3File" class="room3FileClose" type="button" aria-label="Quay lại" title="Quay lại">←</button></div></div></div><button class="btn" id="closeRoom3Computer" type="button" style="background:#ddd7c7">Đóng</button></div>
+<div class="room3ComputerShell"><div id="room3ComputerVisual" class="room3ComputerVisual"><div id="room3ComputerScreen" class="room3ComputerScreen"><img src="room3-computer-key.png" alt="Bảng mã chữ cái và số"><form id="room3ComputerForm"><input id="room3ComputerPassword" type="password" inputmode="numeric" autocomplete="off" aria-label="Mật khẩu"><div id="room3ComputerError" class="room3ComputerError" aria-live="polite"></div></form><div id="room3ComputerGreeting" class="room3ComputerGreeting"></div><div id="room3Folders" class="room3Folders"><button class="room3Folder" data-folder="VIDEO" type="button"><img src="room3-folder.png" alt=""><span>VIDEO</span></button><button class="room3Folder" data-folder="CV" type="button" disabled><img src="room3-folder.png" alt=""><span>CV</span></button><button class="room3Folder" data-folder="FACT" type="button" disabled><img src="room3-folder.png" alt=""><span>Thư gửi bạn</span></button></div><div id="room3FileViewer"><div id="room3FileContent"></div><button id="closeRoom3File" class="room3FileClose" type="button" aria-label="Quay lại" title="Quay lại">←</button></div></div></div><button class="btn" id="closeRoom3Computer" type="button" style="background:#ddd7c7">Đóng</button></div>
 </div>
+<div id="room3FinaleOverlay" role="dialog" aria-modal="true" aria-label="Kết thúc dự án"><div class="room3FinaleContent"><div id="room3FinaleText" aria-live="polite"></div><button id="room3ExitGame" type="button">Thoát game</button></div></div>
 
 <!-- =======================================================
      MEMORY GAME
@@ -2289,6 +2295,7 @@ let archiveBookSelections=0;
 let room3ComputerUnlocked=false;
 let room3VideoViewed=false;
 let room3CVViewed=false;
+let room3CVFilesViewed=new Set();
 /* Room 3 / hồ sơ A05 — state cho secret overlay, tách hoàn toàn khỏi thế giới 3D. */
 let room3A05Completed=false;
 let a05SecretOverlayOpen=false;
@@ -2666,33 +2673,20 @@ writeCharacter()
 }
 
 function startIntro(){
-
-typeIntroLine(
-"BẠN ĐÃ NHẬN ĐƯỢC MỘT THƯ ẨN DANH MỜI VỀ ĐIỀU TRA DỰ ÁN BỊ BỎ QUÊN “23:47”",
-()=>{
-
+typeIntroLine("HỌ VÀ TÊN: NGUYỄN GIA MINH\nNGÀY THÁNG NĂM SINH: 09-12-2010\nTUỔI: 16.",()=>{
 introTimer=setTimeout(()=>{
-
-if(!introActive)
-return;
-
+if(!introActive)return;
+typeIntroLine("BẠN ĐÃ NHẬN ĐƯỢC MỘT THƯ ẨN DANH MỜI VỀ ĐIỀU TRA DỰ ÁN BỊ BỎ QUÊN “23:47”",()=>{
+introTimer=setTimeout(()=>{
+if(!introActive)return;
 introText.textContent="";
-
-typeIntroLine(
-"LIỆU ĐIỀU ĐÓ CÓ PHẢI LÀ SỰ THẬT?",
-()=>{
-
-if(introActive)
-introBegin.classList.add("is-visible")
-
-}
-)
-
+typeIntroLine("LIỆU ĐIỀU ĐÓ CÓ PHẢI LÀ SỰ THẬT?",()=>{
+if(introActive)introBegin.classList.add("is-visible")
+})
 },1700)
-
-}
-)
-
+})
+},1100)
+})
 }
 
 introBegin.addEventListener("click",()=>{
@@ -4453,9 +4447,7 @@ say(
 }
 
 }
-
-}
-);
+});
 
 
 /* END OF HALLWAY */
@@ -4836,13 +4828,24 @@ overlay.style.display="grid";screen.classList.remove("viewing");document.getElem
 }
 function renderRoom3Folders(){const folders=document.querySelectorAll(".room3Folder");folders.forEach(folder=>{const name=folder.dataset.folder;folder.disabled=name==="CV"?!room3VideoViewed:name==="FACT"?!room3CVViewed:false})}
 function completeRoom3Video(){if(room3VideoViewed)return;room3VideoViewed=true;renderRoom3Folders();logEvent("ARCHIVE_COMPUTER_VIDEO_COMPLETE")}
-function openRoom3Folder(name){const screen=document.getElementById("room3ComputerScreen"),viewer=document.getElementById("room3FileViewer"),content=document.getElementById("room3FileContent");screen.classList.add("viewing");viewer.style.display="flex";viewer.dataset.folder=name;viewer.dataset.view="folder";if(name==="VIDEO"){content.innerHTML='<div class="room3FileTitle">VIDEO</div><video id="room3Video" class="room3Video" controls preload="metadata" src="2347.mov"></video>';document.getElementById("room3Video").addEventListener("ended",completeRoom3Video,{once:true})}else if(name==="CV"){content.innerHTML='<div class="room3FileTitle">CV</div><div class="room3CvFiles"><button class="room3CvFile" data-file="1" type="button">1</button><button class="room3CvFile" data-file="2" type="button">2</button></div>';content.querySelectorAll(".room3CvFile").forEach(file=>file.addEventListener("click",()=>openRoom3CvFile(file.dataset.file)));room3CVViewed=true;renderRoom3Folders();logEvent("ARCHIVE_COMPUTER_CV_VIEWED")}else{content.innerHTML='<div class="room3FileTitle">'+name+'</div>';logEvent("ARCHIVE_COMPUTER_FACT_VIEWED")}}
-function openRoom3CvFile(file){const viewer=document.getElementById("room3FileViewer"),content=document.getElementById("room3FileContent");viewer.dataset.folder="CV";viewer.dataset.view="file";content.innerHTML='<div class="room3FileTitle">'+file+'</div><img class="room3CvDocument" src="room3-cv-'+file+'.png" alt="Tệp CV '+file+'">'}
+const room3LetterPages=[
+`<h2>SỰ THẬT</h2><p>Nếu bạn đã đi đến đây, có lẽ bạn cũng đã tìm ra câu trả lời cho câu hỏi:</p><p><b>23:47 thực sự là gì?</b></p><p>Câu trả lời nằm ở chính bạn.</p><p>Trước khi bước vào căn phòng này, bạn đã từng tham gia một khảo sát có tên <b>“Khảo sát phản ứng của học sinh trước sự thất bại”</b>.</p><p>Bạn chỉ biết đó là một cuộc khảo sát dành cho học sinh.</p><p>Bạn không được biết tên dự án.</p><p>Bạn không được biết mục đích thực sự.</p><p>Và bạn càng không biết những câu trả lời của mình sẽ được sử dụng như thế nào.</p><p>Tất cả thông tin về dự án đều được bảo mật, kể cả với chính những người tham gia.</p><p><b>Bạn là S23.</b></p>`,
+`<p><b>Dự án 23:47 từng được thực hiện với rất nhiều học sinh.</b></p><p>Ban đầu, những người tham gia chỉ nghĩ rằng họ đang thực hiện các bài kiểm tra về trí nhớ, khả năng quan sát và giải quyết vấn đề.</p><p>Nhưng đó chỉ là phần bề mặt.</p><p>Ẩn sau những bài kiểm tra ấy là một mục tiêu khác: <b>Ghi nhận cách một học sinh phản ứng khi liên tục gặp thất bại, bị cản trở hoặc phải đưa ra quyết định trong điều kiện không thuận lợi.</b></p><p>Dự án đã được thực hiện qua nhiều đối tượng nghiên cứu.</p><p>Nhưng rồi nó bị dừng lại.</p><p>Không phải vì dữ liệu không đủ.</p><p>Không phải vì những bài kiểm tra thất bại.</p><p>Mà bởi vì <b>một đối tượng nghiên cứu đã phát hiện ra sự thật.</b></p><p>Người đó nhận ra rằng những thử thách mình đang thực hiện không đơn thuần là những bài kiểm tra trí nhớ hay khả năng giải quyết vấn đề.</p><p>Khi sự thật bị phát hiện, dự án không thể tiếp tục theo cách cũ.</p>`,
+`<p>Sau nhiều lần thử nghiệm không đạt được mục tiêu, người nghiên cứu đứng trước một lựa chọn cuối cùng:</p><p><b>Dừng dự án.</b></p><p>Hoặc tìm một đối tượng phù hợp để thực hiện lại toàn bộ quá trình. Và rồi ông tìm thấy hồ sơ của bạn: <b>S23.</b></p><p>Dữ liệu từ lần khảo sát trước cho thấy phản ứng của bạn phù hợp với những điều dự án đang cần nghiên cứu.</p><p>Vì vậy, ông quyết định mời bạn quay trở lại. Nhưng lần này, bạn không được nói rằng mình đang tham gia nghiên cứu. Bạn chỉ được yêu cầu:</p><p><b>“Hãy tìm hiểu xem tại sao Dự án 23:47 lại bị bỏ quên.”</b></p><hr><p>Những căn phòng.</p><p>Những thử thách.</p><p>Những manh mối.</p><p>Những hồ sơ.</p><p>Tất cả đều đã được chuẩn bị cho bạn.</p><p>Bạn tưởng rằng mình đang điều tra một dự án đã bị bỏ dở. Nhưng thực ra… <b>bạn đang trở thành đối tượng của dự án một lần nữa.</b></p><p>Và người đưa bạn vào cuộc điều tra này?</p><p><b>Chính là người đã tạo ra Dự án 23:47.</b></p>`,
+`<p>Ông cần một kết quả cuối cùng.</p><p>Nếu lần này dự án vẫn không đạt được mục tiêu, ông sẽ phải từ bỏ nó. Nhưng bạn đã đi đến cuối.</p><p>Bạn đã hoàn thành tất cả các thử thách.</p><p>Bạn đã tiếp tục sau những lần thất bại.</p><p>Bạn đã tìm kiếm manh mối.</p><p>Bạn đã giải quyết vấn đề.</p><p>Và quan trọng nhất...</p><p><b>Bạn chưa từng nghi ngờ rằng chính mình mới là một phần của cuộc thử nghiệm.</b></p><p>Vì vậy, lần này...</p><p><b>Dự án 23:47 đã thành công.</b></p><p>Không phải vì bạn tìm được sự thật. Mà vì bạn đã không nhận ra rằng...</p><p class="letterFinal"><b>TỪ ĐẦU ĐẾN CUỐI, BẠN CHƯA BAO GIỜ THỰC SỰ RỜI KHỎI DỰ ÁN.</b></p>`
+];
+let room3LetterTimer=null;
+function typeRoom3Letter(target,html,onDone){clearTimeout(room3LetterTimer);target.innerHTML=html;const textNodes=[];target.querySelectorAll("h2,p").forEach(node=>{const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);let n;while(n=walker.nextNode())textNodes.push(n)});const source=textNodes.map(n=>n.nodeValue);textNodes.forEach(n=>n.nodeValue="");let nodeIndex=0,charIndex=0;const write=()=>{if(nodeIndex>=textNodes.length){onDone();return}const full=source[nodeIndex];if(charIndex<full.length){const char=full[charIndex++];textNodes[nodeIndex].nodeValue+=char;if(char.trim()&&Math.random()>.24)beep(120+Math.random()*35,.018,"square",.01);room3LetterTimer=setTimeout(write,char===" "?9:17)}else{nodeIndex++;charIndex=0;room3LetterTimer=setTimeout(write,55)}};write()}
+function openRoom3Letter(page=0){const screen=document.getElementById("room3ComputerScreen"),viewer=document.getElementById("room3FileViewer"),content=document.getElementById("room3FileContent");screen.classList.add("viewing");viewer.style.display="flex";viewer.classList.add("letter-view");viewer.dataset.folder="FACT";viewer.dataset.view="letter";content.innerHTML='<div class="room3LetterPaper"><div id="room3LetterText"></div><button id="room3LetterNext" class="room3LetterNext" type="button" disabled>Tiếp</button></div>';const button=document.getElementById("room3LetterNext");typeRoom3Letter(document.getElementById("room3LetterText"),room3LetterPages[page],()=>{button.disabled=false;button.focus()});button.onclick=()=>{if(page<room3LetterPages.length-1)openRoom3Letter(page+1);else startRoom3Finale()};logEvent("ARCHIVE_COMPUTER_FACT_PAGE",{page:page+1})}
+function startRoom3Finale(){clearTimeout(room3LetterTimer);document.getElementById("room3ComputerOverlay").style.display="none";document.getElementById("room3FinaleOverlay").style.display="grid";const text=document.getElementById("room3FinaleText"),exit=document.getElementById("room3ExitGame");exit.style.display="none";text.textContent="";const message="CẢM ƠN BẠN ĐÃ THAM GIA DỰ ÁN";let i=0;const write=()=>{if(i>=message.length){exit.style.display="inline-block";exit.focus();return}const char=message[i++];text.textContent+=char;if(char.trim())beep(120+Math.random()*35,.025,"square",.012);room3LetterTimer=setTimeout(write,48)};write();logEvent("ARCHIVE_COMPUTER_FINALE")}
+function openRoom3Folder(name){const screen=document.getElementById("room3ComputerScreen"),viewer=document.getElementById("room3FileViewer"),content=document.getElementById("room3FileContent");if(name==="FACT"){openRoom3Letter();return}screen.classList.add("viewing");viewer.style.display="flex";viewer.classList.remove("letter-view");viewer.dataset.folder=name;viewer.dataset.view="folder";if(name==="VIDEO"){content.innerHTML='<div class="room3FileTitle">VIDEO</div><video id="room3Video" class="room3Video" controls preload="metadata" src="2347.mov"></video>';document.getElementById("room3Video").addEventListener("ended",completeRoom3Video,{once:true})}else if(name==="CV"){content.innerHTML='<div class="room3FileTitle">CV</div><div class="room3CvFiles"><button class="room3CvFile" data-file="1" type="button">1</button><button class="room3CvFile" data-file="2" type="button">2</button></div>';content.querySelectorAll(".room3CvFile").forEach(file=>file.addEventListener("click",()=>openRoom3CvFile(file.dataset.file)));logEvent("ARCHIVE_COMPUTER_CV_OPENED")}}
+function openRoom3CvFile(file){const viewer=document.getElementById("room3FileViewer"),content=document.getElementById("room3FileContent");viewer.dataset.folder="CV";viewer.dataset.view="file";content.innerHTML='<div class="room3FileTitle">'+file+'</div><img class="room3CvDocument" src="room3-cv-'+file+'.png" alt="Tệp CV '+file+'">';room3CVFilesViewed.add(file);if(room3CVFilesViewed.size===2){room3CVViewed=true;renderRoom3Folders();logEvent("ARCHIVE_COMPUTER_CV_VIEWED")}}
 document.getElementById("room3ComputerForm").addEventListener("submit",event=>{event.preventDefault();const input=document.getElementById("room3ComputerPassword"),error=document.getElementById("room3ComputerError");if(input.value!=="514201825"){input.classList.add("error");error.textContent="Mật khẩu không đúng.";logEvent("ARCHIVE_COMPUTER_PASSWORD",{success:false});return}room3ComputerUnlocked=true;input.classList.remove("error");error.textContent="";document.getElementById("room3ComputerVisual").classList.add("unlocked");const greeting=document.getElementById("room3ComputerGreeting");greeting.textContent="Xin chào "+PARTICIPANT_ID;greeting.classList.add("show");renderRoom3Folders();logEvent("ARCHIVE_COMPUTER_PASSWORD",{success:true})});
 document.getElementById("room3ComputerPassword").addEventListener("input",()=>{document.getElementById("room3ComputerPassword").classList.remove("error");document.getElementById("room3ComputerError").textContent=""});
 document.querySelectorAll(".room3Folder").forEach(folder=>folder.addEventListener("click",()=>openRoom3Folder(folder.dataset.folder)));
 document.getElementById("closeRoom3File").onclick=()=>{const viewer=document.getElementById("room3FileViewer");if(viewer.dataset.folder==="CV"&&viewer.dataset.view==="file"){openRoom3Folder("CV");return}const video=document.getElementById("room3Video");if(video)video.pause();viewer.style.display="none";viewer.dataset.folder="";viewer.dataset.view="";document.getElementById("room3ComputerScreen").classList.remove("viewing")};
 document.getElementById("closeRoom3Computer").onclick=()=>{document.getElementById("room3ComputerOverlay").style.display="none";modalOpen=false;playing=true;renderer.domElement.requestPointerLock?.();logEvent("ARCHIVE_COMPUTER_CLOSE",{unlocked:room3ComputerUnlocked})};
+document.getElementById("room3ExitGame").onclick=()=>{clearTimeout(room3LetterTimer);window.close();setTimeout(()=>{location.href="about:blank"},180)};
 
 /* =========================================================
    CHALLENGE 07 — HỘP LƯU TRỮ / RED FILTER / BÀN CỜ
