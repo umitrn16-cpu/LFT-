@@ -1855,6 +1855,30 @@ let PARTICIPANT_ID="";
 let SESSION_ID="";
 let ROOM_START_TIME=null;
 let memoryAttempt=0;
+/* Room timers share the original session; they never create a new participant or session. */
+const ROOM_START_TIMES={};
+
+function trackingRoom(){return currentRoom==="ARCHIVE_ROOM"?"ROOM_03":currentRoom}
+function trackingVersion(room){return room==="ROOM_02"?"ROOM2_V1":room==="ROOM_03"?"ROOM3_V1":"ROOM1_V2"}
+function startRoomTracking(room){ROOM_START_TIMES[room]=Date.now();logEvent("ROOM_START",{room,challenge:"",value:""})}
+
+function normalizeTrackingEvent(eventName,data){
+const aliases={
+"ROOM2_ENTER":"ROOM_START","ARCHIVE_ROOM_ENTER":"ROOM_START","ROOM2_KEY_OBTAINED":"KEY_OBTAINED",
+"CH1_NUMBER_CLICK":"NUMBER_CORRECT","ARCHIVE_DOCUMENT_OPENED":"HINT_VIEW","ROOM2_BUTTON_HINT":"HINT_VIEW",
+"ARCHIVE_COMPUTER_OPEN":"COMPUTER_OPEN","ARCHIVE_COMPUTER_VIDEO_COMPLETE":"VIDEO_COMPLETE",
+"ARCHIVE_COMPUTER_CV_OPENED":"CV_OPEN","ARCHIVE07_FILTER_OBTAINED":"FILTER_OBTAINED",
+"ARCHIVE_A05_PAPER_REVEALED":"PAPER_REVEAL","ARCHIVE_A05_PEN_SELECTED":"PENCIL_SELECTED",
+"ARCHIVE07_HS07_OPENED":"HS07_FOUND","ARCHIVE_CHALLENGE_1_COMPLETE":"A05_FOUND",
+"ARCHIVE07_COMPLETE":"FILTER_SUCCESS","ARCHIVE07_COMPARISON_VIEWED":"HINT_VIEW"
+};
+const event=aliases[eventName]||eventName;
+const extra={...data};
+if(eventName==="ARCHIVE_DOCUMENT_OPENED")Object.assign(extra,{hint_type:"DOCUMENT",object_id:data.document});
+if(eventName==="ROOM2_BUTTON_HINT")Object.assign(extra,{hint_type:"BUTTON",object_id:"BUTTON_"+data.button});
+if(eventName==="ARCHIVE07_COMPARISON_VIEWED")Object.assign(extra,{hint_type:"DOCUMENT",object_id:"COMPARISON_SHEET"});
+return {event,extra}
+}
 
 function generateSessionId(){
 
@@ -1879,28 +1903,38 @@ function logEvent(eventName,data={}){
 if(!PARTICIPANT_ID||!SESSION_ID)
 return;
 
+const normalized=normalizeTrackingEvent(eventName,data);
+const room=trackingRoom();
+const roomStartedAt=ROOM_START_TIMES[room]||ROOM_START_TIME;
+
 const payload={
 
 participant_id:PARTICIPANT_ID,
 
 session_id:SESSION_ID,
 
-room:currentRoom,
+room,
 
-event:eventName,
+challenge:data.challenge||"",
+
+event:normalized.event,
 
 timestamp:new Date().toISOString(),
 
 elapsed_seconds:
-ROOM_START_TIME
+roomStartedAt
 ?Math.round(
-(Date.now()-ROOM_START_TIME)/1000
+(Date.now()-roomStartedAt)/1000
 )
 :"",
 
-tracking_version:"ROOM1_ROOM2_V3_DISTRACTION",
+value:data.value??data.number??data.key??"",
+
+tracking_version:trackingVersion(room),
 
 page_url:location.href,
+
+extra_json:JSON.stringify(normalized.extra),
 
 ...data
 
@@ -2531,6 +2565,7 @@ logEvent("ARCHIVE_ROOM_EXITED_WITH_KEY");
 }
 
 function grantArchiveRoomKey(){
+logEvent("ROOM_COMPLETE",{challenge:"FILTER_CHALLENGE",key_id:"KEY_04"});
 /* Hoàn thành Red Filter: đóng overlay, hiện phần thưởng độc lập ở lớp cao nhất,
    rồi mới đưa KEY 04 vào túi và bắt đầu đồng hồ 10 giây. */
 document.getElementById("archive07Hidden")?.remove();
@@ -4737,7 +4772,7 @@ const storageGlass=box("archive07StorageGlass",5.55,.84,-5.65,.82,.025,.52,mat(0
 const redFilterPreview=box("archive07RedFilterPreview",5.55,.86,-5.65,.62,.018,.38,mat(0xb6222a,.32,.04,0xb6222a,.32),false);
 addInteract(storageBox,"Mở HỘP LƯU TRỮ 07",()=>openArchive07Box());
 archiveCollisionRects.push({x:5.55,z:-5.65,w:1.25,d:.82});
-logEvent("ARCHIVE_ROOM_ENTER");
+startRoomTracking("ROOM_03");
 say("Phòng tài liệu vẫn có ánh sáng từ các khung cửa sổ phủ bụi.");
 }
 
@@ -4760,7 +4795,7 @@ window.speechSynthesis.speak(voice)
 }
 
 function startArchiveRecording(clear){
-stopArchiveRecording();archiveRecorderOn=true;
+stopArchiveRecording();archiveRecorderOn=true;logEvent("VOICE_RECORDER_ON",{object_id:"ARCHIVE_RECORDER"});
 try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();if(audio.state==="suspended")audio.resume();const buffer=audio.createBuffer(1,audio.sampleRate*2,audio.sampleRate);const data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;const source=audio.createBufferSource(),gain=audio.createGain();source.buffer=buffer;source.loop=true;gain.gain.value=clear?.012:.065;source.connect(gain);gain.connect(audio.destination);source.start();archiveRecorderNoise={source,gain}}catch(e){}
 playArchiveVoice(clear)
 }
@@ -4813,7 +4848,7 @@ if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;const ctx
 return canvas
 }
 function a05CanvasPoint(event,canvas){const rect=canvas.getBoundingClientRect();return{x:event.clientX-rect.left,y:event.clientY-rect.top}}
-function paintA05Line(ctx,from,to){ctx.strokeStyle="rgba(66,61,55,.40)";ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(to.x,to.y);ctx.stroke();const distance=Math.hypot(to.x-from.x,to.y-from.y),steps=Math.max(1,Math.ceil(distance/11));for(let i=0;i<=steps;i++){const x=from.x+(to.x-from.x)*i/steps,y=from.y+(to.y-from.y)*i/steps;a05PaintCells.add(Math.floor(x/34)+":"+Math.floor(y/34))}paintProgress=a05PaintCells.size;if(!paperRevealCompleted&&paintProgress>=96){paperRevealCompleted=true;document.getElementById("a05Paper").classList.add("revealed");logEvent("ARCHIVE_A05_PAPER_REVEALED",{paint_progress:paintProgress})}}
+function paintA05Line(ctx,from,to){ctx.strokeStyle="rgba(66,61,55,.40)";ctx.lineWidth=18;ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(to.x,to.y);ctx.stroke();const distance=Math.hypot(to.x-from.x,to.y-from.y),steps=Math.max(1,Math.ceil(distance/11));for(let i=0;i<=steps;i++){const x=from.x+(to.x-from.x)*i/steps,y=from.y+(to.y-from.y)*i/steps;a05PaintCells.add(Math.floor(x/34)+":"+Math.floor(y/34))}paintProgress=a05PaintCells.size;if(!paperRevealCompleted&&paintProgress>=96){paperRevealCompleted=true;document.getElementById("a05Paper").classList.add("revealed");logEvent("ARCHIVE_A05_PAPER_REVEALED",{paint_progress:paintProgress});logEvent("HIDDEN_MESSAGE_FOUND",{object_id:"A05_SECRET_PAPER"})}}
 function openA05SecretOverlay(){
 if(!room3A05Completed||paperRevealCompleted)return;
 const overlay=document.getElementById("a05SecretOverlay");document.getElementById("doc").style.display="none";overlay.style.display="grid";a05SecretOverlayOpen=true;playing=false;modalOpen=true;document.exitPointerLock?.();prepareA05Canvas();logEvent("ARCHIVE_A05_SECRET_OPEN",{has_pen:hasPen,paint_progress:paintProgress})
@@ -4890,15 +4925,15 @@ doc("HỘP ĐANG KHÓA — NHẬP MẬT KHẨU",'<div class="note" style="text-a
 function openArchive07ChessControl(){openArchive07HiddenChallenge()}
 
 function openArchive07HiddenChallenge(){
-if(!archive07BoxOpened)return;document.getElementById("doc").style.display="none";modalOpen=true;document.exitPointerLock?.();archive07State="HIDDEN_CHALLENGE_RED_FILTER";
+if(!archive07BoxOpened)return;document.getElementById("doc").style.display="none";modalOpen=true;document.exitPointerLock?.();archive07State="HIDDEN_CHALLENGE_RED_FILTER";logEvent("FILTER_CHALLENGE_START",{challenge:"FILTER_CHALLENGE"});
 let panel=document.getElementById("archive07Hidden");if(panel)panel.remove();panel=document.createElement("div");panel.id="archive07Hidden";panel.style.cssText="position:fixed;inset:0;z-index:110;background:radial-gradient(circle,#334044,#080d0f 75%);display:grid;place-items:center;color:#f5f0e3;font-family:serif";
 const cells=archive07Initial.map((row,r)=>row.map((black,c)=>'<button class="a07cell '+(black?"black":"white")+'" data-cell="'+r+'-'+c+'" aria-label="Quân cờ '+(r+1)+'-'+(c+1)+'"></button>').join("")).join("");
 panel.innerHTML='<div id="a07Stage" style="position:relative;width:min(820px,96vw);min-height:650px;padding:30px;text-align:center;border:1px solid #d4c78688;background:#111b1d;box-shadow:0 25px 90px #000"><button id="a07GiveUp" class="btn" style="position:absolute;right:52px;top:10px;margin:0;padding:8px 12px;font-size:11px;background:#75503a;color:#f6ead2">BỎ CUỘC</button><button id="a07Close" style="position:absolute;right:16px;top:14px">×</button><h2 style="margin:0">THỬ THÁCH ẨN</h2><p id="a07HiddenMsg">Giữ Red Filter phủ vừa khít toàn bộ bàn cờ.</p><b id="a07UseCount">LƯỢT RED FILTER: '+(3-archive07FilterUses)+'/3</b><div id="a07Board" style="position:relative;z-index:1;margin:28px auto;width:330px;height:330px;display:grid;grid-template-columns:repeat(6,1fr);gap:7px;padding:14px;background:#795a3b;border:10px solid #3a281b">'+cells+'</div><div id="a07Filter" style="position:absolute;left:42px;bottom:45px;z-index:3;box-sizing:border-box;width:378px;height:378px;background:rgba(177,18,27,.34);border:3px solid rgba(255,135,135,.82);box-shadow:inset 0 0 28px rgba(255,70,60,.35);cursor:grab;touch-action:none;display:grid;place-items:center;font-weight:bold;color:#ffe8dd;letter-spacing:2px">RED FILTER</div></div>';
 document.body.appendChild(panel);const stage=panel.querySelector("#a07Stage"),board=panel.querySelector("#a07Board"),filter=panel.querySelector("#a07Filter"),msg=panel.querySelector("#a07HiddenMsg"),count=panel.querySelector("#a07UseCount");/* Match the physical filter to the rendered board, including its frame. */const initialBoardRect=board.getBoundingClientRect();filter.style.width=initialBoardRect.width+"px";filter.style.height=initialBoardRect.height+"px";let dragging=false,revealing=false,chargedThisDrag=false,offsetX=0,offsetY=0;
 const clearGlow=()=>panel.querySelectorAll(".a07cell.glow").forEach(cell=>cell.classList.remove("glow"));const showGlow=()=>panel.querySelectorAll(".a07cell").forEach(cell=>{const [row,col]=cell.dataset.cell.split("-").map(Number),isBlack=cell.classList.contains("black"),targetBlack=archive07KeyPattern[row][col]===1;if(isBlack!==targetBlack)cell.classList.add("glow")});const resetFilter=()=>{const stageRect=stage.getBoundingClientRect(),boardRect=board.getBoundingClientRect();filter.style.transition="left .42s ease,top .42s ease,opacity .2s";filter.style.left=(boardRect.right-stageRect.left+14)+"px";filter.style.top="42px";filter.style.right="auto";filter.style.bottom="auto";filter.style.opacity="1"};const aligned=()=>{const b=board.getBoundingClientRect(),f=filter.getBoundingClientRect();return Math.abs((f.left+f.width/2)-(b.left+b.width/2))<=25&&Math.abs((f.top+f.height/2)-(b.top+b.height/2))<=25&&Math.abs(f.width-b.width)<=4&&Math.abs(f.height-b.height)<=4};const reveal=()=>{if(archive07FilterUses>=3)return;if(!chargedThisDrag){chargedThisDrag=true;archive07FilterUses++;count.textContent="LƯỢT RED FILTER: "+(3-archive07FilterUses)+"/3";logEvent("ARCHIVE07_FILTER_USED",{use:archive07FilterUses,placement:"held"})}revealing=true;showGlow();msg.innerHTML="<b>RED FILTER ĐÃ ĐƯỢC ĐẶT ĐÚNG</b>"};
-filter.onpointerdown=e=>{if(archive07FilterUses>=3){msg.textContent="Red Filter đã hết lượt sử dụng.";return}dragging=true;chargedThisDrag=false;filter.style.transition="none";const rect=filter.getBoundingClientRect();offsetX=e.clientX-rect.left;offsetY=e.clientY-rect.top;filter.setPointerCapture(e.pointerId);filter.style.cursor="grabbing";filter.style.opacity=".74"};
+filter.onpointerdown=e=>{if(archive07FilterUses>=3){msg.textContent="Red Filter đã hết lượt sử dụng.";return}logEvent("FILTER_DRAG_START",{challenge:"FILTER_CHALLENGE"});dragging=true;chargedThisDrag=false;filter.style.transition="none";const rect=filter.getBoundingClientRect();offsetX=e.clientX-rect.left;offsetY=e.clientY-rect.top;filter.setPointerCapture(e.pointerId);filter.style.cursor="grabbing";filter.style.opacity=".74"};
 filter.onpointermove=e=>{if(!dragging)return;const rect=stage.getBoundingClientRect();filter.style.left=(e.clientX-rect.left-offsetX)+"px";filter.style.top=(e.clientY-rect.top-offsetY)+"px";filter.style.right="auto";filter.style.bottom="auto";if(aligned())reveal();else if(revealing){revealing=false;clearGlow();msg.textContent="Căn Red Filter phủ khít bàn cờ."}};
-filter.onpointerup=e=>{if(!dragging)return;dragging=false;filter.releasePointerCapture?.(e.pointerId);filter.style.cursor="grab";const sawHint=revealing;revealing=false;clearGlow();resetFilter();if(sawHint){msg.textContent=archive07FilterUses>=3?"Red Filter đã hết lượt. Hãy thao tác theo trí nhớ.":"Red Filter đã trượt sang góc. Hãy thao tác theo trí nhớ."}else msg.textContent="Red Filter chưa khớp vùng bàn cờ."};filter.onpointercancel=filter.onpointerup;
+filter.onpointerup=e=>{if(!dragging)return;dragging=false;filter.releasePointerCapture?.(e.pointerId);filter.style.cursor="grab";const sawHint=revealing;logEvent("FILTER_DRAG_END",{challenge:"FILTER_CHALLENGE",aligned:sawHint});if(!sawHint)logEvent("FILTER_WRONG_ATTEMPT",{challenge:"FILTER_CHALLENGE"});revealing=false;clearGlow();resetFilter();if(sawHint){msg.textContent=archive07FilterUses>=3?"Red Filter đã hết lượt. Hãy thao tác theo trí nhớ.":"Red Filter đã trượt sang góc. Hãy thao tác theo trí nhớ."}else msg.textContent="Red Filter chưa khớp vùng bàn cờ."};filter.onpointercancel=filter.onpointerup;
 panel.querySelectorAll(".a07cell").forEach(cell=>cell.onclick=()=>{if(revealing){msg.textContent="Buông Red Filter trước khi lật quân cờ.";return}const key=cell.dataset.cell,[row,col]=key.split("-").map(Number);cell.classList.toggle("black");cell.classList.toggle("white");logEvent("ARCHIVE07_CHESS_FLIP",{row,col,state:cell.classList.contains("black")?"black":"white"});const solved=[...panel.querySelectorAll(".a07cell")].every(c=>{const [r,k]=c.dataset.cell.split("-").map(Number);return c.classList.contains(archive07KeyPattern[r][k]?"black":"white")});if(solved){archive07State="CHALLENGE_COMPLETED";clearGlow();panel.remove();modalOpen=false;renderer.domElement.requestPointerLock?.();grantArchiveRoomKey();logEvent("ARCHIVE07_COMPLETE",{key:"KEY 04"})}});panel.querySelector("#a07GiveUp").onclick=()=>{resetArchive07Challenge();panel.remove();modalOpen=false;renderer.domElement.requestPointerLock?.();say("Thử thách đã được đặt lại.")};panel.querySelector("#a07Close").onclick=()=>{panel.remove();modalOpen=false;renderer.domElement.requestPointerLock?.()};
 }
 
@@ -5698,9 +5733,7 @@ c3TrueHits=0;
 TRACKING
 */
 
-logEvent(
-"ROOM2_ENTER"
-);
+startRoomTracking("ROOM_02");
 
 }
 
@@ -5886,6 +5919,7 @@ slot.classList.remove("dragOver");
 const key=event.dataTransfer.getData("text/plain");
 if(!key||room2PlacedKeys.includes(key))return;
 if(key!==slot.dataset.key){
+logEvent("KEY_WRONG_ATTEMPT",{challenge:"ROOM2_EXIT",value:key,expected_key:slot.dataset.key});
 document.getElementById("keyTrayHint").textContent="Chìa khóa không khớp với ổ khóa này.";
 say("Chìa khóa không phù hợp.");
 return
@@ -5901,6 +5935,7 @@ if(room2PlacedKeys.length===3)unlockRoom2Door();
 
 function unlockRoom2Door(){
 	logEvent("ROOM2_DOOR_UNLOCKED",{keys:room2PlacedKeys});
+	logEvent("ROOM_COMPLETE",{challenge:"ROOM2_EXIT",keys:room2PlacedKeys});
 	room2DoorUnlocked=true;
 document.getElementById("keyTrayHint").textContent="Ba ổ khóa đã mở. Cửa Room 2 đang mở...";
 setTimeout(()=>{
@@ -8043,11 +8078,8 @@ n,
 b
 ){
 
-if(
-numberBusy||
-n!==nextNumber
-)
-return;
+if(numberBusy)return;
+if(n!==nextNumber){logEvent("NUMBER_WRONG",{challenge:"CH1",value:n,expected_number:nextNumber,attempt:numberAttempt});return}
 
 
 if(
