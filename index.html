@@ -4795,8 +4795,8 @@ function playArchiveVoice(clear){
 if(!archiveRecorderOn||!window.SpeechSynthesisUtterance)return;
 window.speechSynthesis?.cancel();
 const token=archiveRecorderVoiceToken;
-const voice=new SpeechSynthesisUtterance("Bốn màu không phải nơi bạn cần tìm: đỏ, vàng, trắng và xám.");
-voice.lang="vi-VN";voice.rate=clear?.88:1.08;voice.pitch=.82;voice.volume=clear?.76:.28;
+const voice=new SpeechSynthesisUtterance("Những nơi bạn không cần tìm: Đỏ, vàng, trắng và xám.");
+voice.lang="vi-VN";voice.rate=1;voice.pitch=1;voice.volume=clear?.9:.34;
 voice.onend=()=>{if(archiveRecorderOn&&token===archiveRecorderVoiceToken)archiveRecorderVoiceTimer=setTimeout(()=>playArchiveVoice(clear),650)};
 window.speechSynthesis.speak(voice)
 }
