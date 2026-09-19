@@ -1855,6 +1855,7 @@ let PARTICIPANT_ID="";
 let SESSION_ID="";
 let ROOM_START_TIME=null;
 let memoryAttempt=0;
+let TRACKING_EVENT_SEQ=0;
 /* Room timers share the original session; they never create a new participant or session. */
 const ROOM_START_TIMES={};
 
@@ -1894,7 +1895,11 @@ function resetTrackingSession(){
 
 SESSION_ID=generateSessionId();
 
-ROOM_START_TIME=Date.now()
+ROOM_START_TIME=Date.now();
+
+ROOM_START_TIMES.ROOM_01=ROOM_START_TIME;
+ROOM_START_TIMES.ROOM_02=null;
+ROOM_START_TIMES.ROOM_03=null;
 
 }
 
@@ -1905,6 +1910,8 @@ return;
 
 const normalized=normalizeTrackingEvent(eventName,data);
 const room=trackingRoom();
+const clientEventId=PARTICIPANT_ID+"_"+SESSION_ID+"_"+(++TRACKING_EVENT_SEQ)+"_"+Date.now();
+normalized.extra.client_event_id=clientEventId;
 const roomStartedAt=ROOM_START_TIMES[room]||ROOM_START_TIME;
 
 const payload={
@@ -8702,9 +8709,7 @@ playing=true;
 buildRoom1();
 
 
-logEvent(
-"ROOM_START"
-);
+startRoomTracking("ROOM_01");
 
 
 say(
@@ -8876,9 +8881,6 @@ camera.position.set(
 yaw=0;
 
 pitch=0;
-
-
-resetTrackingSession()
 
 };
 
