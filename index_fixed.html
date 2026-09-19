@@ -1871,7 +1871,8 @@ const aliases={
 "ARCHIVE_COMPUTER_CV_OPENED":"CV_OPEN","ARCHIVE07_FILTER_OBTAINED":"FILTER_OBTAINED",
 "ARCHIVE_A05_PAPER_REVEALED":"PAPER_REVEAL","ARCHIVE_A05_PEN_SELECTED":"PENCIL_SELECTED",
 "ARCHIVE07_HS07_OPENED":"HS07_FOUND","ARCHIVE_CHALLENGE_1_COMPLETE":"A05_FOUND",
-"ARCHIVE07_COMPLETE":"FILTER_SUCCESS","ARCHIVE07_COMPARISON_VIEWED":"HINT_VIEW"
+"ARCHIVE07_COMPLETE":"FILTER_SUCCESS","ARCHIVE07_COMPARISON_VIEWED":"HINT_VIEW",
+"ROOM1_COMPLETE_TO_HALLWAY":"ROOM_COMPLETE"
 };
 const event=aliases[eventName]||eventName;
 const extra={...data};
@@ -3988,6 +3989,11 @@ has_key:true
 }
 );
 
+logEvent(
+"ROOM1_COMPLETE_TO_HALLWAY",
+{challenge:"ROOM1_EXIT"}
+);
+
 enterHallway()
 
 }else{
@@ -4556,14 +4562,6 @@ enterArchiveRoom()
 );
 
 
-/*
-TRACKING
-*/
-
-logEvent(
-"ROOM1_COMPLETE_TO_HALLWAY"
-);
-
 say(
 "Cánh cửa mở. Một hành lang tối xuất hiện phía trước."
 );
@@ -4721,15 +4719,17 @@ const render=message=>{
 doc("THỨ TỰ KÝ HIỆU",'<div class="note" style="text-align:center"><b>▲ ■ ★ ♥</b><br><br>'+message+'<br><br><div id="archiveSymbolChoices"><button class="btn archiveSymbolChoice" data-symbol="▲">▲</button> <button class="btn archiveSymbolChoice" data-symbol="■">■</button> <button class="btn archiveSymbolChoice" data-symbol="★">★</button> <button class="btn archiveSymbolChoice" data-symbol="♥">♥</button></div></div>');
 const finishAnswer=()=>{
 if(entered.join("")===archiveSymbolOrder.join("")){
-archiveHiddenUnlocked=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>MỞ KHÓA THỬ THÁCH MỚI</b><br><br>TÌM HỒ SƠ ẨN.</div>';beep(760,.24,"square");logEvent("ARCHIVE_SYMBOL_CHALLENGE_COMPLETE",{order:archiveSymbolOrder});return
+archiveHiddenUnlocked=true;document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center"><b>MỞ KHÓA THỬ THÁCH MỚI</b><br><br>TÌM HỒ SƠ ẨN.</div>';beep(760,.24,"square");logEvent("ARCHIVE_SYMBOL_CHALLENGE_COMPLETE",{order:archiveSymbolOrder});logEvent("SYMBOL_SUCCESS",{order:archiveSymbolOrder});return
 }
+logEvent("SYMBOL_WRONG",{entered:entered.join("")});
 document.getElementById("docBody").innerHTML='<div class="note" style="text-align:center">Thứ tự không khớp.<br><br><button class="btn" id="archiveRetry">NHẬP LẠI</button> <button class="btn" id="archiveQuit">BỎ CUỘC</button></div>';
-document.getElementById("archiveRetry").onclick=()=>{entered=[];render("Nhập lại thứ tự bạn đã ghi nhận.")};
-document.getElementById("archiveQuit").onclick=()=>{resetArchiveSymbolChallenge();document.getElementById("doc").style.display="none";modalOpen=false;renderer.domElement.requestPointerLock?.()};
+document.getElementById("archiveRetry").onclick=()=>{logEvent("SYMBOL_RETRY");entered=[];render("Nhập lại thứ tự bạn đã ghi nhận.")};
+document.getElementById("archiveQuit").onclick=()=>{logEvent("SYMBOL_GIVE_UP");resetArchiveSymbolChallenge();document.getElementById("doc").style.display="none";modalOpen=false;renderer.domElement.requestPointerLock?.()};
 };
 document.querySelectorAll(".archiveSymbolChoice").forEach(button=>{
 button.onclick=()=>{
 button.animate([{filter:"brightness(1)",boxShadow:"0 0 0 transparent"},{filter:"brightness(1.75)",boxShadow:"0 0 14px #fff4a8"},{filter:"brightness(1)",boxShadow:"0 0 0 transparent"}],{duration:220,easing:"ease-out"});
+logEvent("SYMBOL_SELECTED",{symbol:button.dataset.symbol});
 entered.push(button.dataset.symbol);if(entered.length<4)return;
 document.querySelectorAll(".archiveSymbolChoice").forEach(choice=>choice.disabled=true);
 setTimeout(finishAnswer,220);
@@ -4894,6 +4894,7 @@ document.getElementById("room3ExitGame").onclick=()=>{clearTimeout(room3LetterTi
    CHALLENGE 07 — HỘP LƯU TRỮ / RED FILTER / BÀN CỜ
 ========================================================= */
 function openArchive07WorkBoard(){
+logEvent("ARCHIVE07_BOARD_OPEN");
 const tasks=["NHẬP HỒ SƠ","PHÂN LOẠI","ĐỐI CHIẾU","RÀ SOÁT","HOÀN TẤT HỒ SƠ"],dates=["02/08","03/08","04/08","05/08","06/08"];
 const comparisonReady=archive07ComparisonViewed&&archive07HsOpened;
 const papers=[
@@ -6210,6 +6211,7 @@ memoryTimer
 );
 
 memoryAttempt++;
+logEvent("MEMORY_ATTEMPT_START",{attempt:memoryAttempt});
 
 memoryMoves=0;
 
@@ -6694,6 +6696,8 @@ document.getElementById(
 "retryMemory"
 ).onclick=()=>{
 
+logEvent("MEMORY_RETRY",{attempt:memoryAttempt});
+
 document.getElementById(
 "fail"
 ).style.display="none";
@@ -6714,6 +6718,8 @@ startMemoryRound()
 document.getElementById(
 "giveupMemory"
 ).onclick=()=>{
+
+logEvent("MEMORY_GIVE_UP",{attempt:memoryAttempt});
 
 document.getElementById(
 "fail"
@@ -7477,8 +7483,10 @@ logEvent("CH2_START",{attempt:challenge2Attempt})
 
 function placeBook(book){
 if(book.disabled)return;
+logEvent("CH2_BOOK_INTERACT",{attempt:challenge2Attempt,color:book.dataset.color});
 const expected=bookOrder[bookIndex];
 if(book.dataset.color!==expected){
+logEvent("COLOR_WRONG",{attempt:challenge2Attempt,color:book.dataset.color,expected_color:expected});
 document.getElementById("bookStatus").textContent="Sai màu. Hệ thống cần: "+expected+".";
 book.animate([{transform:"translateX(0)"},{transform:"translateX(-8px)"},{transform:"translateX(8px)"},{transform:"translateX(0)"}],{duration:260});
 return
@@ -7535,7 +7543,7 @@ say("Challenge 2 hoàn thành. Bạn nhận được KEY 02.");
 setTimeout(activateChallenge3,3800)
 }
 
-document.getElementById("retryBooks").onclick=()=>startBookChallenge();
+document.getElementById("retryBooks").onclick=()=>{logEvent("CH2_RETRY",{attempt:challenge2Attempt});startBookChallenge()};
 
 document.getElementById("bookQuit").onclick=()=>{
 document.getElementById("challenge2QuitConfirm").style.display="grid";
@@ -7685,6 +7693,7 @@ logEvent("CH3_LIGHTS_ON")
 
 function startC3Symbols(){
 c3Stage="symbols";
+logEvent("CH3_START");
 const run=++c3SymbolRun;
 modalOpen=true;
 document.exitPointerLock?.();
@@ -7810,7 +7819,7 @@ function c3Fail(){
 c3Stage="failed";if(c3Npc)scene.remove(c3Npc);c3Npc=null;clearC3FinalNpcs();document.getElementById("c3Hud").style.display="none";document.getElementById("c3Fail").style.display="grid";modalOpen=true;logEvent("CH3_FAIL")
 }
 
-document.getElementById("retryC3").onclick=()=>{document.getElementById("c3Fail").style.display="none";modalOpen=false;setC3RoomLight(1);spawnC3FinalNpcs();c3Stage="final";c3Deadline=Date.now()+30000;document.getElementById("c3Hud").style.display="block";};
+document.getElementById("retryC3").onclick=()=>{logEvent("CH3_RETRY");document.getElementById("c3Fail").style.display="none";modalOpen=false;setC3RoomLight(1);spawnC3FinalNpcs();c3Stage="final";c3Deadline=Date.now()+30000;document.getElementById("c3Hud").style.display="block";};
 document.getElementById("quitC3").onclick=()=>{document.getElementById("c3Fail").style.display="none";modalOpen=false;c3Stage="idle";setC3RoomLight(1);say("Bạn đã rời khỏi phần đuổi bắt.")};
 
 function updateChallenge3(){
@@ -8539,6 +8548,8 @@ startNumberChallengeRound()
 document.getElementById(
 "retryNumber"
 ).onclick=()=>{
+
+logEvent("CH1_RETRY",{attempt:numberAttempt});
 
 document.getElementById(
 "challengeFail"
